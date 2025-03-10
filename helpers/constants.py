@@ -4,7 +4,7 @@ and offer guidance on how to correct them. Ensure the feedback is clear, support
 encourages improvement."""
 PROMPTS_DIRECTORY = "prompts"
 TEST_OUTPUTS_DIRECTORY = "test_responses_md"
-TEST_ASSIGNMENT_DIRECTORY = 'ggr274_homework5'
+TEST_ASSIGNMENT_DIRECTORY = "ggr274_homework5"
 HELP_MESSAGES = {
     "submission_type": "The format of the submission file (e.g., Jupyter notebook, Python script).",
     "prompt": "The specific prompt to use for evaluating the assignment.",

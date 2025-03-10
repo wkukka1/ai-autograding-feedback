@@ -1,6 +1,7 @@
 import nbformat
 import os
 from pathlib import Path
+from constants import TEST_ASSIGNMENT_DIRECTORY
 
 """ Helpers to convert the .ipynb test files in 'ggr274_homework5' directory to .txt files"""
 
@@ -29,4 +30,4 @@ def convert_ipynb_to_txt(ipynb_file_path, output_txt_file_path):
     print(f"Output saved to: {output_txt_file_path}")
     return output_txt_file_path
 
-#rename_files("test_files")
+rename_files("../" + TEST_ASSIGNMENT_DIRECTORY)
