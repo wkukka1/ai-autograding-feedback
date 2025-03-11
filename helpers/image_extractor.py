@@ -2,7 +2,7 @@ import json
 import base64
 import os
 
-def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike):
+def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str):
     with open(input_notebook_path, "r") as file:
         notebook = json.load(file)
         os.makedirs(output_directory, exist_ok=True)
@@ -25,7 +25,7 @@ def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLi
                     for file_type, data in output["data"].items():
                         if "image/" in file_type:
                             ext = file_type.split("/")[-1]
-                            image_filename = f"submission.{ext}"
+                            image_filename = f"{output_name}.{ext}"
                             os.makedirs(os.path.join(output_directory, question_name, str(image_count)), exist_ok=True)
                             image_path = os.path.join(output_directory, question_name, str(image_count), image_filename)
                             image_count += 1
