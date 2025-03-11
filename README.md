@@ -21,21 +21,21 @@ For the code scope, the program takes three files:
 ## Assumptions 
 ### Code Scope 
 #### Test Files 
-To test the program and run the models, we assume that the test assignment files follow a specific directory structure. Currently, this program has been tested using from *Homework 5* of the *GGR274* class at the *University of Toronto*.  
+To test the program and run the models, we assume that the test assignment files follow a specific directory structure. Currently, this program has been tested using *Homework 5* of the *GGR274* class at the *University of Toronto*.  
 
 ##### Directory Structure  
 
-Mock student submissions are stored in a directory named `ggr274_homework5`. Within this directory, mock submissions are contained in a separate subdirectory `ggr274_homework5/test#`. The following naming convention is used for the files:  
+Within the `ggr274_homework5` directory, mock submissions are contained in a separate subdirectories `ggr274_homework5/test#`. The following naming convention is used for the files:  
 
 - `Homework_5_Solution.ipynb` – Instructor-provided solution file  
 - `student_submission.ipynb` – Student's submission file  
 - `test#_error_output.txt` – Error trace file for the corresponding test case  
 
-Each different test folder contains variations of `student_submission.ipynb` with different errors to simulate common student mistakes.  
+Each test folder contains variations of `student_submission.ipynb` with different errors.  
 
 ##### Preprocessing Jupyter Notebook Files  
 
-Since OpenAI does not support direct uploads of `.ipynb` files, a preprocessing step is required to convert them to `.txt` format. Before running `main.py`, the following command can be executed:  
+Note: Since OpenAI does not support direct uploads of `.ipynb` files, a preprocessing step is required to convert them to `.txt` format. Before running `main.py`, the following command can be executed:  
 
 ```bash
 python helpers/file_converter.py
@@ -82,6 +82,10 @@ python main.py \
   --model <model_name> \
   --output <markdown|stdout>
 ```
+Run this command to see help messages and available choices: 
+```bash
+python main.py -h
+```
 
 ### Example Commands
 #### Generate Markdown Output for Table Evalutation of Student Submission
@@ -104,7 +108,7 @@ python main.py --submission_type jupyter --prompt code_table \
 | `--prompt`       | The prompt name (from `arg_options.Prompt`) | ✅ |
 | `--scope`        | Processing scope (`image` or `code`)             | ✅ |
 | `--assignment`   | Name of the directory which contains test files (any subdirectory of 'ggr274_homework5')| ✅ |
-| `--question`     | Question number (optional)                        | ❌ |
+| `--question`     | Specific question to evaluate                      | ❌ |
 | `--model`        | Model type (from `arg_options.Models`)           | ✅ |
 | `--output`       | Output type (`markdown` or `stdout`)             | ✅ |
 
@@ -129,8 +133,8 @@ To view the predefined prompts, navigate to the /prompts folder. Each prompt is 
 ```
 
 Prompt Naming Conventions: 
-- Prompts to be used when --scope code is selected are prefixed with code_
-- Prompts to be used when --scope image is selected are prefixed with image_
+- Prompts to be used when --scope code is selected are prefixed with code_{}.json
+- Prompts to be used when --scope image is selected are prefixed with image_{}.json
 
 If the --scope argument is provided and its value does not match the prefix of the selected --prompt, an error message will be displayed.
 
@@ -173,7 +177,7 @@ Note: If you wish to use the OpenAI model, you must specify your API key in an .
 OPENAI_API_KEY=your_api_key_here
 ```
 ### Ollama 
-Various models were also tested and ran locally on the Teach CS Bigmouth server by using Ollama. Listed below are the models that were used to test out the project:  
+Various models were also tested and run locally on the Teach CS Bigmouth server by using Ollama. Listed below are the models that were used to test out the project:  
 
 #### Code Scope 
 
@@ -206,7 +210,7 @@ ollama start
 Ollama can also be installed on your personal computer in order to run models locally (https://ollama.com/).
 
 ## Output Structure
-When `--output markdown` is selected, the script will:
+- When `--output markdown` is selected, the script will:
 1. Load `helpers/output_template.md`
 2. Format it with the provided arguments and processing results.
 3. Save it under `test_responses_md/<assignment>/<model>/<prompt>_<timestamp>.md`
@@ -216,6 +220,6 @@ Example Markdown file name:
 test_responses_md/test1/openai/code_table_20250310_143500.md
 ```
 
-When `--output stdout` is selected, the prompt used and generated response will be sent to stdout.
+- When `--output stdout` is selected, the prompt used and generated response will be sent to stdout.
 
 
