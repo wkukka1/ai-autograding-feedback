@@ -3,6 +3,7 @@ import base64
 from ollama import chat, Message, Image
 from openai import OpenAI
 from helpers.arg_options import Models
+from helpers.constants import TEST_ASSIGNMENT_DIRECTORY
 from helpers.image_extractor import extract_images
 from helpers.image_reader import *
 
@@ -38,7 +39,7 @@ def openai_call(message: Message, model: str):
 
 def process_image(args, prompt):
     OUTPUT_DIRECTORY = "output_images"
-    extract_images(args.assignment, OUTPUT_DIRECTORY)
+    extract_images(f"{TEST_ASSIGNMENT_DIRECTORY}/{args.assignment}/student_submission.ipynb", OUTPUT_DIRECTORY)
     message = Message(
         role="user",
         content=prompt["prompt_content"],

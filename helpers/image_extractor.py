@@ -12,10 +12,10 @@ def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLi
                 source = cell["source"]
                 if len(source) > 0 and source[0].startswith("# Question"):
                     # Cell header for file names
-                    question_name = source[0][2:-1].replace(" ", "_")
-                elif "markus_saved_image" in cell["metadata"]:
+                    question_name = source[0][2:-1]
+                elif "markus_question_name" in cell["metadata"]:
                     # Cell metadata tag for saved image file name
-                    question_name = cell["metadata"]["markus_saved_image"]
+                    question_name = cell["metadata"]["markus_question_name"]
                 else:
                     continue
 
