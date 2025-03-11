@@ -59,6 +59,14 @@ To ensure proper extraction and evaluation of student responses, the following f
   ```  
   This section serves as the general assignment instructions and is not included in error evaluation.  
 
+### Image Scope 
+#### Test Files
+Mock student submissions are stored in `ggr274_homework5/image_test#`. The following naming convention is used for the files:  
+- `solution.ipynb` – Instructor-provided solution file  
+- `student_submission.ipynb` – Student's submission file
+
+##### Notebook Preprocessing
+To grade a specific question using the `--question` argument, add the tag `markus_question_name: <question name>` to the metadata for the code cell that generates an image to be graded. The previous cell's markdown content will be used as the question's context.
 
 ## Usage
 
@@ -126,6 +134,11 @@ Prompt Naming Conventions:
 
 If the --scope argument is provided and its value does not match the prefix of the selected --prompt, an error message will be displayed.
 
+Prompt Extra Options (for image scope only):
+- `include_question_context` (true/false): If set to true, a `{context}` field can be added to the prompt, which will be replaced with the markdown content of the cell before the code cell with the `markus_question_name` tag.
+- `include_submission_image` (true/false): Whether the student submission image should be attached in the prompt.
+- `include_solution_image` (true/false): Whether the solution image should be attached in the prompt.
+
 ### Code Scope Prompts 
 | Prompt Name          | Description                                  | 
 |------------------|--------------------------------------------------|
@@ -135,6 +148,12 @@ If the --scope argument is provided and its value does not match the prefix of t
 | `code_table.json`   | Outputs a table which shows the question requirement, the student’s attempt, and potential issue.  |
 | `code_template.json`     | Outputs a template format specified to include error type, description, solution. |
 
+### Image Scope Prompts 
+| Prompt Name          | Description                                  | 
+|------------------|--------------------------------------------------|
+| `image_analyze.json` | Outputs whether the submission image answers the question provided by the context. |
+| `image_compare.json` | Outputs table comparing style elements between submission and solution graphs. |
+| `image_style.json` | Outputs table checking the style elements in a submission graph. |
 
 ## Models 
 The models used can be seen under the /models folder. 
@@ -161,6 +180,11 @@ Various models were also tested and ran locally on the Teach CS Bigmouth server 
 Models: 
 - deepSeek-R1:70B [Documentation](https://ollama.com/library/deepseek-r1)
 - codellama:latest [Documentation](https://ollama.com/library/codellama)
+
+#### Image Scope
+- llama3.2-vision:90b [Documentation](https://ollama.com/library/llama3.2-vision)
+- - This model only supports at most one image attachment.
+- llava:34b [Documentation](https://ollama.com/library/llava)
 
 #### Using Ollama  
 In order to run this project on Bigmouth: 
