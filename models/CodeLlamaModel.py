@@ -23,9 +23,14 @@ class CodeLlamaModel(Model):
             file_contents = self._get_file_contents(assignment_files)
         
         # Combine the model's instructions and the files to reference in the full prompt
-        request = f"{self.model['instructions']}\n\nPrompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
-
-        response = ollama.chat(model=self.model["model"], messages=[{"role": "user", "content": request}])
+        request = f"Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
+        response = ollama.chat(
+                        model=self.model["model"], 
+                        messages=[
+                            {"role": "system", "content": self.model['instructions']},  
+                            {"role": "user", "content": request}
+                        ]
+                    )
         
         if not response or "message" not in response or "content" not in response["message"]:
             print("Error: Invalid or empty response from Ollama.")
@@ -60,9 +65,7 @@ class CodeLlamaModel(Model):
             if task_match:
                 task_content = task_match.group(1).strip()
                 task_found = True
-            else:
-                task_content = f"Error: Task {question_num} not found in {file_path}."
-
+            
             # Append file name and extracted content
             file_contents += f"\n\n---\n### {file_path}\n\n"
             file_contents += intro_content + "\n\n" if intro_content else ""
@@ -92,6 +95,6 @@ class CodeLlamaModel(Model):
                 continue
             
             # Prepend the filename and append the content
-            file_contents += f"### {file_name}\n{content}\n\n"
+            file_contents += f"## {file_name}\n{content}\n\n"
         return file_contents
         
