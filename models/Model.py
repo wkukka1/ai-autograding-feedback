@@ -1,3 +1,6 @@
+
+"""Parent Class for LLM """
+
 class Model:
     def __init__(self):
         """

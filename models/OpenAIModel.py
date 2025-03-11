@@ -101,7 +101,6 @@ class OpenAIModel(Model):
     
     """Cleanup uploaded files and models"""
     def _cleanup_resources(self, file_ids):
-       
         self._cleanup_files(file_ids)
         self._delete_all_models()
 
@@ -116,11 +115,11 @@ class OpenAIModel(Model):
 
     """Delete all models"""
     def _delete_all_models(self):
-        assistants = self.client.beta.assistants.list().data
-        for assistant in assistants:
-            assistant_id = assistant.id
+        models = self.client.beta.assistants.list().data
+        for model in models:
+            model_id = model.id
             # print(f"Deleting model: {model_id}")
-            self.client.beta.assistants.delete(assistant_id)
+            self.client.beta.assistants.delete(model_id)
 
     """Delete all files from OpenAI storage"""
     def _delete_all_files(self):
