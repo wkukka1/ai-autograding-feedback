@@ -1,6 +1,7 @@
 import base64
 from pathlib import Path
 
+from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
 from helpers.arg_options import Models
@@ -8,13 +9,15 @@ from helpers.constants import TEST_ASSIGNMENT_DIRECTORY
 from helpers.image_extractor import extract_images
 from helpers.image_reader import *
 
-client = OpenAI()
 
 def encode_image(image_path: os.PathLike):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 def openai_call(message: Message, model: str):
+    # Load environment variables from .env file
+    load_dotenv()
+    client = OpenAI()
     images = [
         {
             "type": "image_url",
@@ -69,7 +72,7 @@ def process_image(args, prompt):
         message.images.append(Image(value=solution_image_path))
 
     request = f"{message.content}\n{str(message.images)}\n"
-    if args.model == Models.OPENAI:
+    if args.model == Models.OPENAI.value:
         response = openai_call(message, model="gpt-4o")
     else:
         response = chat(model=args.model, messages=[message]).message.content
