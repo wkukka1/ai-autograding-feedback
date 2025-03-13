@@ -1,8 +1,6 @@
 import os, sys
-from models.CodeLlamaModel import CodeLlamaModel
-from models.OpenAIModel import OpenAIModel
-from models.DeepSeekModel import DeepSeekModel
 from helpers.constants import TEST_ASSIGNMENT_DIRECTORY
+from helpers.arg_options import model_mapping
 
 def process_code(args, prompt):
     prompt = prompt["prompt_content"]
@@ -16,13 +14,9 @@ def process_code(args, prompt):
     assignment_files = [os.path.join(assignment_folder, f) for f in os.listdir(assignment_folder) if os.path.isfile(os.path.join(assignment_folder, f))]
 
     # Create model 
-    if args.model == "deepSeek-R1:70B":
-        model = DeepSeekModel()
-    elif args.model == "openai":
-        model = OpenAIModel()
-    elif args.model == "codellama:latest": 
-        model = CodeLlamaModel()
-    else: 
+    if args.model in model_mapping:
+        model = model_mapping[args.model]()
+    else:
         print("Invalid model selected for code scope.")
         sys.exit(1)
     
