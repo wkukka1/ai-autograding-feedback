@@ -37,6 +37,7 @@ model_mapping = {
 class Models(Enum):
     OPENAI = "openai"
     LLAMA = "llama3.2-vision:90b"
+    LLAVA = "llava:34b"
     DEEPSEEK = "deepSeek-R1:70B"
     CODELLAMA = "codellama:latest"
 
