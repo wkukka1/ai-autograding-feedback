@@ -31,8 +31,7 @@ class Scope(Enum):
 model_mapping = {
     "deepSeek-R1:70B": DeepSeekModel,
     "openai": OpenAIModel,
-    "codellama:latest": CodeLlamaModel,
-    "gemma2:latest": GemmaModel
+    "codellama:latest": CodeLlamaModel
 }
 
 class Models(Enum):
