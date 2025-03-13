@@ -1,5 +1,7 @@
 import base64
+from pathlib import Path
 
+from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
 from helpers.arg_options import Models
@@ -7,13 +9,15 @@ from helpers.constants import TEST_ASSIGNMENT_DIRECTORY
 from helpers.image_extractor import extract_images
 from helpers.image_reader import *
 
-client = OpenAI()
 
 def encode_image(image_path: os.PathLike):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 def openai_call(message: Message, model: str):
+    # Load environment variables from .env file
+    load_dotenv()
+    client = OpenAI()
     images = [
         {
             "type": "image_url",
@@ -39,7 +43,15 @@ def openai_call(message: Message, model: str):
 
 def process_image(args, prompt):
     OUTPUT_DIRECTORY = "output_images"
-    extract_images(f"{TEST_ASSIGNMENT_DIRECTORY}/{args.assignment}/student_submission.ipynb", OUTPUT_DIRECTORY)
+    submission_notebook = Path(TEST_ASSIGNMENT_DIRECTORY, args.assignment, "student_submission.ipynb")
+    solution_notebook = Path(TEST_ASSIGNMENT_DIRECTORY, args.assignment, "solution.ipynb")
+
+    # Extract submission images
+    extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
+    # Optionally extract solution images
+    if solution_notebook.is_file():
+        extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
+
     message = Message(
         role="user",
         content=prompt["prompt_content"],
@@ -52,15 +64,15 @@ def process_image(args, prompt):
         message.content = message.content.replace("{context}", "```\n" + context + "\n```")
     if prompt.get("include_submission_image", False):
         submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, args.question)
-        submission_image_path = submission_image_paths[0]
+        submission_image_path = submission_image_paths[0] # Only consider one image per question
         message.images.append(Image(value=submission_image_path))
     if prompt.get("include_solution_image", False):
         solution_image_paths = read_solution_images(OUTPUT_DIRECTORY, args.question)
-        solution_image_path = solution_image_paths[0]
+        solution_image_path = solution_image_paths[0] # Only consider one image per question
         message.images.append(Image(value=solution_image_path))
 
     request = f"{message.content}\n{str(message.images)}\n"
-    if args.model == Models.OPENAI:
+    if args.model == Models.OPENAI.value:
         response = openai_call(message, model="gpt-4o")
     else:
         response = chat(model=args.model, messages=[message]).message.content
