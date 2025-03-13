@@ -1,4 +1,7 @@
 from enum import Enum
+from models.CodeLlamaModel import CodeLlamaModel
+from models.OpenAIModel import OpenAIModel
+from models.DeepSeekModel import DeepSeekModel
 
 """ Options for command line arguments"""
 
@@ -25,6 +28,13 @@ class Scope(Enum):
     def __str__(self):
         return self.value
     
+model_mapping = {
+    "deepSeek-R1:70B": DeepSeekModel,
+    "openai": OpenAIModel,
+    "codellama:latest": CodeLlamaModel,
+    "gemma2:latest": GemmaModel
+}
+
 class Models(Enum):
     OPENAI = "openai"
     LLAMA = "llama3.2-vision:90b"
