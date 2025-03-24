@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
 from helpers.arg_options import Models
-from helpers.constants import TEST_ASSIGNMENT_DIRECTORY
 from helpers.image_extractor import extract_images
 from helpers.image_reader import *
 
@@ -43,8 +42,8 @@ def openai_call(message: Message, model: str):
 
 def process_image(args, prompt):
     OUTPUT_DIRECTORY = "output_images"
-    submission_notebook = Path(TEST_ASSIGNMENT_DIRECTORY, args.assignment, "student_submission.ipynb")
-    solution_notebook = Path(TEST_ASSIGNMENT_DIRECTORY, args.assignment, "solution.ipynb")
+    submission_notebook = Path("./", args.assignment, "student_submission.ipynb")
+    solution_notebook = Path("./", args.assignment, "solution.ipynb")
 
     # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")

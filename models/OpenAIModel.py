@@ -14,7 +14,7 @@ class OpenAIModel(Model):
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         
         # Initialize the vector store
-        self.vector_store = self.client.beta.vector_stores.create(name="Markus LLM Vector Store")
+        self.vector_store = self.client.vector_stores.create(name="Markus LLM Vector Store")
         
         # Create the model
         self.model = self.client.beta.assistants.create(
@@ -36,13 +36,15 @@ class OpenAIModel(Model):
         if not self.model:
             raise RuntimeError("model was not created successfully")
         
+        request = 'Uploaded Files: '
         # Upload files to model's vector store
         file_ids = []
         for file_path in assignment_files:
-            _, ext = os.path.splitext(file_path)
+            base, ext = os.path.splitext(file_path)
             if ext.lower() == '.txt':  # Only upload the text files in each folder
                 file_id = self._upload_file(file_path)
                 file_ids.append(file_id)
+                request += base
 
         # Modify prompt for a specific question if provided
         if question_num: 
@@ -54,7 +56,7 @@ class OpenAIModel(Model):
         # Cleanup resources after use
         self._cleanup_resources(file_ids)
         
-        request = INSTRUCTIONS + "\n" + prompt
+        request = "\n" + INSTRUCTIONS + "\n" + prompt
         return request, response
     
     """Upload a file to OpenAI storage and link it to the vector store"""
@@ -62,7 +64,7 @@ class OpenAIModel(Model):
         #print("Uploading file: " + file_path)
         with open(file_path, 'rb') as f:
             response = self.client.files.create(file=f, purpose='assistants')
-            self.client.beta.vector_stores.files.create(
+            self.client.vector_stores.files.create(
                 vector_store_id=self.vector_store.id,
                 file_id=response.id
             )
@@ -108,7 +110,7 @@ class OpenAIModel(Model):
     def _cleanup_files(self, file_ids):
         for file_id in file_ids:
             self.client.files.delete(file_id)
-            self.client.beta.vector_stores.files.delete(
+            self.client.vector_stores.files.delete(
                 vector_store_id=self.vector_store.id,
                 file_id=file_id
             )
@@ -128,7 +130,7 @@ class OpenAIModel(Model):
             file_id = file.id
             # print(f"Deleting file: {file_id}")
             self.client.files.delete(file_id)
-            self.client.beta.vector_stores.files.delete(
+            self.client.vector_stores.files.delete(
                 vector_store_id=self.vector_store.id,
                 file_id=file_id
             )
