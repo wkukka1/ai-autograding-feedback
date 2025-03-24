@@ -1,6 +1,7 @@
 import base64
 from pathlib import Path
 
+from anthropic import Anthropic
 from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
@@ -36,9 +37,40 @@ def openai_call(message: Message, model: str):
                 ] + images,
             }
         ],
-        n=1
+        top_p=0.5
     )
     return completion.choices[0].message.content
+
+def anthropic_call(message: Message, model: str):
+    load_dotenv()
+    client = Anthropic()
+    images = [
+        {
+            "type": "image",
+            "source": {
+                "type": "base64",
+                "media_type": "image/png",
+                "data": f"{encode_image(image.value)}"
+            }
+        } for image in message.images
+    ]
+    message = client.messages.create(
+        max_tokens=2048,
+        model=model,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": message.content,
+                    }
+                ] + images,
+            }
+        ],
+        top_p=0.5
+    )
+    return message.content[0].text
 
 def process_image(args, prompt):
     OUTPUT_DIRECTORY = "output_images"
@@ -73,6 +105,8 @@ def process_image(args, prompt):
     request = f"{message.content}\n{str(message.images)}\n"
     if args.model == Models.OPENAI.value:
         response = openai_call(message, model="gpt-4o")
+    elif args.model == Models.CLAUDE.value:
+        response = anthropic_call(message, model="claude-3-7-sonnet-20250219")
     else:
         response = chat(model=args.model, messages=[message]).message.content
     return request, response
