@@ -1,5 +1,5 @@
 {
-    "prompt_content": "Compare the student's code and solution code. For each mistake, output the exact line(s) of code from the student's submission file (student_submission.txt) which is causing it and which task number it belongs to. Don't ouput anything else.",
+    "prompt_content": "Compare the student's code and solution code. For each mistake, output the exact line(s) of code from the student's submission file (student_submission.txt) which is causing it. Don't ouput anything else.",
     "include_question_context": false,
     "include_submission_image": false,
     "include_solution_image": false
