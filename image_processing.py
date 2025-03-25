@@ -37,7 +37,7 @@ def openai_call(message: Message, model: str):
                 ] + images,
             }
         ],
-        top_p=0.5
+        temperature=0.33
     )
     return completion.choices[0].message.content
 
@@ -68,7 +68,7 @@ def anthropic_call(message: Message, model: str):
                 ] + images,
             }
         ],
-        top_p=0.5
+        temperature=0.33
     )
     return message.content[0].text
 
@@ -102,11 +102,11 @@ def process_image(args, prompt):
         solution_image_path = solution_image_paths[0] # Only consider one image per question
         message.images.append(Image(value=solution_image_path))
 
-    request = f"{message.content}\n{str(message.images)}\n"
+    request = f"{message.content}\n\n{[str(image) for image in message.images]}"
     if args.model == Models.OPENAI.value:
         response = openai_call(message, model="gpt-4o")
     elif args.model == Models.CLAUDE.value:
         response = anthropic_call(message, model="claude-3-7-sonnet-20250219")
     else:
-        response = chat(model=args.model, messages=[message]).message.content
+        response = chat(model=args.model, messages=[message], options={"temperature": 0.33}).message.content
     return request, response
