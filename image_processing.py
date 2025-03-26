@@ -102,7 +102,7 @@ def process_image(args, prompt):
         solution_image_path = solution_image_paths[0] # Only consider one image per question
         message.images.append(Image(value=solution_image_path))
 
-    request = f"{message.content}\n\n{[str(image) for image in message.images]}"
+    request = f"{message.content}\n\n{[str(image.value) for image in message.images]}"
     if args.model == Models.OPENAI.value:
         response = openai_call(message, model="gpt-4o")
     elif args.model == Models.CLAUDE.value:
