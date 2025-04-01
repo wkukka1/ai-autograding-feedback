@@ -242,7 +242,7 @@ test_responses_md/test1/openai/code_table_20250310_143500.md
 - When `--output direct` is selected, only the generated response will be sent to stdout.
 
 
-## Updates 
+## Markus Integration 
 - Code was slightly modified to integrate with MarkUs and no longer depends on GGR274 Assignment Folder 
 - To integrate this code base with MarkUs: 
   - Upload this entire repository to autotester settings as a folder (File Upload section)
