@@ -105,12 +105,15 @@ python main.py --submission_type jupyter --prompt code_table \
 | Argument          | Description                                      | Required |
 |------------------|--------------------------------------------------|----------|
 | `--submission_type` | Type of submission (from `arg_options.FileType`) | ✅ |
-| `--prompt`       | The prompt name (from `arg_options.Prompt`) | ✅ |
+| `--prompt`       | The prompt name (from `arg_options.Prompt`) | ❌ **|
+| `--prompt_text`       | Additional customizable prompt text that can be fed to model. | ❌ ** |
 | `--scope`        | Processing scope (`image` or `code`)             | ✅ |
 | `--assignment`   | Name of the directory which contains test files (any subdirectory of 'ggr274_homework5')| ✅ |
 | `--question`     | Specific question to evaluate                      | ❌ |
 | `--model`        | Model type (from `arg_options.Models`)           | ✅ |
 | `--output`       | Output type (`markdown` or `stdout`)             | ✅ |
+
+** One of prompt or prompt_text must be selected. 
 
 ## Scope 
 The program supports two distinct scopes: code or image. Depending on whether "code" or "image" is selected, the program supports different models and prompts tailored for each option.
@@ -151,6 +154,7 @@ Prompt Extra Options (for image scope only):
 | `code_lines.json`        | Outputs only code lines where errors are caused.       | 
 | `code_table.json`   | Outputs a table which shows the question requirement, the student’s attempt, and potential issue.  |
 | `code_template.json`     | Outputs a template format specified to include error type, description, solution. |
+| `code_annotation.json`     | Outputs a json object of a list of annotation objects to display student errors on MarkUs. |
 
 ### Image Scope Prompts 
 | Prompt Name          | Description                                  | 
@@ -161,7 +165,7 @@ Prompt Extra Options (for image scope only):
 
 ## Models 
 The models used can be seen under the /models folder. 
-### OpenAI 
+### OpenAI Vector Store 
 #### Code Scope 
 - Model Name: gpt-4-turbo
 - System Prompt: Behaviour of model is set with INSTRUCTIONS prompt from helpers/constants.py.
@@ -176,6 +180,18 @@ Note: If you wish to use the OpenAI model, you must specify your API key in an .
 ```
 OPENAI_API_KEY=your_api_key_here
 ```
+### OpenAI 
+- Uses the same model as above but doesn't use the vector store functionality. Uploads files as part of the prompt. 
+
+### Claude
+#### Code Scope 
+- Model Name: claude-3.7-sonnet
+
+Note: If you wish to use the Claude model, you must specify your API key in an .env file. Create a .env file in your project directory and add your API key:
+```
+CLAUDE_API_KEY=your_api_key_here
+```
+
 ### Ollama 
 Various models were also tested and run locally on the Teach CS Bigmouth server by using Ollama. Listed below are the models that were used to test out the project:  
 
@@ -221,5 +237,14 @@ test_responses_md/test1/openai/code_table_20250310_143500.md
 ```
 
 - When `--output stdout` is selected, the prompt used and generated response will be sent to stdout.
+- When `--output direct` is selected, only the generated response will be sent to stdout.
 
 
+## Updates 
+- Code was slightly modified to integrate with MarkUs and no longer depends on GGR274 Assignment Folder 
+- To use this code base with MarkUs: 
+  - Upload this entire repository to autotester settings 
+  - Upload the instructor's solution code and assignment test files to autotester
+  - Upload one of the scripts in the markus_test_scripts folder and set up one of the autotests to run the script. The script contains commands to run an LLM to generate feedback for the student's submission file. 
+- Ensure markus autotester has the API Keys in and .env file and specified in the docker compose file
+- Ensure markus autotester virtual environment has all libraries downloaded 

@@ -5,19 +5,15 @@ from pathlib import Path
 
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
-
 def process_code(args, prompt):
-    prompt = prompt["prompt_content"]
     
     # Determine the assignment folder
-    
-    # assignment_folder = f"{TEST_ASSIGNMENT_DIRECTORY}/{args.assignment}"
-    assignment_folder = "./"
+    assignment_folder = f"{args.assignment}"
     if not os.path.exists(assignment_folder):
         raise FileNotFoundError(f"Assignment folder '{assignment_folder}' not found.")
 
     if args.submission_type == "jupyter":
-        ensure_txt_files(assignment_folder, rename_files)
+        ensure_txt_files(assignment_folder, rename_files) # convert files to .txt, since openAI doesn't support .ipynb file uploads
 
         # Load only the required .txt files into assignment_files
         assignment_files = [
@@ -26,12 +22,23 @@ def process_code(args, prompt):
             if os.path.isfile(os.path.join(assignment_folder, f)) and any(f.endswith(suffix + ".txt") for suffix in EXPECTED_SUFFIXES)
         ]
     elif args.submission_type == "python":
-        # Load only the required .txt files into assignment_files
         assignment_files = [
             os.path.join(assignment_folder, f)
             for f in os.listdir(assignment_folder)
             if os.path.isfile(os.path.join(assignment_folder, f)) and any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
         ]
+    
+    for file in assignment_files:
+        filename = os.path.basename(file)
+        name_without_ext, _ = os.path.splitext(filename)
+
+        if name_without_ext.endswith("_solution"): # add files to reference in the prompt
+            prompt += f"\nThe instructor's solution file you should reference is {filename}."
+        elif name_without_ext.endswith("_submission"):
+            prompt += f"\nThe student's code submission file you should reference is {filename}."
+        elif name_without_ext.endswith("test_output"):
+            prompt += f"\nThe student's error trace file you should reference is {filename}."
+
     
     # Create model 
     if args.model in model_mapping:
@@ -59,7 +66,7 @@ def ensure_txt_files(directory, rename_function):
 
     if missing_suffixes:
         for filename in os.listdir(directory):
-            file_path = Path(directory) / filename  # Create a Path object
+            file_path = Path(directory) / filename  
             file_base, ext = file_path.stem, file_path.suffix 
 
             for suffix in missing_suffixes:

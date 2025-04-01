@@ -20,9 +20,10 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--submission_type", type=str, choices=arg_options.get_enum_values(arg_options.FileType), required=True, help=HELP_MESSAGES["submission_type"])
-    parser.add_argument("--prompt", type=str, choices=arg_options.get_enum_values(arg_options.Prompt), required=True, help=HELP_MESSAGES["prompt"])
+    parser.add_argument("--prompt", type=str, choices=arg_options.get_enum_values(arg_options.Prompt), required=False, help=HELP_MESSAGES["prompt"])
+    parser.add_argument("--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"])
     parser.add_argument("--scope", type=str, choices=arg_options.get_enum_values(arg_options.Scope), required=True, help=HELP_MESSAGES["scope"])
-    parser.add_argument("--assignment", type=str, required=False, help=HELP_MESSAGES["assignment"])
+    parser.add_argument("--assignment", type=str, required=True, help=HELP_MESSAGES["assignment"])
     parser.add_argument("--question", type=str, required=False, help=HELP_MESSAGES["question"])
     parser.add_argument("--model", type=str, choices=arg_options.get_enum_values(arg_options.Models), required=True, help=HELP_MESSAGES["model"])
     parser.add_argument("--output", type=str, choices=arg_options.get_enum_values(arg_options.OutputType), required=True, help=HELP_MESSAGES["output"])
@@ -30,25 +31,29 @@ def main():
     args = parser.parse_args()
     
     # Open prompt file
-    prompt_filename = f"{AUTOTEST_DIR}/prompts/{args.prompt}.json"
-    with open(prompt_filename, "r") as prompt_file:
-        prompt = json.load(prompt_file)
+    prompt_content = ''
+    if args.prompt: 
+        if not args.prompt.startswith("image") and args.scope == "image":
+            print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
+            sys.exit(1)
+        if not args.prompt.startswith("code") and args.scope == "code":
+            print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
+            sys.exit(1)
+        prompt_filename = f"{AUTOTEST_DIR}/prompts/{args.prompt}.json"
+        with open(prompt_filename, "r") as prompt_file:
+            prompt = json.load(prompt_file)
+            prompt_content += prompt["prompt_content"]
+        
+    if args.prompt_text: 
+        prompt_content += args.prompt_text
 
     # Delegate to the appropriate script based on scope
     if args.scope == "image":
-        if not args.prompt.startswith("image"):
-            print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
-            sys.exit(1)
-            
         #print("Generating response for image scope...")
         request, response = image_processing.process_image(args, prompt)
     else:
-        if not args.prompt.startswith("code"):
-            print("Error: The prompt must start with 'code'. Please re-run the command with a valid prompt.")
-            sys.exit(1)
-            
         #print("Generating response for code scope...")
-        request, response = code_processing.process_code(args, prompt)
+        request, response = code_processing.process_code(args, prompt_content)
 
     # Output Responses
     if args.output == "markdown":
@@ -79,6 +84,8 @@ def main():
         print("=== Request ===\n")
         print(request)
         print("\n=== Response ===\n")
+        print(response)
+    elif args.output == "direct":
         print(response)
 
 if __name__ == "__main__":
