@@ -1,7 +1,7 @@
 # ai-autograding-feedback
 
 ## Overview
-This program is part of an exploratory project to evaluate the quality of LLM-generated feedback in assisting with assignment grading and enhancing student learning. This program processes either the code sections or images of a student's submission to programming assignments, based on the provided arguments. It generates output in either markdown format or standard output. 
+This program is part of an exploratory project to evaluate the quality of LLM-generated feedback in assisting with assignment grading and enhancing student learning. This program processes either the code sections or images of a student's submission to programming assignments, based on the provided arguments. It generates output into a markdown file or standard output. 
 
 The large language models used and implementation logic vary depending on whether the selected scope is 'image' or 'code'.
 
@@ -113,7 +113,7 @@ python main.py --submission_type jupyter --prompt code_table \
 | `--model`        | Model type (from `arg_options.Models`)           | ✅ |
 | `--output`       | Output type (`markdown` or `stdout`)             | ✅ |
 
-** One of prompt or prompt_text must be selected. 
+** One of either prompt or prompt_text must be selected. 
 
 ## Scope 
 The program supports two distinct scopes: code or image. Depending on whether "code" or "image" is selected, the program supports different models and prompts tailored for each option.
@@ -121,7 +121,7 @@ The program supports two distinct scopes: code or image. Depending on whether "c
 If the "code" scope is selected, the program will identify student errors in the code sections of the assignment, comparing them to the solution code. Additionally, if the `--scope code` option is chosen, the `--question` option can also be specified to analyze the code for a particular question rather than the entire file. In order to use the `--question` option, the question code in both the solution and submission file must be delimited by '## Task {#}'. See the [Assumptions](#Assumptions) section above. 
 
 ## Submission Type 
-Currently, jupyter notebook assignments are supported. 
+Currently, jupyter notebook and python assignments are supported. 
 
 ## Prompts 
 To view the predefined prompts, navigate to the /prompts folder. Each prompt is stored as a JSON object with the following structure:
@@ -129,9 +129,9 @@ To view the predefined prompts, navigate to the /prompts folder. Each prompt is 
 ```json
 {
   "prompt_content": "The text prompt that will be sent to the model",
-  "include_question_context": ,
-  "include_submission_image": ,
-  "include_solution_image": 
+  "include_question_context": true/false,
+  "include_submission_image": true/false,
+  "include_solution_image": true/false 
 }
 ```
 
@@ -186,6 +186,8 @@ OPENAI_API_KEY=your_api_key_here
 ### Claude
 #### Code Scope 
 - Model Name: claude-3.7-sonnet
+- System Prompt: Behaviour of model is set with INSTRUCTIONS prompt from helpers/constants.py.
+- [Claude Documentation](https://www.anthropic.com/claude/sonnet)
 
 Note: If you wish to use the Claude model, you must specify your API key in an .env file. Create a .env file in your project directory and add your API key:
 ```
@@ -242,9 +244,23 @@ test_responses_md/test1/openai/code_table_20250310_143500.md
 
 ## Updates 
 - Code was slightly modified to integrate with MarkUs and no longer depends on GGR274 Assignment Folder 
-- To use this code base with MarkUs: 
-  - Upload this entire repository to autotester settings 
-  - Upload the instructor's solution code and assignment test files to autotester
-  - Upload one of the scripts in the markus_test_scripts folder and set up one of the autotests to run the script. The script contains commands to run an LLM to generate feedback for the student's submission file. 
-- Ensure markus autotester has the API Keys in and .env file and specified in the docker compose file
-- Ensure markus autotester virtual environment has all libraries downloaded 
+- To integrate this code base with MarkUs: 
+  - Upload this entire repository to autotester settings as a folder (File Upload section)
+  - Upload the instructor's solution code (file must be suffixed with _solution) and assignment test files to autotester. Student's submission file must also be suffixed with _submission when uploaded.
+  - Upload one of the scripts from the /markus_test_scripts folder and set up a test group to run the script. The LLM script and test files must be separate test groups. The script contains commands to run this repository and generate LLM feedback for the student's submission file, which will be displayed in overall comments and annotations on MarkUs. 
+- Ensure markus autotester docker container has the API Keys in an .env file and specified in the docker compose file
+- Ensure markus autotester virtual environment has all libraries downloaded specified in requirements.txt file
+- Ensure test timeouts are set to 60 seconds or longer due to API request latency
+
+### Markus Test Scripts 
+- /markus_test_scripts contains scripts which can be uploaded to the autotester in order to generate LLM Feedback 
+- Currently, only openAI and Claude models are supported. 
+
+#### Python Tester 
+- run_llm_combined.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. First, creates general feedback and displays as overall comments and test output (can use any prompt and model). Second, feeds in the output of the first LLM response into the model again, asking it to create annotations for the student's mistakes. Prompt can be seen in the script. 
+- run_llm_feedback.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. 
+- run_llm_annotation.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. Uses the code_annotation.json prompt and model can be specified in the script. Displays in test outputs and as annotations. 
+
+#### Custom Tester 
+- run_hw5_test.sh: Runs test for GGR274 HW5 assignment
+- run_llm_jupyter.sh: Runs LLM on any assignment (solution file, submission file, test output file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. 
