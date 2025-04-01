@@ -3,4 +3,3 @@ openai
 nbformat
 dotenv
 ollama
-anthropic
