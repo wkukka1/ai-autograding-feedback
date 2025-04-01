@@ -10,6 +10,7 @@ MAIN_OUTPUT=$(/home/docker/.autotesting/scripts/defaultvenv/bin/python ai-autogr
       --prompt code_template \
       --scope code \
       --model claude-3.7-sonnet \  
+      --asasignment ./ \
       --output stdout 2>&1)
 
 OVERALL_COMMENT=$(echo "$MAIN_OUTPUT" | jq -R -s .)
