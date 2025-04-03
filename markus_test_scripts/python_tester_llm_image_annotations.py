@@ -1,3 +1,4 @@
+import json
 import subprocess
 import pytest
 import os
@@ -11,12 +12,12 @@ def run_llm():
         "/home/docker/.autotesting/scripts/defaultvenv/bin/python", 
         "ai-autograding-feedback/main.py",
         "--submission_type", "jupyter",
-        "--prompt", "image_style",
+        "--prompt", "image_style_annotations",
         "--scope", "image",
         "--assignment", "./",
         "--question", "Question 5b",
         "--model", "openai",
-        "--output", "direct"
+        "--output", "stdout"
     ]
 
     # Capture the output from the LLM program
@@ -25,24 +26,19 @@ def run_llm():
     return llm_output
 
 DEFAULT_ANNOTATION_WIDTH = 25
-def extract_coordinates(response):
-    """Returns all coordinates found in response as a list of boxes (x1, y1, x2, y2)"""
-    matches: list[tuple[str]] = re.findall(r"[([](\d+(?:-\d+)?),\s*(\d+(?:-\d+)?)[])]", response)
-    coordinate_boxes: list[tuple[int]] = []
-    for match in matches:
-        if "-" in match[0]:
-            x1, x2 = int(match[0].split("-")[0]), int(match[0].split("-")[1])
-        else:
-            x1 = int(match[0])
-            x2 = x1 + DEFAULT_ANNOTATION_WIDTH
+def extract_json(response) -> list[dict]:
+    match = re.search(r"\`\`\`json([\S\s]+)\`\`\`", response)
+    if match:
+        return json.loads(match.group(1))
+    return []
 
-        if "-" in match[1]:
-            y1, y2 = int(match[1].split("-")[0]), int(match[1].split("-")[1])
-        else:
-            y1 = int(match[1])
-            y2 = y1 + DEFAULT_ANNOTATION_WIDTH
-        coordinate_boxes.append((x1, y1, x2, y2))
-    return coordinate_boxes
+def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
+    return (
+        coordinate_pair[0],
+        coordinate_pair[1],
+        coordinate_pair[0] + DEFAULT_ANNOTATION_WIDTH,
+        coordinate_pair[1] + DEFAULT_ANNOTATION_WIDTH
+    )
 
 def test_with_markers(request):
     """ Generates LLM response """
@@ -53,15 +49,16 @@ def test_with_markers(request):
     # Display LLM output in the overall comment
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
 
-    coordinate_boxes = extract_coordinates(llm_feedback)[0]
-    x1, y1, x2, y2 = coordinate_boxes
-    request.node.add_marker(pytest.mark.markus_annotation(
-        filename=os.path.relpath("student_submission.png", os.getcwd()),
-        content=llm_feedback,
-        x1=x1,
-        y1=y1,
-        x2=x2,
-        y2=y2,
-    ))
+    outputs = extract_json(llm_feedback)
 
-print(extract_coordinates("askljdh a(2, 100)asd as[321,99-121]hdth(20-50, 40)fg"))
+    for output in outputs:
+        x1, y1, x2, y2 = convert_coordinates(output["location"])
+        request.node.add_marker(pytest.mark.markus_annotation(
+            type="ImageAnnotation",
+            filename=os.path.relpath("student_submission.png", os.getcwd()),
+            content=output["description"],
+            x1=x1,
+            y1=y1,
+            x2=x2,
+            y2=y2,
+        ))

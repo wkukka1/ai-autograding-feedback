@@ -5,6 +5,7 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
+from PIL import Image as PILImage
 from helpers.arg_options import Models
 from helpers.image_extractor import extract_images
 from helpers.image_reader import *
@@ -93,6 +94,11 @@ def process_image(args, prompt):
     if prompt.get("include_question_context", False):
         context = read_question_context(OUTPUT_DIRECTORY, args.question)
         message.content = message.content.replace("{context}", "```\n" + context + "\n```")
+    if prompt.get("include_image_size", False):
+        submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, args.question)
+        submission_image_path = submission_image_paths[0] # Only consider one image per question
+        image = PILImage.open(submission_image_path)
+        message.content = message.content.replace("{image_size}", f"{image.width} by {image.height}")
     if prompt.get("include_submission_image", False):
         submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, args.question)
         submission_image_path = submission_image_paths[0] # Only consider one image per question
