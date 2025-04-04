@@ -6,8 +6,8 @@ import os.path
 import re
 
         
-def run_llm():
-    # Pass test_output as part of the input to the LLM program
+def run_llm() -> str:
+    """Run the LLM feedback generator and return results"""
     llm_command = [
         "/home/docker/.autotesting/scripts/defaultvenv/bin/python", 
         "ai-autograding-feedback/main.py",
@@ -22,16 +22,16 @@ def run_llm():
 
     # Capture the output from the LLM program
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
-    llm_output = llm_result.stdout.strip()  # Process output if needed
+    llm_output = llm_result.stdout.strip()
     return llm_output
 
-DEFAULT_ANNOTATION_WIDTH = 25
 def extract_json(response) -> list[dict]:
     match = re.search(r"\`\`\`json([\S\s]+)\`\`\`", response)
     if match:
         return json.loads(match.group(1))
     return []
 
+DEFAULT_ANNOTATION_WIDTH = 25
 def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
     return (
         coordinate_pair[0],
