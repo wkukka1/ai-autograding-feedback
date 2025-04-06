@@ -3,3 +3,4 @@ openai
 nbformat
 dotenv
 ollama
+pillow

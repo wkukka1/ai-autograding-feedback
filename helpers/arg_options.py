@@ -13,7 +13,9 @@ def get_enum_values(enum_class):
 class Prompt(Enum):
     IMAGE_COMPARE = "image_compare"
     IMAGE_ANALYZE = "image_analyze"
+    IMAGE_ANALYZE_ANNOTATION = "image_analyze_annotations"
     IMAGE_STYLE = "image_style"
+    IMAGE_STYLE_ANNOTATIONS = "image_style_annotations"
     CODE_LINES = "code_lines"
     CODE_TEMPLATE = "code_template"
     CODE_TABLE = "code_table"
