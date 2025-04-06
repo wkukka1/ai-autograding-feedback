@@ -25,7 +25,7 @@ To test the program and run the models, we assume that the test assignment files
 
 ##### Directory Structure  
 
-Within the `ggr274_homework5` directory, mock submissions are contained in a separate subdirectories `ggr274_homework5/test#`. The following naming convention is used for the files:  
+Within the `test_submissions/ggr274_homework5` directory, mock submissions are contained in a separate subdirectories `test_submissions/ggr274_homework5/test#`. The following naming convention is used for the files:  
 
 - `Homework_5_Solution.ipynb` – Instructor-provided solution file  
 - `student_submission.ipynb` – Student's submission file  
@@ -255,7 +255,7 @@ test_responses_md/test1/openai/code_table_20250310_143500.md
 ### Markus Test Scripts 
 - /markus_test_scripts contains scripts which can be uploaded to the autotester in order to generate LLM Feedback 
 - Currently, only openAI and Claude models are supported.
-- Contains /test_submission subdirectory of mock assignment submissions, solutions, and test files, which must be submitted on the markus autoter along with the llm script files 
+- Contains /test_submissions directory has mock assignment submissions, solutions, and test files, used for testing the markus integration. These files must be submitted on the markus autotester along with the llm script files.
 
 #### Python Tester 
 - python_tester_llm_code.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. First, creates general feedback and displays as overall comments and test output (can use any prompt and model). Second, feeds in the output of the first LLM response into the model again, asking it to create annotations for the student's mistakes.
