@@ -1,12 +1,11 @@
 import pytest
 
-# Assuming the student's BFS function is in submission.py
+# Assuming the student's BFS function is named bfs_ubmission.py
 try:
-    import tests.bfs.bfs_error_submission as submission
+    import bfs_submission as submission
 except ImportError:
     pass
 
-# Define a test graph
 graph = {
     'A': ['B', 'C'],
     'B': ['A', 'D', 'E'],
@@ -35,10 +34,7 @@ def capture_bfs_output(bfs_function, graph, start_node):
 
 def test_student_bfs():
     """Test student's BFS function for correct behavior"""
-    # Assuming the student's function is called `bfs`
     student_output = capture_bfs_output(submission.bfs, graph, 'A')
-    
-    # Assert that the student's output matches the correct BFS order
     
     assert student_output == correct_output, f"Expected {correct_output}, but got {student_output}"
 
