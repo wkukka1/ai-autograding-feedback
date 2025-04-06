@@ -254,13 +254,12 @@ test_responses_md/test1/openai/code_table_20250310_143500.md
 
 ### Markus Test Scripts 
 - /markus_test_scripts contains scripts which can be uploaded to the autotester in order to generate LLM Feedback 
-- Currently, only openAI and Claude models are supported. 
+- Currently, only openAI and Claude models are supported.
+- Contains /test_submission subdirectory of mock assignment submissions, solutions, and test files, which must be submitted on the markus autoter along with the llm script files 
 
 #### Python Tester 
-- run_llm_combined.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. First, creates general feedback and displays as overall comments and test output (can use any prompt and model). Second, feeds in the output of the first LLM response into the model again, asking it to create annotations for the student's mistakes. Prompt can be seen in the script. 
-- run_llm_feedback.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. 
-- run_llm_annotation.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. Uses the code_annotation.json prompt and model can be specified in the script. Displays in test outputs and as annotations. 
+- python_tester_llm_code.py: Runs LLM on any assignment (solution file, submission file) uploaded to the autotester. First, creates general feedback and displays as overall comments and test output (can use any prompt and model). Second, feeds in the output of the first LLM response into the model again, asking it to create annotations for the student's mistakes.
+- llm_helpers.py: contains helper functions needed to run llm scripts
 
 #### Custom Tester 
-- run_hw5_test.sh: Runs test for GGR274 HW5 assignment
-- run_llm_jupyter.sh: Runs LLM on any assignment (solution file, submission file, test output file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. 
+- custom_tester_llm_code.sh: Runs LLM on any assignment (solution file, submission file, test output file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. 
