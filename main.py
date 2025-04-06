@@ -33,17 +33,20 @@ def main():
     # Open prompt file
     prompt_content = ''
     if args.prompt: 
+        # Ensure scope and prompt selected align
         if not args.prompt.startswith("image") and args.scope == "image":
             print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
             sys.exit(1)
         if not args.prompt.startswith("code") and args.scope == "code":
             print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
             sys.exit(1)
+            
         prompt_filename = f"{AUTOTEST_DIR}/prompts/{args.prompt}.json"
         with open(prompt_filename, "r") as prompt_file:
             prompt = json.load(prompt_file)
             prompt_content += prompt["prompt_content"]
-        
+    
+    # Option for custom prompt 
     if args.prompt_text: 
         prompt_content += args.prompt_text
 
