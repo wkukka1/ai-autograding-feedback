@@ -1,13 +1,16 @@
+from dotenv import load_dotenv
 import json
-import subprocess
 import re
+import subprocess
+import sys
 
         
 def run_llm(model, prompt) -> str:
     """Run the LLM feedback generator and return results"""
+    load_dotenv()
     llm_command = [
-        "/home/docker/.autotesting/scripts/defaultvenv/bin/python", 
-        "ai-autograding-feedback/main.py",
+        sys.executable, 
+        "-m", "ai_feedback",
         "--submission_type", "jupyter",
         "--prompt", prompt,
         "--scope", "image",
@@ -23,10 +26,8 @@ def run_llm(model, prompt) -> str:
     return llm_output
 
 def extract_json(response) -> list[dict]:
-    match = re.search(r"\`\`\`json([\S\s]+)\`\`\`", response)
-    if match:
-        return json.loads(match.group(1))
-    return []
+    matches = re.findall(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', response)
+    return [json.loads(match) for match in matches]
 
 DEFAULT_ANNOTATION_WIDTH = 25
 def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
