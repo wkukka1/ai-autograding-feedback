@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 from ollama import chat, Message, Image
 from openai import OpenAI
 from PIL import Image as PILImage
-from helpers.arg_options import Models
-from helpers.image_extractor import extract_images
-from helpers.image_reader import *
+from .helpers.arg_options import Models
+from .helpers.image_extractor import extract_images
+from .helpers.image_reader import *
 
 
 def encode_image(image_path: os.PathLike):

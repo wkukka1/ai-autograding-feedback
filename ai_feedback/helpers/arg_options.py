@@ -1,9 +1,5 @@
 from enum import Enum
-from models.CodeLlamaModel import CodeLlamaModel
-from models.OpenAIModelVector import OpenAIModelVector
-from models.DeepSeekModel import DeepSeekModel
-from models.ClaudeModel import ClaudeModel
-from models.OpenAIModel import OpenAIModel
+from .. import models
 
 """ Options for command line arguments"""
 
@@ -32,13 +28,13 @@ class Scope(Enum):
 
     def __str__(self):
         return self.value
-    
+
 model_mapping = {
-    "deepSeek-R1:70B": DeepSeekModel,
-    "openai": OpenAIModel,
-    "openai-vector": OpenAIModelVector,
-    "codellama:latest": CodeLlamaModel,
-    "claude-3.7-sonnet": ClaudeModel
+    "deepSeek-R1:70B": models.DeepSeekModel,
+    "openai": models.OpenAIModel,
+    "openai-vector": models.OpenAIModelVector,
+    "codellama:latest": models.CodeLlamaModel,
+    "claude-3.7-sonnet": models.ClaudeModel
 }
 
 class Models(Enum):
@@ -52,14 +48,14 @@ class Models(Enum):
 
     def __str__(self):
         return self.value
-    
+
 class FileType(Enum):
     JUPYTER = "jupyter"
     PYTHON = "python"
 
     def __str__(self):
         return self.value
-    
+
 class OutputType(Enum):
     STDOUT = "stdout"
     MARKDOWN = "markdown"

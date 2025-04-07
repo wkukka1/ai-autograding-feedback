@@ -1,8 +1,8 @@
 import os
 from dotenv import load_dotenv
 import openai
-from models.Model import Model
-from helpers.constants import INSTRUCTIONS
+from .Model import Model
+from ..helpers.constants import INSTRUCTIONS
 
 load_dotenv()
 
@@ -18,16 +18,16 @@ class OpenAIModel(Model):
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
             file_contents = self._get_file_contents(assignment_files)
-        
+
         request = f"{INSTRUCTIONS}\n\nPrompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
-        
+
         response = self._call_openai(request)
         return request, response
 
     """Retrieve contents of all files and concatenate them together to attach to the prompt."""
     def _get_file_contents(self, assignment_files):
         file_contents = ""
-    
+
         for file_path in assignment_files:
             file_name = os.path.basename(file_path)
             try:
@@ -36,23 +36,23 @@ class OpenAIModel(Model):
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
-            
+
             file_contents += f"=== {file_name} ===\n"
-            
+
             for i, line in enumerate(lines, start=1):
-                stripped_line = line.rstrip("\n") 
-                
+                stripped_line = line.rstrip("\n")
+
                 if stripped_line.strip():
                     start_col = len(line) - len(line.lstrip()) + 1  # First non-whitespace char
                     end_col = len(stripped_line)  # Last visible character
                     file_contents += f"(Line {i}, Col {start_col}-{end_col}) {stripped_line}\n"
                 else:
                     file_contents += f"(Line {i}) {line}"  # Keep blank lines for readability
-            
+
             file_contents += "\n"
-        
+
         return file_contents
-    
+
     """Send prompt to OpenAI and retrieve the response"""
     def _call_openai(self, prompt):
         response = self.client.chat.completions.create(

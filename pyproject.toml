@@ -1,0 +1,45 @@
+[project]
+name = "ai_feedback"
+version = "0.0.1"
+authors = [
+    { name="Ricky Chen" },
+    { name="Sohee Goo" },
+]
+maintainers = [
+    { name="David Liu", email="david@cs.toronto.edu" },
+    { name="Nathan Taback" },
+]
+description = "A package for generating AI feedback on student work"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "anthropic",
+    "dotenv",
+    "openai",
+    "nbformat",
+    "ollama",
+    "pillow",
+]
+
+[project.scripts]
+cli-name = "ai_feedback.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/MarkUsProject/ai-autograding-feedback/"
+Issues = "https://github.com/MarkUsProject/ai-autograding-feedback/issues"
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = [
+    "/ai_feedback/**/*.py",
+    "/ai_feedback/data",
+]

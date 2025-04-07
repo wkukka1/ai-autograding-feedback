@@ -1,8 +1,8 @@
 import os
 from dotenv import load_dotenv
 import openai
-from models.Model import Model
-from helpers.constants import INSTRUCTIONS
+from .Model import Model
+from ..helpers.constants import INSTRUCTIONS
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,12 +10,12 @@ load_dotenv()
 class OpenAIModelVector(Model):
     def __init__(self):
         super().__init__()
-        
+
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        
+
         # Initialize the vector store
         self.vector_store = self.client.vector_stores.create(name="Markus LLM Vector Store")
-        
+
         # Create the model
         self.model = self.client.beta.assistants.create(
             name="Markus LLM model",
@@ -35,7 +35,7 @@ class OpenAIModelVector(Model):
     def generate_response(self, prompt, assignment_files, question_num=None):
         if not self.model:
             raise RuntimeError("model was not created successfully")
-        
+
         request = 'Uploaded Files: '
         # Upload files to model's vector store
         file_ids = []
@@ -47,18 +47,18 @@ class OpenAIModelVector(Model):
             request += base
 
         # Modify prompt for a specific question if provided
-        if question_num: 
+        if question_num:
             prompt = prompt + f' Identify and generate a response for the mistakes **only** in task ${question_num}. '
             response = self._call_openai(prompt)
         else:
             response = self._call_openai(prompt)
-        
+
         # Cleanup resources after use
         self._cleanup_resources(file_ids)
-        
+
         request = "\n" + INSTRUCTIONS + "\n" + prompt
         return request, response
-    
+
     """Upload a file to OpenAI storage and link it to the vector store"""
     def _upload_file(self, file_path):
         #print("Uploading file: " + file_path)
@@ -92,15 +92,15 @@ class OpenAIModelVector(Model):
                 thread_id=thread.id,
                 run_id=run.id
             )
-        
+
         if run.status == "failed":
             print("Error details:", run.last_error)
-        
+
         messages = self.client.beta.threads.messages.list(thread_id=thread.id)
         response = messages.data[0].content[0].text.value
-        
+
         return response
-    
+
     """Cleanup uploaded files and models"""
     def _cleanup_resources(self, file_ids):
         self._cleanup_files(file_ids)
