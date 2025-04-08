@@ -18,7 +18,7 @@ class Prompt(Enum):
     CODE_HINT = "code_hint"
     CODE_EXPLANATION = "code_explanation"
     CODE_ANNOTATION = "code_annotation"
-    TEXT_PDF_ANNOTATION = "text_pdf_annotation"
+    TEXT_PDF_ANNOTATION = "text_pdf_analyze"
 
     def __str__(self):
         return self.value
