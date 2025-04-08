@@ -1,10 +1,12 @@
 #!/bin/bash
 
 TEST_NAME="LLM Feedback Test"
+source ../../scripts/defaultvenv/bin/activate
+PYTHON_BIN="../../scripts/defaultvenv/bin/activate"
 
 # Run main.py to get LLM response 
 # Change prompt type and model type here
-MAIN_OUTPUT=$(/home/docker/.autotesting/scripts/defaultvenv/bin/python ai-autograding-feedback/main.py \
+MAIN_OUTPUT=$($PYTHON_BIN -m ai_feedback \
       --submission_type jupyter \
       --prompt code_template \
       --scope code \

@@ -50,9 +50,9 @@ def process_code(args, prompt):
 
     if args.scope == "code":
         if args.question:
-            request, response = model.generate_response(prompt, assignment_files, question_num=args.question)
+            request, response = model.generate_response(prompt=prompt, assignment_files=assignment_files, question_num=args.question)
         else:
-            request, response = model.generate_response(prompt, assignment_files)
+            request, response = model.generate_response(prompt=prompt, assignment_files=assignment_files)
 
     return request, response
 

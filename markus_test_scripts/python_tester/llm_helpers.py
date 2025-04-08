@@ -1,4 +1,10 @@
-import re, json
+
+from dotenv import load_dotenv
+import json
+import re
+import subprocess
+import sys
+
 
 ANNOTATION_PROMPT = """These are the student mistakes you previously identified in the 
 last message. For each of the mistakes you identified, return a JSON object containing 
@@ -11,19 +17,6 @@ of the json array to return: { \"annotations\": [{\"filename\": \"student_code.p
 ONLY return the json object and nothing else. Make sure the line #s don't exceed 
 the number of lines in the file. You can use markdown syntax in the annotation's content,
 especially when denoting code."""
-
-def extract_json(text):
-    """Extracts the JSON object containing 'annotations' from the model's output."""
-    match = re.search(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', text)
-    if not match:
-        return "No valid JSON found in the response."
-    
-    json_str = match.group(1)
-    
-    try:
-        return json_str
-    except json.JSONDecodeError as e:
-        return "Error parsing JSON."
     
 def add_annotation_columns(annotations, submission):
     """
@@ -82,3 +75,45 @@ def add_annotation_columns(annotations, submission):
         annotations_with_columns.append(annotation)
 
     return annotations_with_columns
+
+
+
+def run_llm(submission, model, scope, output, question=None, prompt_text=None,prompt=None) -> str:
+    """Run the LLM feedback generator and return results"""
+    load_dotenv()
+    llm_command = [
+        sys.executable, 
+        "-m", "ai_feedback",
+        "--submission_type", submission,
+        "--scope", scope,
+        "--assignment", "./",
+        "--model", model,
+        "--output", output
+    ]
+    if question is not None:
+        llm_command.append("--question")
+        llm_command.append(question)
+    if prompt is not None:
+        llm_command.append("--prompt")
+        llm_command.append(question)
+    if prompt_text is not None:
+        llm_command.append("--prompt_text")
+        llm_command.append(question)
+        
+    # Capture the output from the LLM program
+    llm_result = subprocess.run(llm_command, capture_output=True, text=True)
+    llm_output = llm_result.stdout.strip()
+    return llm_output
+
+def extract_json(response) -> list[dict]:
+    matches = re.findall(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', response)
+    return [json.loads(match) for match in matches]
+
+DEFAULT_ANNOTATION_WIDTH = 25
+def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
+    return (
+        coordinate_pair[0] - DEFAULT_ANNOTATION_WIDTH // 2,
+        coordinate_pair[1] - DEFAULT_ANNOTATION_WIDTH // 2,
+        coordinate_pair[0] + DEFAULT_ANNOTATION_WIDTH // 2,
+        coordinate_pair[1] + DEFAULT_ANNOTATION_WIDTH // 2
+    )

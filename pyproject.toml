@@ -25,6 +25,7 @@ dependencies = [
     "nbformat",
     "ollama",
     "pillow",
+    "PyPDF2",
 ]
 
 [project.scripts]
