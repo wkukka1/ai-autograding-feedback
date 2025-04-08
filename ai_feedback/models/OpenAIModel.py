@@ -1,4 +1,4 @@
-import os
+import os, sys
 from dotenv import load_dotenv
 import openai
 from .Model import Model
@@ -77,6 +77,45 @@ class OpenAIModel(Model):
                 text += f"Page {page_num}:\n{cleaned_text}\n\n"
 
         return text
+    
+    """ Retrieve contents of files only for the specified question number.
+        The format that is assumed here to extract certain code cells are very specific
+        to the test files in ggr274_homework5.
+    """
+    def _get_question_contents(self, assignment_files, question_num):
+        file_contents = ""
+        task_found = False
+
+        for file_path in assignment_files:
+            # Only extract for .txt files and submission/solution files
+            if not file_path.endswith(".txt") or "error_output" in file_path or file_path.endswith(".DS_Store") :
+                continue
+
+            with open(file_path, "r", encoding="utf-8") as file:
+                content = file.read()
+
+            # Extract Introduction block
+            intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+            intro_content = intro_match.group(1).strip() if intro_match else ""
+
+            # Extract Task block
+            task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
+            task_match = re.search(task_pattern, content, re.DOTALL)
+
+            if task_match:
+                task_content = task_match.group(1).strip()
+                task_found = True
+
+            # Append file name and extracted content
+            file_contents += f"\n\n---\n### {file_path}\n\n"
+            file_contents += intro_content + "\n\n" if intro_content else ""
+            file_contents += task_content + "\n\n"
+
+        if not task_found:
+            print(f"Task {question_num} not found in any assignment file.")
+            sys.exit(1)
+
+        return file_contents.strip()
 
     """Send prompt to OpenAI and retrieve the response"""
     def _call_openai(self, prompt):
