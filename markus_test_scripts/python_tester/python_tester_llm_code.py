@@ -4,7 +4,7 @@ import os.path
 from llm_helpers import *
 
 # Modify depending on name of student's submission file 
-import cnn_submission as submission
+import bfs_error_submission as submission
 
 # NOTE: add numpy and torch in package requirements section of autotester settings specifically for cnn_submission
 

@@ -95,10 +95,10 @@ def run_llm(submission, model, scope, output, question=None, prompt_text=None,pr
         llm_command.append(question)
     if prompt is not None:
         llm_command.append("--prompt")
-        llm_command.append(question)
+        llm_command.append(prompt)
     if prompt_text is not None:
         llm_command.append("--prompt_text")
-        llm_command.append(question)
+        llm_command.append(prompt_text)
         
     # Capture the output from the LLM program
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
