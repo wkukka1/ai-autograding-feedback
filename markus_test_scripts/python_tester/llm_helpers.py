@@ -118,14 +118,16 @@ def extract_json(response: str) -> list[dict]:
     matches = re.findall(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', response)
     return [json.loads(match) for match in matches]
 
-DEFAULT_ANNOTATION_WIDTH = 25
-def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
-    """Convert a point to a region for image annotations"""
+MINIMUM_ANNOTATION_WIDTH = 8
+def convert_coordinates(box: list[int]) -> tuple[int]:
+    """Extend a bounding box to have a minimum width for image annotations"""
+    x_extension = max(0, (MINIMUM_ANNOTATION_WIDTH - abs(box[2] - box[0])) // 2)
+    y_extension = max(0, (MINIMUM_ANNOTATION_WIDTH - abs(box[3] - box[1])) // 2)
     return (
-        coordinate_pair[0] - DEFAULT_ANNOTATION_WIDTH // 2,
-        coordinate_pair[1] - DEFAULT_ANNOTATION_WIDTH // 2,
-        coordinate_pair[0] + DEFAULT_ANNOTATION_WIDTH // 2,
-        coordinate_pair[1] + DEFAULT_ANNOTATION_WIDTH // 2
+        box[0] - x_extension,
+        box[1] - y_extension,
+        box[2] + x_extension,
+        box[3] + y_extension
     )
 
 def add_image_annotations(request, llm_feedback: str, file_name: str) -> None:
