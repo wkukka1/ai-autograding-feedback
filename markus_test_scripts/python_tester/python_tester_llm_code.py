@@ -1,67 +1,36 @@
-import subprocess
 import pytest
 import os
 import os.path 
-import json 
-from llm_helpers import extract_json, ANNOTATION_PROMPT, add_annotation_columns
+from llm_helpers import *
 
 # Modify depending on name of student's submission file 
 import cnn_submission as submission
 
-# NOTE: add numpy and torch in package requirements section of autotester settings 
+# NOTE: add numpy and torch in package requirements section of autotester settings specifically for cnn_submission
 
 llm_feedback = ''
-
-def run_llm():
-    llm_command = [
-        "/home/docker/.autotesting/scripts/defaultvenv/bin/python", 
-        "ai-autograding-feedback/main.py",
-        "--submission_type", "python",
-        "--prompt", "code_table", # change prompt type here 
-        "--scope", "code",
-        "--model", "claude-3.7-sonnet", # change model type here
-        "--output", "stdout",
-        "--assignment", "./"
-    ]
-
-    llm_result = subprocess.run(llm_command, capture_output=True, text=True)
-    llm_output = llm_result.stdout.strip()
-    return llm_output
 
 def test_with_feedback(request):
     """ Generates LLM Feedback """
     global llm_feedback 
-    llm_feedback = run_llm() # get LLM feedback and display on markus
+    # change prompt and model here
+    llm_feedback = run_llm(submission="python", prompt="code_table", 
+        scope="code", model="openai", output="stdout") 
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
-        
- 
-def run_llm_annotation():
-    # feed in previous LLM message to create annotations
-    prompt = f"Previous message: {llm_feedback}."
-    prompt += ANNOTATION_PROMPT
-    llm_command = [
-        "/home/docker/.autotesting/scripts/defaultvenv/bin/python", 
-        "ai-autograding-feedback/main.py",
-        "--submission_type", "python",
-        "--prompt_text", prompt, 
-        "--scope", "code",
-        "--model", "claude-3.7-sonnet", # change model type here
-        "--output", "direct",
-        "--assignment", "./"
-    ]
-
-    llm_result = subprocess.run(llm_command, capture_output=True, text=True)
-    llm_output = llm_result.stdout.strip()
-    return llm_output
 
 def test_with_annotations(request):
     """ Generates LLM Annotations """
+    # feed in previous LLM message to create annotations
+    prompt = f"Previous message: {llm_feedback}."
+    prompt += ANNOTATION_PROMPT
 
     # Run LLM feedback
-    raw_annotation = run_llm_annotation() # generate annotations
-    annotations = extract_json(raw_annotation) 
-    annotations = json.loads(annotations)["annotations"]
+    raw_annotation = run_llm(submission="python", prompt_text=prompt, 
+                scope="code", model="openai", output="direct") # generate annotations
+    
+    annotations_json_list = extract_json(raw_annotation)
+    annotations = annotations_json_list[0]["annotations"]
     
     annotations_with_columns = add_annotation_columns(annotations, submission)
     

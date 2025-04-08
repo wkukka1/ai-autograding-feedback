@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 from . import image_processing
 from . import code_processing
+from . import text_processing
 from .helpers import arg_options
 from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
@@ -43,6 +44,9 @@ def main():
         if not args.prompt.startswith("code") and args.scope == "code":
             print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
             sys.exit(1)
+        if not args.prompt.startswith("text") and args.scope == "text":
+            print("Error: The prompt must start with 'text'. Please re-run the command with a valid prompt.")
+            sys.exit(1)
 
         prompt_filename = os.path.join(os.path.dirname(__file__), f'data/prompts/{args.prompt}.json')
         with open(prompt_filename, "r") as prompt_file:
@@ -57,6 +61,9 @@ def main():
     if args.scope == "image":
         #print("Generating response for image scope...")
         request, response = image_processing.process_image(args, prompt)
+    elif args.scope == "text":
+        #print("Generating response for text scope...")
+        request, response = text_processing.process_text(args, prompt_content)
     else:
         #print("Generating response for code scope...")
         request, response = code_processing.process_code(args, prompt_content)

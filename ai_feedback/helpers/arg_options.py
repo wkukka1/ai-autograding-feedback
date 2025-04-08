@@ -18,6 +18,7 @@ class Prompt(Enum):
     CODE_HINT = "code_hint"
     CODE_EXPLANATION = "code_explanation"
     CODE_ANNOTATION = "code_annotation"
+    TEXT_PDF_ANNOTATION = "text_pdf_annotation"
 
     def __str__(self):
         return self.value
@@ -25,6 +26,7 @@ class Prompt(Enum):
 class Scope(Enum):
     IMAGE = "image"
     CODE = "code"
+    TEXT = "text"
 
     def __str__(self):
         return self.value
@@ -52,6 +54,7 @@ class Models(Enum):
 class FileType(Enum):
     JUPYTER = "jupyter"
     PYTHON = "python"
+    PDF = "pdf"
 
     def __str__(self):
         return self.value

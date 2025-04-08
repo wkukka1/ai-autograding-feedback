@@ -1,12 +1,13 @@
 import pytest
 import os
 import os.path 
-from python_tester_llm_image import *
+from llm_helpers import *
 
 def test_with_markers(request):
     """ Generates LLM response """
     # Run LLM feedback
-    llm_feedback = run_llm("openai", "image_analyze_annotations")
+    llm_feedback = run_llm(submission="jupyter", question="Question 5b", scope="image", output="stdout",
+                           model="openai", prompt="image_analyze_annotations")
   
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))
     # Display LLM output in the overall comment
