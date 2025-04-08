@@ -1,6 +1,8 @@
 
 from dotenv import load_dotenv
 import json
+import os
+import pytest
 import re
 import subprocess
 import sys
@@ -102,18 +104,42 @@ def run_llm(submission, model, scope, output, question=None, prompt_text=None,pr
         
     # Capture the output from the LLM program
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
+    try:
+        llm_result.check_returncode()
+    except:
+        error = llm_result.stderr.strip()
+        return str(f"Error calling LLM API:\n{error}")
+
     llm_output = llm_result.stdout.strip()
     return llm_output
 
-def extract_json(response) -> list[dict]:
+def extract_json(response: str) -> list[dict]:
+    """Returns a list of JSON objects found in a string"""
     matches = re.findall(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', response)
     return [json.loads(match) for match in matches]
 
 DEFAULT_ANNOTATION_WIDTH = 25
 def convert_coordinates(coordinate_pair: list[int]) -> tuple[int]:
+    """Convert a point to a region for image annotations"""
     return (
         coordinate_pair[0] - DEFAULT_ANNOTATION_WIDTH // 2,
         coordinate_pair[1] - DEFAULT_ANNOTATION_WIDTH // 2,
         coordinate_pair[0] + DEFAULT_ANNOTATION_WIDTH // 2,
         coordinate_pair[1] + DEFAULT_ANNOTATION_WIDTH // 2
     )
+
+def add_image_annotations(request, llm_feedback: str, file_name: str) -> None:
+    """Add image annotations from LLM feedback to the Pytest request"""
+    annotations = extract_json(llm_feedback)
+    for annotation in annotations:
+        if "location" in annotation and "description" in annotation:
+            x1, y1, x2, y2 = convert_coordinates(annotation["location"])
+            request.node.add_marker(pytest.mark.markus_annotation(
+                type="ImageAnnotation",
+                filename=os.path.relpath(file_name, os.getcwd()),
+                content=annotation["description"],
+                x1=x1,
+                y1=y1,
+                x2=x2,
+                y2=y2,
+            ))
