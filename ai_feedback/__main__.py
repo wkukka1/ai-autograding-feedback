@@ -37,7 +37,7 @@ def main():
 
     # Open prompt file
     if args.prompt_custom: 
-        prompt_filename = os.path.join(os.path.dirname(__file__), f'{args.prompt}.txt')
+        prompt_filename = os.path.join(os.path.dirname(__file__), f'{args.prompt_text}.txt')
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else: 
@@ -59,9 +59,9 @@ def main():
                 prompt = json.load(prompt_file)
                 prompt_content += prompt["prompt_content"]
 
-    # Option for custom prompt
-    if args.prompt_text:
-        prompt_content += args.prompt_text
+        # Option for custom prompt
+        if args.prompt_text:
+            prompt_content += args.prompt_text
 
     # Delegate to the appropriate script based on scope
     if args.scope == "image":

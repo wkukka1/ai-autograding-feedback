@@ -80,7 +80,7 @@ def add_annotation_columns(annotations, submission):
 
 
 
-def run_llm(submission, model, scope, output, question=None, prompt_text=None,prompt=None) -> str:
+def run_llm(submission, model, scope, output, prompt_custom=None, question=None, prompt_text=None,prompt=None) -> str:
     """Run the LLM feedback generator and return results"""
     load_dotenv()
     llm_command = [
@@ -95,6 +95,8 @@ def run_llm(submission, model, scope, output, question=None, prompt_text=None,pr
     if question is not None:
         llm_command.append("--question")
         llm_command.append(question)
+    if prompt_custom is not None:
+        llm_command.append("--prompt_custom")
     if prompt is not None:
         llm_command.append("--prompt")
         llm_command.append(prompt)
