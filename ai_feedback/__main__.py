@@ -37,7 +37,7 @@ def main():
 
     # Open prompt file
     if args.prompt_custom: 
-        prompt_filename = os.path.join(os.path.dirname(__file__), f'./home/docker/.autotesting/scripts/{args.prompt_text}.txt')
+        prompt_filename = os.path.join(os.path.dirname(__file__), f'/home/docker/.autotesting/scripts/{args.prompt_text}.txt')
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else: 
