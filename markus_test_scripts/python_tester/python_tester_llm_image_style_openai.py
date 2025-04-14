@@ -4,7 +4,7 @@ from llm_helpers import *
 def test_with_markers(request):
     """ Generates LLM response """
     # Run LLM feedback
-    llm_feedback = run_llm(submission="jupyter", question="Question 5b", scope="image", output="direct",
+    llm_feedback = run_llm(submission="jupyter", question="4", scope="image", output="direct",
                            model="openai", prompt="image_style")
   
     # Display LLM output in the test output

@@ -4,7 +4,7 @@ from llm_helpers import *
 def test_image_analyze(request):
     """Test whether the submission graph matches the problem requirements"""
     # Run LLM feedback
-    llm_feedback = run_llm(submission="jupyter", question="Question 5b", scope="image", output="direct",
+    llm_feedback = run_llm(submission="jupyter", question="4", scope="image", output="direct",
                            model="openai", prompt="image_analyze_annotations")
   
     # Display LLM output in the test output
