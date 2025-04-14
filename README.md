@@ -14,6 +14,10 @@ For the text scope, the program takes three files:
 - An assignment's solution file
 - A student's submission file
 
+For the image scope, the program takes up to two files, depending on the prompt used:
+- A student's submission file
+- (Optional) An assignment's solution file
+
 ## Features
 - Handles **image**, **text** and **code** scopes.
 - Reads pre-defined prompts specified in JSON files.
@@ -42,6 +46,8 @@ If the "code" scope is selected, the program will identify student errors in the
 
 
 If the "text" scope is selected, the program will identify student errors in the written responses of the assignment, comparing them to the solution's rubric for written responses. If the 'text' scope is chosen, then 'pdf' must be chosen for the submission type. 
+
+If the "image" scope is selected, the program will identify issues in submission images, optionally comparing them to reference solutions. Question numbers can be specified by adding the tag `markus_question_name: <question name>` to the metadata for the code cell that generates the submission image. The previous cell's markdown content will be used as the question's context.
 
 ## Submission Type
 Currently, jupyter notebook, pdf, and python assignments are supported.
@@ -84,8 +90,10 @@ Prompt Extra Options (for image scope only):
 | Prompt Name          | Description                                  |
 |------------------|--------------------------------------------------|
 | `image_analyze.json` | Outputs whether the submission image answers the question provided by the context. |
+| `image_analyze_annotations.json` | Outputs whether the submission image answers the question provided by the context as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
 | `image_compare.json` | Outputs table comparing style elements between submission and solution graphs. |
 | `image_style.json` | Outputs table checking the style elements in a submission graph. |
+| `image_style_annotations.json` | Outputs evaluations of style elements in a submission graph as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
 
 ### Text Scope Prompts
 | Prompt Name          | Description                                  |
@@ -244,6 +252,10 @@ python -m ai_feedback  --submission_type jupyter --prompt code_table \
   --scope code --assignment test_submissions/ggr274_homework5/test1 --question 1 --model deepSeek-R1:70B --output markdown
 ```
 
+#### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
+```sh
+python3 -m ai_feedback --submission_type jupyter --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision --output stdout
+```
 
 #### Using Ollama
 In order to run this project on Bigmouth:
