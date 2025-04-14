@@ -37,7 +37,8 @@ def main():
 
     # Open prompt file
     if args.prompt_custom: 
-        prompt_filename = os.path.join(os.path.dirname(__file__), f'{args.prompt_text}.txt')
+        prompt_filename = os.path.join(os.path.dirname(__file__), f'../../../../../files/{args.prompt_text}.txt')
+        print(prompt_filename)
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else: 
