@@ -100,9 +100,9 @@ def main():
             md_file.write(markdown_output)
         print(f"Markdown report saved to `{markdown_filename}`")
     elif args.output == "stdout":
-        print("=== Request ===\n")
-        print(request)
-        print("\n=== Response ===\n")
+        # print("=== Request ===\n")
+        # print(request)
+        # print("\n=== Response ===\n")
         print(response)
     elif args.output == "direct":
         print(response)
