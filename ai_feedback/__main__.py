@@ -34,15 +34,16 @@ def main():
     parser.add_argument("--output", type=str, choices=arg_options.get_enum_values(arg_options.OutputType), required=True, help=HELP_MESSAGES["output"])
 
     args = parser.parse_args()
+    
+    prompt_content = ''
 
     # Open prompt file
     if args.prompt_custom: 
-        prompt_filename = os.path.join(os.path.dirname(__file__), f'../../../../../files/{args.prompt_text}.txt')
+        prompt_filename = os.path.join('./', f'{args.prompt_text}.txt')
         print(prompt_filename)
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else: 
-        prompt_content = ''
         if args.prompt:
             # Ensure scope and prompt selected align
             if not args.prompt.startswith("image") and args.scope == "image":
