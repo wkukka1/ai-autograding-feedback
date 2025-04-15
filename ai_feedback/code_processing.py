@@ -29,6 +29,7 @@ def process_code(args, prompt):
             if os.path.isfile(os.path.join(assignment_folder, f)) and any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
         ]
 
+    
     for file in assignment_files:
         filename = os.path.basename(file)
         name_without_ext, _ = os.path.splitext(filename)
