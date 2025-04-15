@@ -1,1 +1,0 @@
-b) Create the same boxplots as in Task 4 f), but use `Age group label` to create the boxplot, so that the ticks on horizontal axes of the boxplot are informative. Store this boxplot in a variable called `time_boxplots_age_label`.
