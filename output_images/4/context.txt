@@ -1,0 +1,1 @@
+b) Use `df_labelled` to create four side-by-side boxplots of sepal lengths, sepal widths, petal lengths, and petal widths (in cm) for each species. Use `species name` to create the boxplot, so that the ticks on horizontal axes of the boxplot are informative. Store this boxplot in a variable called `boxplots_labelled`.

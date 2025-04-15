@@ -125,7 +125,7 @@ class ClaudeModel(Model):
             # Extract Task block
             task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
             task_match = re.search(task_pattern, content, re.DOTALL)
-
+            task_content = ''
             if task_match:
                 task_content = task_match.group(1).strip()
                 task_found = True
