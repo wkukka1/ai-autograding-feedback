@@ -304,7 +304,7 @@ Files:
 - custom_tester_llm_code.sh: Runs LLM on assignments (solution file, submission file, test output file) uploaded to the custom autotester. Currently, supports jupyter notebook files uploaded. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. Can optionally uncomment the annotations section to display annotations, however the annotations will display on the .txt version of the file uploaded by the student, not the .ipynb file. 
 
 
-#### Python Tester Usage
+#### Python AutoTester Usage
 ##### Code Scope 
 1. Ensure the student has submitted a submission file (_submission suffixed).
 2. Ensure the instructor has submitted a solution file (_solution suffixed), llm_helpers.py (located in /markus_test_scripts), and python_tester_llm_code.py (located in /markus_test_scripts). Instructor can also upload another pytest file which can be run as its own test group. 
@@ -322,6 +322,7 @@ Along with any other packages that the submission or solution file uses.
 ##### Text Scope 
 - Do the same as the code scope, but ensure that the student submission and instructor solution are .pdf files with the same naming assumption. Also, ensure that python_tester_llm_pdf.py is uploaded as the test script. 
 
+#### Running Python Autotester Examples
 ##### CNN Example 
 - Look at the /test_submissions/cnn_example directory for the following files 
 - Instructor uploads: cnn_solution.py, cnn_test.py, llm_helpers.py, python_tester_llm_code.py files
