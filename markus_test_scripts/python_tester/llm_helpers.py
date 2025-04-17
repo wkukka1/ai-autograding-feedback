@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 import json
 import os
@@ -6,7 +5,7 @@ import pytest
 import re
 import subprocess
 import sys
-
+from typing import Any, List, Dict, Optional, Tuple
 
 ANNOTATION_PROMPT = """These are the student mistakes you previously identified in the 
 last message. For each of the mistakes you identified, return a JSON object containing 
@@ -19,11 +18,23 @@ of the json array to return: { \"annotations\": [{\"filename\": \"student_code.p
 ONLY return the json object and nothing else. Make sure the line #s don't exceed 
 the number of lines in the file. You can use markdown syntax in the annotation's content,
 especially when denoting code."""
-    
-def add_annotation_columns(annotations, submission):
+
+def add_annotation_columns(
+    annotations: List[Dict[str, Any]], 
+    submission: Any
+) -> List[Dict[str, Any]]:
     """
-    Given LLM annotations with line_start and line_end, add 
-    column_start and column_end metadata to the JSON object. 
+    Add `column_start` and `column_end` metadata to each annotation 
+    based on the lines in the student's submission file.
+
+    Args:
+        annotations: A list of annotation dictionaries that include 
+            'filename', 'content', 'line_start', and 'line_end' keys.
+        submission: An object expected to have a `__file__` attribute 
+            pointing to the student's file path.
+
+    Returns:
+        A list of annotations with added `column_start` and `column_end` keys.
     """
     try:
         file_path = submission.__file__
@@ -31,8 +42,9 @@ def add_annotation_columns(annotations, submission):
             file_lines = file.readlines()
     except Exception as e:
         print(f"Error reading submission file: {e}")
-    
-    annotations_with_columns = []
+        return []
+
+    annotations_with_columns: List[Dict[str, Any]] = []
 
     for annotation in annotations:
         filename = annotation["filename"]
@@ -53,7 +65,7 @@ def add_annotation_columns(annotations, submission):
             line = file_lines[i]
             stripped_line = line.rstrip("\n")
 
-            if stripped_line.strip(): # find start and end of each line
+            if stripped_line.strip():
                 start_col = len(line) - len(line.lstrip())
                 end_col = len(stripped_line)
             else:
@@ -64,13 +76,11 @@ def add_annotation_columns(annotations, submission):
             column_ends.append(end_col)
 
         if column_starts and column_ends:
-            # find min and max columns if multiline annotation
             column_start = min(column_starts)
             column_end = max(column_ends)
         else:
             column_start = 0
             column_end = 1
-
 
         annotation["column_start"] = column_start
         annotation["column_end"] = column_end
@@ -79,9 +89,32 @@ def add_annotation_columns(annotations, submission):
     return annotations_with_columns
 
 
+def run_llm(
+    submission: str, 
+    model: str, 
+    scope: str, 
+    output: str,
+    prompt_custom: Optional[bool] = None, 
+    question: Optional[str] = None, 
+    prompt_text: Optional[str] = None,
+    prompt: Optional[str] = None
+) -> str:
+    """
+    Executes the LLM feedback generator script and captures its output.
 
-def run_llm(submission, model, scope, output, prompt_custom=None, question=None, prompt_text=None,prompt=None) -> str:
-    """Run the LLM feedback generator and return results"""
+    Args:
+        submission: The submission type.
+        model: The LLM model to use.
+        scope: The feedback generation scope ('code', 'image', or 'text').
+        output: The output format type.
+        prompt_custom: Whether to use a instructor's custom prompt file.
+        question: Optional assignment question text.
+        prompt_text: Custom string input prompt for the LLM.
+        prompt: Name of predefined prompt file to use.
+
+    Returns:
+        The output from the LLM feedback generator as a string, or an error message.
+    """
     load_dotenv()
     llm_command = [
         sys.executable, 
@@ -93,36 +126,44 @@ def run_llm(submission, model, scope, output, prompt_custom=None, question=None,
         "--output", output
     ]
     if question is not None:
-        llm_command.append("--question")
-        llm_command.append(question)
+        llm_command += ["--question", question]
     if prompt_custom is not None:
         llm_command.append("--prompt_custom")
     if prompt is not None:
-        llm_command.append("--prompt")
-        llm_command.append(prompt)
+        llm_command += ["--prompt", prompt]
     if prompt_text is not None:
-        llm_command.append("--prompt_text")
-        llm_command.append(prompt_text)
-        
-    # Capture the output from the LLM program
+        llm_command += ["--prompt_text", prompt_text]
+
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
     try:
         llm_result.check_returncode()
-    except:
+    except subprocess.CalledProcessError:
         error = llm_result.stderr.strip()
-        return str(f"Error calling LLM API:\n{error}")
+        return f"Error calling LLM API:\n{error}"
 
-    llm_output = llm_result.stdout.strip()
-    return llm_output
+    return llm_result.stdout.strip()
 
-def extract_json(response: str) -> list[dict]:
-    """Returns a list of JSON objects found in a string"""
-    matches = re.findall(r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', response)
+
+def extract_json(response: str) -> List[Dict[str, Any]]:
+    """
+    Extracts JSON objects embedded in a string.
+
+    Args:
+        response: A string potentially containing JSON objects.
+
+    Returns:
+        A list of parsed JSON dictionaries extracted from the input string.
+    """
+    matches = re.findall(
+        r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', 
+        response
+    )
     return [json.loads(match) for match in matches]
 
+
 MINIMUM_ANNOTATION_WIDTH = 8
-def convert_coordinates(box: list[int]) -> tuple[int]:
-    """Extend a bounding box to have a minimum width for image annotations"""
+
+def convert_coordinates(box: List[int]) -> Tuple[int, int, int, int]:
     x_extension = max(0, (MINIMUM_ANNOTATION_WIDTH - abs(box[2] - box[0])) // 2)
     y_extension = max(0, (MINIMUM_ANNOTATION_WIDTH - abs(box[3] - box[1])) // 2)
     return (
@@ -132,8 +173,12 @@ def convert_coordinates(box: list[int]) -> tuple[int]:
         box[3] + y_extension
     )
 
-def add_image_annotations(request, llm_feedback: str, file_name: str) -> None:
-    """Add image annotations from LLM feedback to the Pytest request"""
+
+def add_image_annotations(
+    request: Any, 
+    llm_feedback: str, 
+    file_name: str
+) -> None:
     annotations = extract_json(llm_feedback)
     for annotation in annotations:
         if "location" in annotation and "description" in annotation:

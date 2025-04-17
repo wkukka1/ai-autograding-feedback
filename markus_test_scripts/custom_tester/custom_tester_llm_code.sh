@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 ANNOTATION_PROMPT="These are the student mistakes you previously identified in the 
 last message. For each of the mistakes you identified, return a JSON object containing 
 an array of annotations, referencing the student's submission file for line and column #s. 
@@ -16,12 +14,10 @@ around the json object. Make sure the line #s don't exceed the number of lines i
 the column lines don't exceed the number of columns for each line. You can use markdown 
 syntax in the annotation's content, especially when denoting code. column_start should be 0."
 
-
 TEST_NAME="LLM Feedback Test"
 
 PYTHON_BIN="/home/docker/.autotesting/scripts/defaultvenv/bin/python"
 
-# Run main.py to get LLM response 
 # Change prompt type and model type here
 MAIN_OUTPUT=$($PYTHON_BIN -m ai_feedback \
       --submission_type jupyter \
@@ -39,12 +35,13 @@ echo "{\"overall_comment\": $OVERALL_COMMENT}"
 
 
 # UNCOMMENT TO CREATE ANNOTATIONS ON THE test1_output.txt file 
-ANNOTATIONS_OUTPUT=$($PYTHON_BIN -m ai_feedback \
-      --submission_type jupyter \
-      --prompt_text "Previous message: $OVERALL_COMMENT. $ANNOTATION_PROMPT" \
-      --scope code \
-      --model openai \
-      --assignment ./ \
-      --output direct 2>&1)
-ANNOTATIONS_OUTPUT_STR=$(echo "$ANNOTATIONS_OUTPUT" | jq -R -s .)
-echo "$ANNOTATIONS_OUTPUT"
+
+# ANNOTATIONS_OUTPUT=$($PYTHON_BIN -m ai_feedback \
+#       --submission_type jupyter \
+#       --prompt_text "Previous message: $OVERALL_COMMENT. $ANNOTATION_PROMPT" \
+#       --scope code \
+#       --model openai \
+#       --assignment ./ \
+#       --output direct 2>&1)
+# ANNOTATIONS_OUTPUT_STR=$(echo "$ANNOTATIONS_OUTPUT" | jq -R -s .)
+# echo "$ANNOTATIONS_OUTPUT"

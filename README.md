@@ -29,15 +29,16 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | Argument          | Description                                      | Required |
 |------------------|--------------------------------------------------|----------|
 | `--submission_type` | Type of submission (from `arg_options.FileType`) | ✅ |
-| `--prompt`       | The prompt name (from `arg_options.Prompt`) | ❌ **|
-| `--prompt_text`       | Additional customizable prompt text that can be fed to model. | ❌ ** |
+| `--prompt`       | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
+| `--prompt_text`       | Additional string text prompt that can be fed to model. | ❌ ** |
+| `--prompt_custom`       | The name of prompt file uploaded to be used by model. | ❌ ** |
 | `--scope`        | Processing scope (`image` or `code` or `text`)             | ✅ |
 | `--assignment`   | Name of the directory which contains test files  | ✅ |
 | `--question`     | Specific question to evaluate                      | ❌ |
 | `--model`        | Model type (from `arg_options.Models`)           | ✅ |
 | `--output`       | Output type (from `arg_options.Output`)             | ✅ |
 
-** One of either prompt or prompt_text must be selected.
+** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
 The program supports three scopes: code or text or image. Depending on which is selected, the program supports different models and prompts tailored for each option.
@@ -53,6 +54,7 @@ If the "image" scope is selected, the program will identify issues in submission
 Currently, jupyter notebook, pdf, and python assignments are supported.
 
 ## Prompts
+The user can use this argument to specify which predefined prompt they wish the model to use.
 To view the predefined prompts, navigate to the ai_feedback/data/prompts folder. Each prompt is stored as a JSON object with the following structure:
 
 ```json
@@ -102,8 +104,10 @@ Prompt Extra Options (for image scope only):
 
 
 ## Prompt_text
-Additonally, you can pass in a string through the --prompt_text argument. This will either be concatenated to the prompt if --prompt is used or fed in as the only prompt if --prompt is not used. 
+Additonally, the user can pass in a string through the --prompt_text argument. This will either be concatenated to the prompt if --prompt is used or fed in as the only prompt if --prompt is not used. 
 
+## Prompt_custom
+The user can pass in their own custom prompt file and use the --prompt_custom argument to flag that the model should use the custom prompt. This can be used instead of choosing one of the predefined prompts. 
 
 ## Models
 The models used can be seen under the ai_feedback/models folder.
@@ -239,6 +243,11 @@ python -m ai_feedback -h
 #### Evaluate cnn_example test using openAI model 
 ```bash
 python -m ai_feedback --submission_type python --prompt code_lines --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
+```
+
+#### Evaluate cnn_example test using openAI model and custom prompt 
+```bash
+python -m ai_feedback --submission_type python --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
 ```
 
 #### Evaluate pdf_example test using openAI model 

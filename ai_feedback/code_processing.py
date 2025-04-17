@@ -1,48 +1,67 @@
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
+from typing import Callable, List, Tuple
+
 from .helpers.arg_options import model_mapping
 from .helpers.file_converter import rename_files
 
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
-def process_code(args, prompt):
+def process_code(args, prompt: str) -> Tuple[str, str]:
+    """
+    Processes assignment files and generates a response using the selected model.
 
-    # Determine the assignment folder
+    Depending on the submission type (Jupyter or Python), it loads the appropriate
+    files from the assignment folder, modifies the prompt with file references,
+    and invokes the selected model to generate a response.
+
+    Args:
+        args: Command-line argument namespace containing submission_type, assignment, model, scope, and question.
+        prompt (str): The initial user prompt to be modified and passed to the model.
+
+    Returns:
+        Tuple[str, str]: A tuple containing the final request string and the model's generated response.
+
+    Raises:
+        FileNotFoundError: If the assignment folder does not exist.
+        SystemExit: If an invalid model is selected.
+    """
     assignment_folder = f"{args.assignment}"
     if not os.path.exists(assignment_folder):
         raise FileNotFoundError(f"Assignment folder '{assignment_folder}' not found.")
 
-    if args.submission_type == "jupyter":
-        ensure_txt_files(assignment_folder, rename_files) # convert files to .txt, since openAI doesn't support .ipynb file uploads
+    assignment_files: List[str] = []
 
-        # Load only the required .txt files into assignment_files
+    if args.submission_type == "jupyter":
+        ensure_txt_files(assignment_folder, rename_files)  # Convert notebooks to .txt if needed
+
         assignment_files = [
             os.path.join(assignment_folder, f)
             for f in os.listdir(assignment_folder)
-            if os.path.isfile(os.path.join(assignment_folder, f)) and any(f.endswith(suffix + ".txt") for suffix in EXPECTED_SUFFIXES)
+            if os.path.isfile(os.path.join(assignment_folder, f)) and 
+               any(f.endswith(suffix + ".txt") for suffix in EXPECTED_SUFFIXES)
         ]
+
     elif args.submission_type == "python":
         assignment_files = [
             os.path.join(assignment_folder, f)
             for f in os.listdir(assignment_folder)
-            if os.path.isfile(os.path.join(assignment_folder, f)) and any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
+            if os.path.isfile(os.path.join(assignment_folder, f)) and 
+               any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
         ]
 
-    
     for file in assignment_files:
         filename = os.path.basename(file)
         name_without_ext, _ = os.path.splitext(filename)
 
-        if name_without_ext.endswith("_solution"): # add files to reference in the prompt
+        if name_without_ext.endswith("_solution"):
             prompt += f"\nThe instructor's solution file you should reference is {filename}."
         elif name_without_ext.endswith("_submission"):
             prompt += f"\nThe student's code submission file you should reference is {filename}."
         elif name_without_ext.endswith("test_output"):
             prompt += f"\nThe student's error trace file you should reference is {filename}."
 
-
-    # Create model
     if args.model in model_mapping:
         model = model_mapping[args.model]()
     else:
@@ -51,16 +70,33 @@ def process_code(args, prompt):
 
     if args.scope == "code":
         if args.question:
-            request, response = model.generate_response(prompt=prompt, assignment_files=assignment_files, question_num=args.question)
+            request, response = model.generate_response(
+                prompt=prompt,
+                assignment_files=assignment_files,
+                question_num=args.question
+            )
         else:
-            request, response = model.generate_response(prompt=prompt, assignment_files=assignment_files)
+            request, response = model.generate_response(
+                prompt=prompt,
+                assignment_files=assignment_files
+            )
 
     return request, response
 
 
-def ensure_txt_files(directory, rename_function):
-    """Ensure required .txt files exist. Convert only missing ones."""
-    missing_suffixes = []
+def ensure_txt_files(directory: str, rename_function: Callable[[Path], None]) -> None:
+    """
+    Ensures that required .txt files exist in the directory.
+    Converts missing files through a helper function found in helpers/file_converter.
+
+    Args:
+        directory (str): Path to the assignment directory.
+        rename_function (Callable[[Path], None]): A function that handles renaming or converting files.
+
+    Returns:
+        None
+    """
+    missing_suffixes: List[str] = []
 
     for suffix in EXPECTED_SUFFIXES:
         if not any(f.endswith(suffix + ".txt") for f in os.listdir(directory)):
