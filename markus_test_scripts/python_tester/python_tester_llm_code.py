@@ -11,7 +11,7 @@ import student_submission as submission
 llm_feedback = ''
 
 def test_with_feedback(request):
-    """ Generates LLM Feedback """
+    """ Generates LLM Feedback for code scope of assignments"""
     global llm_feedback 
     # change prompt and model here
     llm_feedback = run_llm(submission="python", prompt="code_table", 

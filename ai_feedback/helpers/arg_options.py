@@ -1,12 +1,24 @@
 from enum import Enum
 from .. import models
 
-""" Options for command line arguments"""
+def get_enum_values(enum_class: type[Enum]) -> list[str]:
+    """
+    Retrieve all values from an Enum class.
 
-def get_enum_values(enum_class):
+    Args:
+        enum_class (type[Enum]): The Enum class to extract values from.
+
+    Returns:
+        list[str]: A list containing all the enum values.
+    """
     return [member.value for member in enum_class]
 
 class Prompt(Enum):
+    """
+    Enum representing different types of prompts for AI models.
+
+    Each prompt corresponds to a specific kind of scope (code, image, or text).
+    """
     IMAGE_COMPARE = "image_compare"
     IMAGE_ANALYZE = "image_analyze"
     IMAGE_ANALYZE_ANNOTATION = "image_analyze_annotations"
@@ -24,6 +36,11 @@ class Prompt(Enum):
         return self.value
 
 class Scope(Enum):
+    """
+    Enum representing the high-level content scope for a given operation.
+
+    This helps define whether the input is image-based, code-based, or text-based.
+    """
     IMAGE = "image"
     CODE = "code"
     TEXT = "text"
@@ -40,6 +57,9 @@ model_mapping = {
 }
 
 class Models(Enum):
+    """
+    Enum representing the available AI model types.
+    """
     OPENAI = "openai"
     OPENAIVECTOR = "openai-vector"
     LLAMA = "llama3.2-vision:90b"
@@ -52,6 +72,9 @@ class Models(Enum):
         return self.value
 
 class FileType(Enum):
+    """
+    Enum representing different input file types that the application can process.
+    """
     JUPYTER = "jupyter"
     PYTHON = "python"
     PDF = "pdf"
@@ -60,6 +83,9 @@ class FileType(Enum):
         return self.value
 
 class OutputType(Enum):
+    """
+    Enum representing the output format types for the LLM's results.
+    """
     STDOUT = "stdout"
     MARKDOWN = "markdown"
     DIRECT = "direct"
