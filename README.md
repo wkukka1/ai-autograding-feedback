@@ -60,9 +60,9 @@ To view the predefined prompts, navigate to the ai_feedback/data/prompts folder.
 ```json
 {
   "prompt_content": "The text prompt that will be sent to the model",
-  "include_question_context": true/false,
-  "include_submission_image": true/false,
-  "include_solution_image": true/false
+  "include_question_context": false,
+  "include_submission_image": false,
+  "include_solution_image": false
 }
 ```
 
