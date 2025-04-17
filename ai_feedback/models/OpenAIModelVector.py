@@ -8,11 +8,12 @@ from ..helpers.constants import SYSTEM_INSTRUCTIONS
 # Load environment variables from .env file
 load_dotenv()
 
+
 class OpenAIModelVector(Model):
     """
     A model that uses OpenAI's GPT-4-turbo with vector search support for document-augmented responses.
-    This class handles uploading files to OpenAI's vector store and cleaning up associated resources 
-    after processing. Files are not directly uploaded as part of prompt. 
+    This class handles uploading files to OpenAI's vector store and cleaning up associated resources
+    after processing. Files are not directly uploaded as part of prompt.
     """
 
     def __init__(self) -> None:
@@ -22,20 +23,25 @@ class OpenAIModelVector(Model):
         super().__init__()
 
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.vector_store = self.client.vector_stores.create(name="Markus LLM Vector Store")
+        self.vector_store = self.client.vector_stores.create(
+            name="Markus LLM Vector Store"
+        )
         self.model = self.client.beta.assistants.create(
             name="Markus LLM model",
             model="gpt-4-turbo",
             instructions=SYSTEM_INSTRUCTIONS,
             tools=[{"type": "file_search"}],
             tool_resources={
-                "file_search": {
-                    "vector_store_ids": [self.vector_store.id]
-                }
-            }
+                "file_search": {"vector_store_ids": [self.vector_store.id]}
+            },
         )
 
-    def generate_response(self, prompt: str, assignment_files: List[str], question_num: Optional[int] = None) -> tuple[str, str]:
+    def generate_response(
+        self,
+        prompt: str,
+        assignment_files: List[str],
+        question_num: Optional[int] = None,
+    ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.
 
@@ -50,7 +56,7 @@ class OpenAIModelVector(Model):
         if not self.model:
             raise RuntimeError("Model was not created successfully.")
 
-        request = 'Uploaded Files: '
+        request = "Uploaded Files: "
         file_ids: List[str] = []
 
         for file_path in assignment_files:
@@ -60,7 +66,7 @@ class OpenAIModelVector(Model):
             request += base
 
         if question_num:
-            prompt += f' Identify and generate a response for the mistakes **only** in task ${question_num}. '
+            prompt += f" Identify and generate a response for the mistakes **only** in task ${question_num}. "
 
         response = self._call_openai(prompt)
         self._cleanup_resources(file_ids)
@@ -78,11 +84,10 @@ class OpenAIModelVector(Model):
         Returns:
             str: The ID of the uploaded file.
         """
-        with open(file_path, 'rb') as f:
-            response = self.client.files.create(file=f, purpose='assistants')
+        with open(file_path, "rb") as f:
+            response = self.client.files.create(file=f, purpose="assistants")
             self.client.vector_stores.files.create(
-                vector_store_id=self.vector_store.id,
-                file_id=response.id
+                vector_store_id=self.vector_store.id, file_id=response.id
             )
         return response.id
 
@@ -99,20 +104,16 @@ class OpenAIModelVector(Model):
         thread = self.client.beta.threads.create()
 
         self.client.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content=prompt
+            thread_id=thread.id, role="user", content=prompt
         )
 
         run = self.client.beta.threads.runs.create(
-            thread_id=thread.id,
-            assistant_id=self.model.id
+            thread_id=thread.id, assistant_id=self.model.id
         )
 
         while run.status not in ["completed", "failed"]:
             run = self.client.beta.threads.runs.retrieve(
-                thread_id=thread.id,
-                run_id=run.id
+                thread_id=thread.id, run_id=run.id
             )
 
         if run.status == "failed":
@@ -141,8 +142,7 @@ class OpenAIModelVector(Model):
         for file_id in file_ids:
             self.client.files.delete(file_id)
             self.client.vector_stores.files.delete(
-                vector_store_id=self.vector_store.id,
-                file_id=file_id
+                vector_store_id=self.vector_store.id, file_id=file_id
             )
 
     def _delete_all_models(self) -> None:
@@ -161,6 +161,5 @@ class OpenAIModelVector(Model):
         for file in files:
             self.client.files.delete(file.id)
             self.client.vector_stores.files.delete(
-                vector_store_id=self.vector_store.id,
-                file_id=file.id
+                vector_store_id=self.vector_store.id, file_id=file.id
             )

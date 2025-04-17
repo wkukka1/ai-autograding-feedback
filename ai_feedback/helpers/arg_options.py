@@ -1,6 +1,7 @@
 from enum import Enum
 from .. import models
 
+
 def get_enum_values(enum_class: type[Enum]) -> list[str]:
     """
     Retrieve all values from an Enum class.
@@ -13,12 +14,14 @@ def get_enum_values(enum_class: type[Enum]) -> list[str]:
     """
     return [member.value for member in enum_class]
 
+
 class Prompt(Enum):
     """
     Enum representing different types of prompts for AI models.
 
     Each prompt corresponds to a specific kind of scope (code, image, or text).
     """
+
     IMAGE_COMPARE = "image_compare"
     IMAGE_ANALYZE = "image_analyze"
     IMAGE_ANALYZE_ANNOTATION = "image_analyze_annotations"
@@ -35,12 +38,14 @@ class Prompt(Enum):
     def __str__(self):
         return self.value
 
+
 class Scope(Enum):
     """
     Enum representing the high-level content scope for a given operation.
 
     This helps define whether the input is image-based, code-based, or text-based.
     """
+
     IMAGE = "image"
     CODE = "code"
     TEXT = "text"
@@ -48,18 +53,21 @@ class Scope(Enum):
     def __str__(self):
         return self.value
 
+
 model_mapping = {
     "deepSeek-R1:70B": models.DeepSeekModel,
     "openai": models.OpenAIModel,
     "openai-vector": models.OpenAIModelVector,
     "codellama:latest": models.CodeLlamaModel,
-    "claude-3.7-sonnet": models.ClaudeModel
+    "claude-3.7-sonnet": models.ClaudeModel,
 }
+
 
 class Models(Enum):
     """
     Enum representing the available AI model types.
     """
+
     OPENAI = "openai"
     OPENAIVECTOR = "openai-vector"
     LLAMA = "llama3.2-vision:90b"
@@ -71,10 +79,12 @@ class Models(Enum):
     def __str__(self):
         return self.value
 
+
 class FileType(Enum):
     """
     Enum representing different input file types that the application can process.
     """
+
     JUPYTER = "jupyter"
     PYTHON = "python"
     PDF = "pdf"
@@ -82,10 +92,12 @@ class FileType(Enum):
     def __str__(self):
         return self.value
 
+
 class OutputType(Enum):
     """
     Enum representing the output format types for the LLM's results.
     """
+
     STDOUT = "stdout"
     MARKDOWN = "markdown"
     DIRECT = "direct"

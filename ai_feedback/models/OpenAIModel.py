@@ -10,6 +10,7 @@ from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
 load_dotenv()
 
+
 class OpenAIModel(Model):
     def __init__(self) -> None:
         """
@@ -21,11 +22,11 @@ class OpenAIModel(Model):
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def generate_response(
-        self, 
-        prompt: str, 
-        assignment_files: List[str], 
-        scope: Optional[str] = None, 
-        question_num: Optional[int] = None
+        self,
+        prompt: str,
+        assignment_files: List[str],
+        scope: Optional[str] = None,
+        question_num: Optional[int] = None,
     ) -> Tuple[str, str]:
         """
         Generate a response based on the given prompt and assignment context.
@@ -40,7 +41,7 @@ class OpenAIModel(Model):
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
         """
         if question_num:
-            prompt += f' Identify and generate a response for the mistakes **only** in task {question_num}. '
+            prompt += f" Identify and generate a response for the mistakes **only** in task {question_num}. "
             file_contents = self._get_question_contents(assignment_files, question_num)
         elif scope == "text":
             file_contents = self._get_pdf_contents(assignment_files)
@@ -66,7 +67,7 @@ class OpenAIModel(Model):
         for file_path in assignment_files:
             file_name = os.path.basename(file_path)
             try:
-                with open(file_path, 'r') as file:
+                with open(file_path, "r") as file:
                     lines = file.readlines()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
@@ -93,7 +94,7 @@ class OpenAIModel(Model):
         Returns:
             str: Combined extracted text from all PDF files.
         """
-        combined_content = ''
+        combined_content = ""
         for file_path in assignment_files:
             file_name = os.path.basename(file_path)
             pdf_content = self._extract_text_from_pdf(file_path)
@@ -122,7 +123,9 @@ class OpenAIModel(Model):
                 text += f"Page {page_num}:\n{cleaned_text}\n\n"
         return text
 
-    def _get_question_contents(self, assignment_files: List[str], question_num: int) -> str:
+    def _get_question_contents(
+        self, assignment_files: List[str], question_num: int
+    ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
 
@@ -143,13 +146,19 @@ class OpenAIModel(Model):
         task_found = False
 
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or "error_output" in file_path or file_path.endswith(".DS_Store"):
+            if (
+                not file_path.endswith(".txt")
+                or "error_output" in file_path
+                or file_path.endswith(".DS_Store")
+            ):
                 continue
 
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
 
-            intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+            intro_match = re.search(
+                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
+            )
             intro_content = intro_match.group(1).strip() if intro_match else ""
 
             task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
@@ -183,9 +192,9 @@ class OpenAIModel(Model):
             model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": SYSTEM_INSTRUCTIONS},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ],
             max_tokens=1000,
-            temperature=0.5
+            temperature=0.5,
         )
         return response.choices[0].message.content

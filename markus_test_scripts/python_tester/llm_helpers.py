@@ -19,18 +19,18 @@ ONLY return the json object and nothing else. Make sure the line #s don't exceed
 the number of lines in the file. You can use markdown syntax in the annotation's content,
 especially when denoting code."""
 
+
 def add_annotation_columns(
-    annotations: List[Dict[str, Any]], 
-    submission: Any
+    annotations: List[Dict[str, Any]], submission: Any
 ) -> List[Dict[str, Any]]:
     """
-    Add `column_start` and `column_end` metadata to each annotation 
+    Add `column_start` and `column_end` metadata to each annotation
     based on the lines in the student's submission file.
 
     Args:
-        annotations: A list of annotation dictionaries that include 
+        annotations: A list of annotation dictionaries that include
             'filename', 'content', 'line_start', and 'line_end' keys.
-        submission: An object expected to have a `__file__` attribute 
+        submission: An object expected to have a `__file__` attribute
             pointing to the student's file path.
 
     Returns:
@@ -38,7 +38,7 @@ def add_annotation_columns(
     """
     try:
         file_path = submission.__file__
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             file_lines = file.readlines()
     except Exception as e:
         print(f"Error reading submission file: {e}")
@@ -52,7 +52,9 @@ def add_annotation_columns(
         line_end = annotation["line_end"]
 
         if not file_lines or line_start > len(file_lines) or line_end > len(file_lines):
-            print(f"Skipping invalid line numbers for {filename}: {line_start}-{line_end}")
+            print(
+                f"Skipping invalid line numbers for {filename}: {line_start}-{line_end}"
+            )
             continue
 
         column_starts = []
@@ -90,14 +92,14 @@ def add_annotation_columns(
 
 
 def run_llm(
-    submission: str, 
-    model: str, 
-    scope: str, 
+    submission: str,
+    model: str,
+    scope: str,
     output: str,
-    prompt_custom: Optional[bool] = None, 
-    question: Optional[str] = None, 
+    prompt_custom: Optional[bool] = None,
+    question: Optional[str] = None,
     prompt_text: Optional[str] = None,
-    prompt: Optional[str] = None
+    prompt: Optional[str] = None,
 ) -> str:
     """
     Executes the LLM feedback generator script and captures its output.
@@ -117,13 +119,19 @@ def run_llm(
     """
     load_dotenv()
     llm_command = [
-        sys.executable, 
-        "-m", "ai_feedback",
-        "--submission_type", submission,
-        "--scope", scope,
-        "--assignment", "./",
-        "--model", model,
-        "--output", output
+        sys.executable,
+        "-m",
+        "ai_feedback",
+        "--submission_type",
+        submission,
+        "--scope",
+        scope,
+        "--assignment",
+        "./",
+        "--model",
+        model,
+        "--output",
+        output,
     ]
     if question is not None:
         llm_command += ["--question", question]
@@ -155,13 +163,13 @@ def extract_json(response: str) -> List[Dict[str, Any]]:
         A list of parsed JSON dictionaries extracted from the input string.
     """
     matches = re.findall(
-        r'(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})', 
-        response
+        r"(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})", response
     )
     return [json.loads(match) for match in matches]
 
 
 MINIMUM_ANNOTATION_WIDTH = 8
+
 
 def convert_coordinates(box: List[int]) -> Tuple[int, int, int, int]:
     x_extension = max(0, (MINIMUM_ANNOTATION_WIDTH - abs(box[2] - box[0])) // 2)
@@ -170,25 +178,23 @@ def convert_coordinates(box: List[int]) -> Tuple[int, int, int, int]:
         box[0] - x_extension,
         box[1] - y_extension,
         box[2] + x_extension,
-        box[3] + y_extension
+        box[3] + y_extension,
     )
 
 
-def add_image_annotations(
-    request: Any, 
-    llm_feedback: str, 
-    file_name: str
-) -> None:
+def add_image_annotations(request: Any, llm_feedback: str, file_name: str) -> None:
     annotations = extract_json(llm_feedback)
     for annotation in annotations:
         if "location" in annotation and "description" in annotation:
             x1, y1, x2, y2 = convert_coordinates(annotation["location"])
-            request.node.add_marker(pytest.mark.markus_annotation(
-                type="ImageAnnotation",
-                filename=os.path.relpath(file_name, os.getcwd()),
-                content=annotation["description"],
-                x1=x1,
-                y1=y1,
-                x2=x2,
-                y2=y2,
-            ))
+            request.node.add_marker(
+                pytest.mark.markus_annotation(
+                    type="ImageAnnotation",
+                    filename=os.path.relpath(file_name, os.getcwd()),
+                    content=annotation["description"],
+                    x1=x1,
+                    y1=y1,
+                    x2=x2,
+                    y2=y2,
+                )
+            )
