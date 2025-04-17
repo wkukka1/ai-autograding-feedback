@@ -8,10 +8,11 @@ Subclasses must implement the `generate_response` method to provide
 their own model-specific logic.
 """
 
+
 class Model:
     def __init__(self):
         """
-        Initialize the model. 
+        Initialize the model.
         """
         pass
 
@@ -19,7 +20,7 @@ class Model:
         """
         Generate a response based on the provided prompt.
 
-        This is an abstract method that must be overridden by subclasses to implement 
+        This is an abstract method that must be overridden by subclasses to implement
         specific model inference logic.
 
         Args:
@@ -27,7 +28,7 @@ class Model:
             **kwargs (Any): Additional keyword arguments.
 
         Returns:
-            Tuple[str, str]: 
+            Tuple[str, str]:
                 A tuple containing:
                 - The full prompt that was used.
                 - The generated response.
@@ -35,4 +36,6 @@ class Model:
         Raises:
             NotImplementedError: If the method is not implemented by the subclass.
         """
-        raise NotImplementedError("Subclasses must implement the `generate_response` method.")
+        raise NotImplementedError(
+            "Subclasses must implement the `generate_response` method."
+        )

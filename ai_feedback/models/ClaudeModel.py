@@ -12,6 +12,7 @@ from ..helpers.constants import SYSTEM_INSTRUCTIONS
 # Load environment variables from .env file
 load_dotenv()
 
+
 class ClaudeModel(Model):
     def __init__(self) -> None:
         """
@@ -25,7 +26,7 @@ class ClaudeModel(Model):
         prompt: str,
         assignment_files: List[str],
         scope: Optional[str] = None,
-        question_num: Optional[int] = None
+        question_num: Optional[int] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -39,10 +40,10 @@ class ClaudeModel(Model):
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
         """
-        request = ''
+        request = ""
 
         if question_num:
-            request += f' Identify and generate a response for the mistakes **only** in question/task ${question_num}. '
+            request += f" Identify and generate a response for the mistakes **only** in question/task ${question_num}. "
             file_contents = self._get_question_contents(assignment_files, question_num)
         elif scope == "text":
             file_contents = self._get_pdf_contents(assignment_files)
@@ -56,7 +57,7 @@ class ClaudeModel(Model):
             max_tokens=1000,
             temperature=0.5,
             system=SYSTEM_INSTRUCTIONS,
-            messages=[{"role": "user", "content": request}]
+            messages=[{"role": "user", "content": request}],
         )
 
         if not response or not response.content:
@@ -81,7 +82,7 @@ class ClaudeModel(Model):
             file_name = os.path.basename(file_path)
 
             try:
-                with open(file_path, 'r') as file:
+                with open(file_path, "r") as file:
                     lines = file.readlines()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
@@ -93,7 +94,9 @@ class ClaudeModel(Model):
                 if stripped_line.strip():
                     file_contents += f"(Line {i}) {stripped_line}\n"
                 else:
-                    file_contents += f"(Line {i}) {line}"  # Keep blank lines for readability
+                    file_contents += (
+                        f"(Line {i}) {line}"  # Keep blank lines for readability
+                    )
 
             file_contents += "\n"
 
@@ -150,9 +153,7 @@ class ClaudeModel(Model):
         return text
 
     def _get_question_contents(
-        self,
-        assignment_files: List[str],
-        question_num: int
+        self, assignment_files: List[str], question_num: int
     ) -> str:
         """
         Retrieves content related to a specific question number from assignment files.
@@ -171,13 +172,19 @@ class ClaudeModel(Model):
         task_found = False
 
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or "error_output" in file_path or file_path.endswith(".DS_Store"):
+            if (
+                not file_path.endswith(".txt")
+                or "error_output" in file_path
+                or file_path.endswith(".DS_Store")
+            ):
                 continue
 
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
 
-            intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+            intro_match = re.search(
+                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
+            )
             intro_content = intro_match.group(1).strip() if intro_match else ""
 
             task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"

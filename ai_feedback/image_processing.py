@@ -15,6 +15,7 @@ def encode_image(image_path: os.PathLike):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
+
 def openai_call(message: Message, model: str):
     # Load environment variables from .env file
     load_dotenv()
@@ -22,8 +23,9 @@ def openai_call(message: Message, model: str):
     images = [
         {
             "type": "image_url",
-            "image_url": {"url": f"data:image/png;base64,{encode_image(image.value)}"}
-        } for image in message.images
+            "image_url": {"url": f"data:image/png;base64,{encode_image(image.value)}"},
+        }
+        for image in message.images
     ]
     completion = client.chat.completions.create(
         model=model,
@@ -35,12 +37,14 @@ def openai_call(message: Message, model: str):
                         "type": "text",
                         "text": message.content,
                     }
-                ] + images,
+                ]
+                + images,
             }
         ],
-        temperature=0.33
+        temperature=0.33,
     )
     return completion.choices[0].message.content
+
 
 def anthropic_call(message: Message, model: str):
     load_dotenv()
@@ -51,9 +55,10 @@ def anthropic_call(message: Message, model: str):
             "source": {
                 "type": "base64",
                 "media_type": "image/png",
-                "data": f"{encode_image(image.value)}"
-            }
-        } for image in message.images
+                "data": f"{encode_image(image.value)}",
+            },
+        }
+        for image in message.images
     ]
     message = client.messages.create(
         max_tokens=2048,
@@ -66,12 +71,14 @@ def anthropic_call(message: Message, model: str):
                         "type": "text",
                         "text": message.content,
                     }
-                ] + images,
+                ]
+                + images,
             }
         ],
-        temperature=0.33
+        temperature=0.33,
     )
     return message.content[0].text
+
 
 def process_image(args, prompt):
     OUTPUT_DIRECTORY = "output_images"
@@ -84,28 +91,34 @@ def process_image(args, prompt):
     if solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
 
-    message = Message(
-        role="user",
-        content=prompt["prompt_content"],
-        images=[]
-    )
+    message = Message(role="user", content=prompt["prompt_content"], images=[])
 
     # Attachments
     if prompt.get("include_question_context", False):
         context = read_question_context(OUTPUT_DIRECTORY, args.question)
-        message.content = message.content.replace("{context}", "```\n" + context + "\n```")
+        message.content = message.content.replace(
+            "{context}", "```\n" + context + "\n```"
+        )
     if prompt.get("include_image_size", False):
         submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, args.question)
-        submission_image_path = submission_image_paths[0] # Only consider one image per question
+        submission_image_path = submission_image_paths[
+            0
+        ]  # Only consider one image per question
         image = PILImage.open(submission_image_path)
-        message.content = message.content.replace("{image_size}", f"{image.width} by {image.height}")
+        message.content = message.content.replace(
+            "{image_size}", f"{image.width} by {image.height}"
+        )
     if prompt.get("include_submission_image", False):
         submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, args.question)
-        submission_image_path = submission_image_paths[0] # Only consider one image per question
+        submission_image_path = submission_image_paths[
+            0
+        ]  # Only consider one image per question
         message.images.append(Image(value=submission_image_path))
     if prompt.get("include_solution_image", False):
         solution_image_paths = read_solution_images(OUTPUT_DIRECTORY, args.question)
-        solution_image_path = solution_image_paths[0] # Only consider one image per question
+        solution_image_path = solution_image_paths[
+            0
+        ]  # Only consider one image per question
         message.images.append(Image(value=solution_image_path))
 
     request = f"{message.content}\n\n{[str(image.value) for image in message.images]}"
@@ -114,5 +127,7 @@ def process_image(args, prompt):
     elif args.model == Models.CLAUDE.value:
         response = anthropic_call(message, model="claude-3-7-sonnet-20250219")
     else:
-        response = chat(model=args.model, messages=[message], options={"temperature": 0.33}).message.content
+        response = chat(
+            model=args.model, messages=[message], options={"temperature": 0.33}
+        ).message.content
     return request, response

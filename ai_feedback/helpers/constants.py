@@ -11,5 +11,5 @@ HELP_MESSAGES = {
     "assignment": "The name of the assignment to be evaluated.",
     "question": "The specific question number to analyze within the assignment (if applicable).",
     "model": "The name of the LLM model to use for evaluation.",
-    "output": "Format to display the output response."
+    "output": "Format to display the output response.",
 }

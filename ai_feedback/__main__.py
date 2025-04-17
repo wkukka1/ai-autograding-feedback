@@ -23,7 +23,9 @@ def load_markdown_template() -> str:
         SystemExit: If the template file is not found, the program will print an error and exit.
     """
     try:
-        template_file = os.path.join(os.path.dirname(__file__), 'data/output/output_template.md')
+        template_file = os.path.join(
+            os.path.dirname(__file__), "data/output/output_template.md"
+        )
         with open(template_file, "r") as file:
             return file.read()
     except FileNotFoundError:
@@ -43,38 +45,82 @@ def main() -> int:
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--submission_type", type=str, choices=arg_options.get_enum_values(arg_options.FileType), required=True, help=HELP_MESSAGES["submission_type"])
-    parser.add_argument("--prompt", type=str, choices=arg_options.get_enum_values(arg_options.Prompt), required=False, help=HELP_MESSAGES["prompt"])
-    parser.add_argument("--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"])
+    parser.add_argument(
+        "--submission_type",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.FileType),
+        required=True,
+        help=HELP_MESSAGES["submission_type"],
+    )
+    parser.add_argument(
+        "--prompt",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.Prompt),
+        required=False,
+        help=HELP_MESSAGES["prompt"],
+    )
+    parser.add_argument(
+        "--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"]
+    )
     parser.add_argument("--prompt_custom", action="store_true", required=False)
-    parser.add_argument("--scope", type=str, choices=arg_options.get_enum_values(arg_options.Scope), required=True, help=HELP_MESSAGES["scope"])
-    parser.add_argument("--assignment", type=str, required=True, help=HELP_MESSAGES["assignment"])
-    parser.add_argument("--question", type=str, required=False, help=HELP_MESSAGES["question"])
-    parser.add_argument("--model", type=str, choices=arg_options.get_enum_values(arg_options.Models), required=True, help=HELP_MESSAGES["model"])
-    parser.add_argument("--output", type=str, choices=arg_options.get_enum_values(arg_options.OutputType), required=True, help=HELP_MESSAGES["output"])
+    parser.add_argument(
+        "--scope",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.Scope),
+        required=True,
+        help=HELP_MESSAGES["scope"],
+    )
+    parser.add_argument(
+        "--assignment", type=str, required=True, help=HELP_MESSAGES["assignment"]
+    )
+    parser.add_argument(
+        "--question", type=str, required=False, help=HELP_MESSAGES["question"]
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.Models),
+        required=True,
+        help=HELP_MESSAGES["model"],
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.OutputType),
+        required=True,
+        help=HELP_MESSAGES["output"],
+    )
 
     args = parser.parse_args()
 
-    prompt_content = ''
+    prompt_content = ""
 
     if args.prompt_custom:
-        prompt_filename = os.path.join('./', f'{args.prompt_text}.txt')
+        prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
         print(prompt_filename)
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else:
         if args.prompt:
             if not args.prompt.startswith("image") and args.scope == "image":
-                print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
+                print(
+                    "Error: The prompt must start with 'image'. Please re-run the command with a valid prompt."
+                )
                 sys.exit(1)
             if not args.prompt.startswith("code") and args.scope == "code":
-                print("Error: The prompt must start with 'code'. Please re-run the command with a valid prompt.")
+                print(
+                    "Error: The prompt must start with 'code'. Please re-run the command with a valid prompt."
+                )
                 sys.exit(1)
             if not args.prompt.startswith("text") and args.scope == "text":
-                print("Error: The prompt must start with 'text'. Please re-run the command with a valid prompt.")
+                print(
+                    "Error: The prompt must start with 'text'. Please re-run the command with a valid prompt."
+                )
                 sys.exit(1)
 
-            prompt_filename = os.path.join(os.path.dirname(__file__), f'data/prompts/{args.prompt}.json')
+            prompt_filename = os.path.join(
+                os.path.dirname(__file__), f"data/prompts/{args.prompt}.json"
+            )
             with open(prompt_filename, "r") as prompt_file:
                 prompt = json.load(prompt_file)
                 prompt_content += prompt["prompt_content"]
@@ -103,7 +149,7 @@ def main() -> int:
             model=args.model,
             request=request,
             response=response,
-            timestamp=timestamp
+            timestamp=timestamp,
         )
         with open(markdown_filename, "w") as md_file:
             md_file.write(markdown_output)

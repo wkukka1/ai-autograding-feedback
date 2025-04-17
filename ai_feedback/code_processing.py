@@ -8,6 +8,7 @@ from .helpers.file_converter import rename_files
 
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
+
 def process_code(args, prompt: str) -> Tuple[str, str]:
     """
     Processes assignment files and generates a response using the selected model.
@@ -34,21 +35,25 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     assignment_files: List[str] = []
 
     if args.submission_type == "jupyter":
-        ensure_txt_files(assignment_folder, rename_files)  # Convert notebooks to .txt if needed
+        ensure_txt_files(
+            assignment_folder, rename_files
+        )  # Convert notebooks to .txt if needed
 
         assignment_files = [
             os.path.join(assignment_folder, f)
             for f in os.listdir(assignment_folder)
-            if os.path.isfile(os.path.join(assignment_folder, f)) and 
-               any(f.endswith(suffix + ".txt") for suffix in EXPECTED_SUFFIXES)
+            if os.path.isfile(os.path.join(assignment_folder, f))
+            and any(f.endswith(suffix + ".txt") for suffix in EXPECTED_SUFFIXES)
         ]
 
     elif args.submission_type == "python":
         assignment_files = [
             os.path.join(assignment_folder, f)
             for f in os.listdir(assignment_folder)
-            if os.path.isfile(os.path.join(assignment_folder, f)) and 
-               any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
+            if os.path.isfile(os.path.join(assignment_folder, f))
+            and any(
+                os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES
+            )
         ]
 
     for file in assignment_files:
@@ -56,11 +61,15 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
         name_without_ext, _ = os.path.splitext(filename)
 
         if name_without_ext.endswith("_solution"):
-            prompt += f"\nThe instructor's solution file you should reference is {filename}."
+            prompt += (
+                f"\nThe instructor's solution file you should reference is {filename}."
+            )
         elif name_without_ext.endswith("_submission"):
             prompt += f"\nThe student's code submission file you should reference is {filename}."
         elif name_without_ext.endswith("test_output"):
-            prompt += f"\nThe student's error trace file you should reference is {filename}."
+            prompt += (
+                f"\nThe student's error trace file you should reference is {filename}."
+            )
 
     if args.model in model_mapping:
         model = model_mapping[args.model]()
@@ -73,12 +82,11 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
             request, response = model.generate_response(
                 prompt=prompt,
                 assignment_files=assignment_files,
-                question_num=args.question
+                question_num=args.question,
             )
         else:
             request, response = model.generate_response(
-                prompt=prompt,
-                assignment_files=assignment_files
+                prompt=prompt, assignment_files=assignment_files
             )
 
     return request, response

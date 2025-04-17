@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
+
 class DeepSeekModel(Model):
 
     def __init__(self) -> None:
@@ -18,10 +19,10 @@ class DeepSeekModel(Model):
         }
 
     def generate_response(
-        self, 
-        prompt: str, 
-        assignment_files: List[str], 
-        question_num: Optional[int] = None
+        self,
+        prompt: str,
+        assignment_files: List[str],
+        question_num: Optional[int] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -45,18 +46,24 @@ class DeepSeekModel(Model):
         response = ollama.chat(
             model=self.model["model"],
             messages=[
-                {"role": "system", "content": self.model['instructions']},
-                {"role": "user", "content": request}
-            ]
+                {"role": "system", "content": self.model["instructions"]},
+                {"role": "user", "content": request},
+            ],
         )
 
-        if not response or "message" not in response or "content" not in response["message"]:
+        if (
+            not response
+            or "message" not in response
+            or "content" not in response["message"]
+        ):
             print("Error: Invalid or empty response from Ollama.")
             return None
 
         return request, response["message"]["content"]
 
-    def _get_question_contents(self, assignment_files: List[str], question_num: int) -> str:
+    def _get_question_contents(
+        self, assignment_files: List[str], question_num: int
+    ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
 
@@ -74,14 +81,20 @@ class DeepSeekModel(Model):
         task_found = False
 
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or "error_output" in file_path or file_path.endswith(".DS_Store"):
+            if (
+                not file_path.endswith(".txt")
+                or "error_output" in file_path
+                or file_path.endswith(".DS_Store")
+            ):
                 continue
 
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
 
             # Extract Introduction block
-            intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+            intro_match = re.search(
+                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
+            )
             intro_content = intro_match.group(1).strip() if intro_match else ""
 
             # Extract Task block
@@ -121,7 +134,7 @@ class DeepSeekModel(Model):
             file_name = os.path.basename(file_path)
 
             try:
-                with open(file_path, 'r') as file:
+                with open(file_path, "r") as file:
                     content = file.read()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
