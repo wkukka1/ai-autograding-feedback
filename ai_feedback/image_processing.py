@@ -105,7 +105,7 @@ def process_image(args, prompt: str) -> tuple[str, str]:
     requests: list[str] = []
     responses: list[str] = []
     for question in questions:
-        message = Message(role="user", content=prompt, images=[])
+        message = Message(role="user", content=prompt["prompt_content"], images=[])
 
         # Add image attachments and extra information
         if prompt.get("include_question_context", False):
