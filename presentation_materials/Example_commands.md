@@ -9,7 +9,7 @@ python -m ai_feedback \
 --submission_type jupyter \
 --prompt code_explanation \
 --scope code \
---assignment test_submissions/iris_demo_example/image_test_incorrect \
+--assignment presentation_materials/iris_image_examples/image_test_incorrect \
 --question "4" \
 --model claude-3.7-sonnet \
 --output stdout
@@ -50,7 +50,7 @@ python -m ai_feedback \
 --submission_type jupyter \
 --prompt image_analyze \
 --scope image \
---assignment test_submissions/iris_demo_example/image_test_incorrect \
+--assignment presentation_materials/iris_image_examples/image_test_incorrect \
 --question "4" \
 --model openai \
 --output stdout
