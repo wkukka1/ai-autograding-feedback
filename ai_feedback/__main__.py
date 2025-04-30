@@ -129,6 +129,7 @@ def main() -> int:
             prompt_content += args.prompt_text
 
     if args.scope == "image":
+        prompt["prompt_content"] = prompt_content
         request, response = image_processing.process_image(args, prompt)
     elif args.scope == "text":
         request, response = text_processing.process_text(args, prompt_content)

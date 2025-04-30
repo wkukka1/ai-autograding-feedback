@@ -84,7 +84,7 @@ def anthropic_call(message: Message, model: str) -> str | None:
     return message.content[0].text
 
 
-def process_image(args, prompt: str) -> tuple[str, str]:
+def process_image(args, prompt: dict) -> tuple[str, str]:
     """Generates feedback for an image submission.
     Returns the LLM prompt delivered and the returned response."""
     OUTPUT_DIRECTORY = "output_images"
