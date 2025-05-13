@@ -60,6 +60,7 @@ model_mapping = {
     "openai-vector": models.OpenAIModelVector,
     "codellama:latest": models.CodeLlamaModel,
     "claude-3.7-sonnet": models.ClaudeModel,
+    "remote": models.RemoteModel,
 }
 
 
@@ -75,6 +76,7 @@ class Models(Enum):
     DEEPSEEK = "deepSeek-R1:70B"
     CODELLAMA = "codellama:latest"
     CLAUDE = "claude-3.7-sonnet"
+    REMOTE = "remote"
 
     def __str__(self):
         return self.value
