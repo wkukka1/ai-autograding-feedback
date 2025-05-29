@@ -14,10 +14,10 @@ from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
 def detect_submission_type(assignment_folder: str) -> str:
     """Automatically detect the submission type based on file extensions in the assignment folder.
-    
+
     Args:
         assignment_folder (str): Path to the assignment directory.
-        
+
     Returns:
         str: The detected submission type ("jupyter", "python", or "pdf").
     """
@@ -28,7 +28,7 @@ def detect_submission_type(assignment_folder: str) -> str:
             return "python"
         elif filename.endswith("_submission.pdf"):
             return "pdf"
-    
+
     print("Error: Could not auto-detect submission type.")
     sys.exit(1)
 
@@ -70,8 +70,7 @@ def main() -> int:
         "--submission_type",
         type=str,
         choices=arg_options.get_enum_values(arg_options.FileType),
-        required=False,
-        default=None,
+        required=True,
         help=HELP_MESSAGES["submission_type"],
     )
     parser.add_argument(
