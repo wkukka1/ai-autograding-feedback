@@ -88,8 +88,8 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     """Generates feedback for an image submission.
     Returns the LLM prompt delivered and the returned response."""
     OUTPUT_DIRECTORY = "output_images"
-    submission_notebook = Path("./", args.assignment, "student_submission.ipynb")
-    solution_notebook = Path("./", args.assignment, "solution.ipynb")
+    submission_notebook = Path(args.submission)
+    solution_notebook   = Path(args.solution)
 
     # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
