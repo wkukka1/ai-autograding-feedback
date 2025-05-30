@@ -28,7 +28,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 ## Argument Details
 | Argument          | Description                                      | Required |
 |------------------|--------------------------------------------------|----------|
-| `--submission_type` | Type of submission (from `arg_options.FileType`) | ✅ |
+| `--submission_type` | Type of submission (from `arg_options.FileType`) | ❌ |
 | `--prompt`       | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
 | `--prompt_text`       | Additional string text prompt that can be fed to model. | ❌ ** |
 | `--prompt_custom`       | The name of prompt file uploaded to be used by model. | ❌ ** |
@@ -51,6 +51,13 @@ If the "text" scope is selected, the program will identify student errors in the
 If the "image" scope is selected, the program will identify issues in submission images, optionally comparing them to reference solutions. Question numbers can be specified by adding the tag `markus_question_name: <question name>` to the metadata for the code cell that generates the submission image. The previous cell's markdown content will be used as the question's context.
 
 ## Submission Type
+The program automatically detects submission type based on file extensions in the assignment directory:
+- Files ending with `_submission.ipynb` → jupyter notebook
+- Files ending with `_submission.py` → python file  
+- Files ending with `_submission.pdf` → PDF document
+
+The user can also explicitly specify the submission type using the `--submission_type` argument if auto-detection is not suitable.
+
 Currently, jupyter notebook, pdf, and python assignments are supported.
 
 ## Prompts
@@ -242,28 +249,28 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --submission_type python --prompt code_lines --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
+python -m ai_feedback --prompt code_lines --scope code --assignment test_submissions/cnn_example --model openai --output stdout
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
 ```bash
-python -m ai_feedback --submission_type python --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
+python -m ai_feedback --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model openai --output stdout
 ```
 
 #### Evaluate pdf_example test using openAI model 
 ```bash
-python -m ai_feedback --submission_type pdf --prompt text_pdf_analyze --scope text --assignment test_submissions/pdf_example --model openai  --output direct
+python -m ai_feedback --prompt text_pdf_analyze --scope text --assignment test_submissions/pdf_example --model openai --output direct
 ```
 
 #### Evaluate question1 of test1 of ggr274 homework using DeepSeek model 
 ```bash
-python -m ai_feedback  --submission_type jupyter --prompt code_table \
+python -m ai_feedback --prompt code_table \
   --scope code --assignment test_submissions/ggr274_homework5/test1 --question 1 --model deepSeek-R1:70B --output markdown
 ```
 
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
-python3 -m ai_feedback --submission_type jupyter --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision --output stdout
+python3 -m ai_feedback --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision --output stdout
 ```
 
 #### Using Ollama
