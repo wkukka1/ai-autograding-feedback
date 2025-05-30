@@ -1,4 +1,4 @@
-# Assignment: {assignment}
+# Submission File: {args.submission}
 
 **Question Number**: {question}
 
