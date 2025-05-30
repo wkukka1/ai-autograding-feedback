@@ -81,9 +81,15 @@ def main() -> int:
         help=HELP_MESSAGES["prompt"],
     )
     parser.add_argument(
-        "--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"]
+        "--prompt_text",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["prompt_text"]
     )
-    parser.add_argument("--prompt_custom", action="store_true", required=False)
+    parser.add_argument(
+        "--prompt_custom",
+        action="store_true",
+        required=False)
     parser.add_argument(
         "--scope",
         type=str,
@@ -92,10 +98,22 @@ def main() -> int:
         help=HELP_MESSAGES["scope"],
     )
     parser.add_argument(
-        "--assignment", type=str, required=True, help=HELP_MESSAGES["assignment"]
+        "--submission",
+        type=str,
+        required=True,
+        help=HELP_MESSAGES["assignment"]
     )
     parser.add_argument(
-        "--question", type=str, required=False, help=HELP_MESSAGES["question"]
+        "--solution",
+        type=str,
+        required=False,
+        default="",
+        help=HELP_MESSAGES["solution"])
+    parser.add_argument(
+        "--question",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["question"]
     )
     parser.add_argument(
         "--model",
@@ -112,7 +130,11 @@ def main() -> int:
         default='stdout',
         help=HELP_MESSAGES["output"],
     )
-
+    parser.add_argument(
+        "--test_output",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["test_output"])
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided
@@ -171,12 +193,12 @@ def main() -> int:
 
         markdown_template = load_markdown_template()
         markdown_output = markdown_template.format(
-            assignment=args.assignment,
             question=args.question if args.question else "N/A",
             model=args.model,
             request=request,
             response=response,
             timestamp=timestamp,
+            submission=args.submission,
         )
         with open(markdown_filename, "w") as md_file:
             md_file.write(markdown_output)
