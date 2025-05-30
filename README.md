@@ -27,7 +27,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 
 ## Argument Details
 | Argument          | Description                                      | Required |
-|------------------|--------------------------------------------------|----------|
+|------------------|--------------------------------------------------|---------|
 | `--submission_type` | Type of submission (from `arg_options.FileType`) | ✅ |
 | `--prompt`       | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
 | `--prompt_text`       | Additional string text prompt that can be fed to model. | ❌ ** |
@@ -36,7 +36,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--assignment`   | Name of the directory which contains test files  | ✅ |
 | `--question`     | Specific question to evaluate                      | ❌ |
 | `--model`        | Model type (from `arg_options.Models`)           | ✅ |
-| `--output`       | Output type (from `arg_options.Output`)             | ✅ |
+| `--output`       | Output type (from `arg_options.Output`)             | ❌ |
 
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
@@ -164,7 +164,7 @@ Example Markdown file name:
 ai_feedback/test_responses_md/test1/openai/code_table_20250310_143500.md
 ```
 
-- When `--output stdout` is selected, the prompt used and generated response will be sent to stdout.
+- When the `--output` argument is not given, the prompt used and generated response will be sent to stdout.
 - When `--output direct` is selected, only the generated response will be sent to stdout.
 
 ## Test Files
@@ -230,7 +230,7 @@ python -m ai_feedback \
   --assignment <assignment_directory> \
   --question <question_number> \
   --model <model_name> \
-  --output <markdown|stdout|direct>
+  --output <markdown|direct>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
@@ -242,12 +242,12 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --submission_type python --prompt code_lines --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
+python -m ai_feedback --submission_type python --prompt code_lines --scope code --assignment test_submissions/cnn_example --model  openai
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
 ```bash
-python -m ai_feedback --submission_type python --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model  openai  --output stdout
+python -m ai_feedback --submission_type python --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model  openai
 ```
 
 #### Evaluate pdf_example test using openAI model 
@@ -263,7 +263,7 @@ python -m ai_feedback  --submission_type jupyter --prompt code_table \
 
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
-python3 -m ai_feedback --submission_type jupyter --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision --output stdout
+python -m ai_feedback --submission_type jupyter --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision
 ```
 
 #### Using Ollama
