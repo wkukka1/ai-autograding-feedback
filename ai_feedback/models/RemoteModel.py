@@ -26,7 +26,8 @@ class RemoteModel(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
+        submission_file: str,
+        solution_file: Optional[str] = None,
         question_num: Optional[int] = None,
     ) -> Optional[Tuple[str, str]]:
         """
@@ -41,6 +42,7 @@ class RemoteModel(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        assignment_files = [submission_file, solution_file] if solution_file else [submission_file]
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
