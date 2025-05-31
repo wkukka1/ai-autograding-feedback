@@ -1,4 +1,4 @@
-# Submission File: {args.submission}
+# Submission File: {submission}
 
 **Question Number**: {question}
 
