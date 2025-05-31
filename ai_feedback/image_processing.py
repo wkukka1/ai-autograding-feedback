@@ -89,7 +89,10 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     Returns the LLM prompt delivered and the returned response."""
     OUTPUT_DIRECTORY = "output_images"
     submission_notebook = Path(args.submission)
-    solution_notebook   = Path(args.solution)
+    if args.solution and args.solution != '':
+        solution_notebook = Path(args.solution)
+    if not args.image:
+        raise SystemExit(f"Missing image argument.")
 
     # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
@@ -114,25 +117,15 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
                 "{context}", "```\n" + context + "\n```"
             )
         if prompt.get("include_image_size", False):
-            submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, question)
-            submission_image_path = submission_image_paths[
-                0
-            ]  # Only consider one image per question
-            image = PILImage.open(submission_image_path)
+            image = PILImage.open(args.image)
             message.content = message.content.replace(
                 "{image_size}", f"{image.width} by {image.height}"
             )
         if prompt.get("include_submission_image", False):
-            submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, question)
-            submission_image_path = submission_image_paths[
-                0
-            ]  # Only consider one image per question
+            submission_image_path = args.image
             message.images.append(Image(value=submission_image_path))
         if prompt.get("include_solution_image", False):
-            solution_image_paths = read_solution_images(OUTPUT_DIRECTORY, question)
-            solution_image_path = solution_image_paths[
-                0
-            ]  # Only consider one image per question
+            solution_image_path = args.image
             message.images.append(Image(value=solution_image_path))
 
         # Prompt the LLM
