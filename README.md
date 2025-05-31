@@ -10,7 +10,7 @@ For the code scope, the program takes three files:
 - A student's submission file
 - A test file 
 
-For the text scope, the program takes three files:
+For the text scope, the program takes two files:
 - An assignment's solution file
 - A student's submission file
 
