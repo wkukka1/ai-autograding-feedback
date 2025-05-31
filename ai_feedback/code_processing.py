@@ -30,24 +30,39 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     """
     if not os.path.isfile(args.submission):
         raise FileNotFoundError(f"Submission file '{args.submission}' not found.")
-    if not args.solution or not os.path.isfile(args.solution):
-        raise FileNotFoundError(f"Solution file '{args.solution}' not found.")
-
     submission_file = Path(args.submission)
-    solution_file = Path(args.solution)
+
+    solution_file = None
+    if args.solution:
+        if not os.path.isfile(args.solution):
+            raise FileNotFoundError(f"Solution file '{args.solution}' not found.")
+        solution_file = Path(args.solution)
+    if args.test_output:
+        if not os.path.isfile(args.test_output):
+            raise FileNotFoundError(f"Test output file '{args.test_output}' not found.")
+        test_output_file = Path(args.test_output)
+
     if args.submission_type == "jupyter":
         ensure_txt_file(args.submission, rename_files)
-        ensure_txt_file(args.solution, rename_files)
-
-        submission_file = args.submission.replace(".ipynb", ".txt")
-        solution_file = args.solution.replace(".ipynb", ".txt")
-
+        submission_file = Path(args.submission.replace(".ipynb", ".txt"))
+        if solution_file:
+            ensure_txt_file(args.solution, rename_files)
+            solution_file = Path(args.solution.replace(".ipynb", ".txt"))
     elif args.submission_type != "python":
         raise SystemExit(f"Invalid submission type '{args.submission_type}'.")
 
-    prompt += f"\nThe student's code submission file you should reference is {os.path.basename(args.submission)}."
-    prompt += f"\nThe instructor's solution file you should reference is {os.path.basename(args.solution)}."
-
+    prompt += (
+        f"\nThe student's code submission file you should reference is "
+        f"{submission_file.name}."
+    )
+    if solution_file:
+        prompt += (
+            f"\nThe instructor's solution file you should reference is "
+            f"{solution_file.name}."
+        )
+    if args.test_output:
+        prompt += (f"\nThe test output file you should reference is "
+                   f"{test_output_file.name}.")
 
     if args.model in model_mapping:
             model = model_mapping[args.model]()
