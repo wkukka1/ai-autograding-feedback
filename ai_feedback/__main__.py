@@ -101,7 +101,7 @@ def main() -> int:
         "--submission",
         type=str,
         required=True,
-        help=HELP_MESSAGES["assignment"]
+        help=HELP_MESSAGES["submission"]
     )
     parser.add_argument(
         "--solution",
@@ -134,7 +134,14 @@ def main() -> int:
         "--test_output",
         type=str,
         required=False,
+        default=None,
         help=HELP_MESSAGES["test_output"])
+    parser.add_argument(
+        "--image",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["image"]
+    )
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided
