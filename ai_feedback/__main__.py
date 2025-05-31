@@ -12,6 +12,27 @@ from .helpers import arg_options
 from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
 
+def detect_submission_type(assignment_folder: str) -> str:
+    """Automatically detect the submission type based on file extensions in the assignment folder.
+    
+    Args:
+        assignment_folder (str): Path to the assignment directory.
+        
+    Returns:
+        str: The detected submission type ("jupyter", "python", or "pdf").
+    """
+    for filename in os.listdir(assignment_folder):
+        if filename.endswith("_submission.ipynb"):
+            return "jupyter"
+        elif filename.endswith("_submission.py"):
+            return "python"
+        elif filename.endswith("_submission.pdf"):
+            return "pdf"
+    
+    print("Error: Could not auto-detect submission type.")
+    sys.exit(1)
+
+
 def load_markdown_template() -> str:
     """
     Loads the markdown template used for formatting output.
@@ -49,7 +70,8 @@ def main() -> int:
         "--submission_type",
         type=str,
         choices=arg_options.get_enum_values(arg_options.FileType),
-        required=True,
+        required=False,
+        default=None,
         help=HELP_MESSAGES["submission_type"],
     )
     parser.add_argument(
@@ -93,6 +115,10 @@ def main() -> int:
     )
 
     args = parser.parse_args()
+
+    # Auto-detect submission type if not provided
+    if args.submission_type is None:
+        args.submission_type = detect_submission_type(args.assignment)
 
     prompt_content = ""
 
