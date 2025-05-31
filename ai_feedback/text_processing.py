@@ -5,8 +5,6 @@ from typing import Tuple, List
 
 from .helpers.arg_options import model_mapping
 
-EXPECTED_SUFFIXES = ["_solution", "_submission"]
-
 
 def process_text(args, prompt: str) -> Tuple[str, str]:
     """
@@ -30,16 +28,18 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
     submission_file = Path(args.submission)
     if not submission_file.is_file():
         raise FileNotFoundError(f"Submission file '{submission_file}' not found.")
-
-    solution_file = Path(args.solution)
-    if not solution_file.is_file():
-        raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
-
-    submission_file, solution_file = str(submission_file), str(solution_file)
+    solution_file = None
+    if args.solution and args.solution != '':
+        solution_file = Path(args.solution)
+        if not solution_file.is_file():
+            raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
 
     prompt += (
         f"\nThe student's code submission file you should reference is "
         f"{submission_file}."
+    )
+    if solution_file:
+        prompt += (
             f"\nThe instructor's solution file you should reference is "
             f"{solution_file}."
         )
@@ -54,7 +54,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         if args.question:
             request, response = model.generate_response(
                 prompt=prompt,
-                scope=args.scope,
+                # scope=args.scope,
                 solution_file=solution_file,
                 submission_file=submission_file,
                 question_num=args.question,
@@ -62,7 +62,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         else:
             request, response = model.generate_response(
                 prompt=prompt,
-                scope=args.scope,
+                # scope=args.scope,
                 solution_file=solution_file,
                 submission_file=submission_file,
             )
