@@ -3,6 +3,8 @@ import json
 import os
 import sys
 import re
+from PyPDF2 import PdfReader
+from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -26,8 +28,8 @@ class RemoteModel(Model):
     def generate_response(
         self,
         prompt: str,
-        submission_file: str,
-        solution_file: Optional[str] = None,
+        submission_file: Path,
+        solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
     ) -> Optional[Tuple[str, str]]:
         """
@@ -42,6 +44,8 @@ class RemoteModel(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        print("Solution file:", solution_file)
+        print(f"Submission file: {submission_file}")
         assignment_files = [submission_file, solution_file] if solution_file else [submission_file]
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
@@ -65,7 +69,7 @@ class RemoteModel(Model):
 
         # Create the request
         request = urllib.request.Request(self.remote_url, data=json_data, headers=headers, method="POST")
-
+        print(f"PROMPT: {json_data}")
         # Send the request and get the response
         with urllib.request.urlopen(request) as response:
             # Print the status code and response data
@@ -75,7 +79,7 @@ class RemoteModel(Model):
         return request, response
 
     def _get_question_contents(
-        self, assignment_files: List[str], question_num: int
+        self, assignment_files: List[Path], question_num: int
     ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
@@ -95,41 +99,35 @@ class RemoteModel(Model):
 
         for file_path in assignment_files:
             if (
-                not file_path.endswith(".txt")
-                or "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                file_path.suffix != ".txt"
+                or "error_output" in file_path.name
+                or file_path.suffix == ".DS_Store"
             ):
                 continue
 
-            with open(file_path, "r", encoding="utf-8") as file:
-                content = file.read()
+            text = _extract_text_from_file(file_path)
+            intro_re = re.compile(r"(## Introduction\b.*?)(?=\n##|\Z)", re.DOTALL)
+            task_re = re.compile(rf"(## Task {question_num}\b.*?)(?=\n##|\Z)", re.DOTALL)
 
             # Extract Introduction block
-            intro_match = re.search(
-                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
-            )
-            intro_content = intro_match.group(1).strip() if intro_match else ""
-
-            # Extract Task block
-            task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
-            task_match = re.search(task_pattern, content, re.DOTALL)
-
-            task_content = ""
-            if task_match:
-                task_content = task_match.group(1).strip()
+            intro = intro_re.search(text)
+            task = task_re.search(text)
+            if task:
                 task_found = True
 
-            file_contents += f"\n\n---\n### {file_path}\n\n"
-            file_contents += intro_content + "\n\n" if intro_content else ""
-            file_contents += task_content + "\n\n"
+            file_contents += f"\n\n---\n### {file_path.name}\n\n"
+            if intro:
+                file_contents += intro.group(1).strip() + "\n\n"
+            if task:
+                file_contents += task.group(1).strip() + "\n\n"
 
         if not task_found:
-            print(f"Task {question_num} not found in any assignment file.")
+            print(f"Task {question_num} not found in any provided file.")
             sys.exit(1)
-
+        print(f"QUESTION CONTENTS : {file_contents}")
         return file_contents.strip()
 
-    def _get_file_contents(self, assignment_files: List[str]) -> str:
+    def _get_file_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieve the full contents of all assignment files.
 
@@ -141,14 +139,13 @@ class RemoteModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if file_path.suffix == '.txt' or file_path.suffix == (".DS_Store"):
                 continue
 
             file_name = os.path.basename(file_path)
 
             try:
-                with open(file_path, "r") as file:
-                    content = file.read()
+               content = _extract_text_from_file(file_path)
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
@@ -156,3 +153,31 @@ class RemoteModel(Model):
             file_contents += f"## {file_name}\n{content}\n\n"
 
         return file_contents
+
+def _extract_text_from_file(file_path: Path) -> str:
+    """
+    Given a path to a .py, .pdf, or .txt file, return its text content.
+    Raises ValueError for unsupported extensions.
+    """
+    p = Path(file_path)
+    ext = p.suffix.lower()
+
+    if ext == ".py" or ext == ".txt":
+        # Read Python source or plain text
+        return p.read_text(encoding="utf-8")
+
+    elif ext == ".pdf":
+        # Use PyPDF2 to pull text out of each page
+        reader = PdfReader(str(p))
+        pages_text = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                pages_text.append(text)
+        return "\n\n".join(pages_text)
+
+    else:
+        raise ValueError(
+            f"Unsupported file extension: {ext!r}. "
+            "Use .py, .pdf, or .txt only."
+        )
