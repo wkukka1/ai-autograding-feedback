@@ -230,7 +230,7 @@ python -m ai_feedback \
   --assignment <assignment_directory> \
   --question <question_number> \
   --model <model_name> \
-  --output <markdown|direct>
+  --output <markdown|stdout|direct>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
