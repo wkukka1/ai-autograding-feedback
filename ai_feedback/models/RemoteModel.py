@@ -31,6 +31,8 @@ class RemoteModel(Model):
         submission_file: Path,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
+        test_output:Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -46,7 +48,9 @@ class RemoteModel(Model):
         """
         print("Solution file:", solution_file)
         print(f"Submission file: {submission_file}")
-        assignment_files = [submission_file, solution_file] if solution_file else [submission_file]
+        print(f"TEST OUTPUT: {test_output}")
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
+
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
@@ -99,8 +103,7 @@ class RemoteModel(Model):
 
         for file_path in assignment_files:
             if (
-                file_path.suffix != ".txt"
-                or "error_output" in file_path.name
+                "error_output" in file_path.name
                 or file_path.suffix == ".DS_Store"
             ):
                 continue
@@ -139,7 +142,7 @@ class RemoteModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if file_path.suffix == '.txt' or file_path.suffix == (".DS_Store"):
+            if file_path.suffix == (".DS_Store"):
                 continue
 
             file_name = os.path.basename(file_path)

@@ -25,10 +25,11 @@ class ClaudeModel(Model):
     def generate_response(
         self,
         prompt: str,
-        submission_file: str,
-        solution_file: str,
+        submission_file: Path,
+        solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
+        test_output: Optional[Path] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -44,20 +45,21 @@ class ClaudeModel(Model):
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
         """
         request = ""
-        submission = Path(submission_file)
-        solution = Path(solution_file) if solution_file else None
+
 
         if question_num:
-            contents = self._get_question_contents(submission, "Submission", question_num) + "\n\n"
-            if solution:
-                contents += self._get_question_contents(solution, "Solution", question_num)
+            contents = self._get_question_contents(submission_file, "Submission", question_num) + "\n\n"
+            if solution_file:
+                contents += self._get_question_contents(solution_file, "Solution", question_num)
 
         elif scope == "text":
-            contents = self._get_pdf_contents(submission, "Submission", solution, "Solution")
+            contents = self._get_pdf_contents(submission_file, "Submission", solution_file, "Solution")
         else:
-            contents = self._get_file_contents(submission, "Submission")
-            if solution:
-                contents += "\n\n" + self._get_file_contents(solution, "Solution")
+            contents = self._get_file_contents(submission_file, "Submission")
+            if solution_file:
+                contents += "\n\n" + self._get_file_contents(solution_file, "Solution")
+        if test_output:
+            contents += f"\n\n Text Output: {test_output.read_text()}"
 
         request = f"Prompt: {prompt}\n\nFiles to reference:\n{contents}"
 
