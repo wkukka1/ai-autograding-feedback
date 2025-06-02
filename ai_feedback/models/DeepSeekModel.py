@@ -90,7 +90,7 @@ class DeepSeekModel(Model):
             if (
                 file_path.suffix == '.txt' or
                 "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                or ".DS_Store" in file_path.name
             ):
                 continue
 
@@ -132,7 +132,7 @@ class DeepSeekModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if ".DS_Store" in file_path.name:
                 continue
 
             file_name = file_path.name
