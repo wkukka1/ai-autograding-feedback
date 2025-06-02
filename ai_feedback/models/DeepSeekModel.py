@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
-
+from PyPDF2 import PdfReader
 
 class DeepSeekModel(Model):
 
@@ -88,8 +88,8 @@ class DeepSeekModel(Model):
 
         for file_path in assignment_files:
             if (
-                "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                "error_output" in file_path.name
+                or ".DS_Store" in file_path.name
             ):
                 continue
 
@@ -131,13 +131,13 @@ class DeepSeekModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if ".DS_Store" in file_path.name:
                 continue
 
             file_name = file_path.name
 
             try:
-                content = file_path.read_text()
+                content = _extract_text_from_file(file_path)
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
@@ -145,3 +145,31 @@ class DeepSeekModel(Model):
             file_contents += f"## {file_name}\n{content}\n\n"
 
         return file_contents
+
+def _extract_text_from_file(file_path: Path) -> str:
+    """
+    Given a path to a .py, .pdf, or .txt file, return its text content.
+    Raises ValueError for unsupported extensions.
+    """
+    p = Path(file_path)
+    ext = p.suffix.lower()
+
+    if ext == ".py" or ext == ".txt":
+        # Read Python source or plain text
+        return p.read_text(encoding="utf-8")
+
+    elif ext == ".pdf":
+        # Use PyPDF2 to pull text out of each page
+        reader = PdfReader(str(p))
+        pages_text = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                pages_text.append(text)
+        return "\n\n".join(pages_text)
+
+    else:
+        raise ValueError(
+            f"Unsupported file extension: {ext!r}. "
+            "Use .py, .pdf, or .txt only."
+        )
