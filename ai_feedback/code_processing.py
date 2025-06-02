@@ -31,12 +31,12 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     if not os.path.isfile(args.submission):
         raise FileNotFoundError(f"Submission file '{args.submission}' not found.")
     submission_file = Path(args.submission)
-
     solution_file = None
     if args.solution:
         if not os.path.isfile(args.solution):
             raise FileNotFoundError(f"Solution file '{args.solution}' not found.")
         solution_file = Path(args.solution)
+    test_output_file = None
     if args.test_output:
         if not os.path.isfile(args.test_output):
             raise FileNotFoundError(f"Test output file '{args.test_output}' not found.")
@@ -76,6 +76,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 prompt=prompt,
                 submission_file=submission_file,
                 solution_file=solution_file,
+                test_output=test_output_file,
                 question_num=args.question,
             )
         else:
@@ -83,6 +84,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 prompt=prompt,
                 submission_file=submission_file,
                 solution_file=solution_file,
+                test_output=test_output_file,
             )
 
     return request, response
