@@ -56,6 +56,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
                 prompt=prompt,
                 solution_file=solution_file,
                 submission_file=submission_file,
+                scope=args.scope,
                 question_num=args.question,
             )
         else:
@@ -63,6 +64,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
                 prompt=prompt,
                 solution_file=solution_file,
                 submission_file=submission_file,
+                scope=args.scope,
             )
 
     return request, response
