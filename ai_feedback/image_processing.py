@@ -94,9 +94,8 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     if not args.image:
         raise SystemExit(f"Missing image argument.")
 
-    # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
-    # Optionally extract solution images
+
     if solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
 
