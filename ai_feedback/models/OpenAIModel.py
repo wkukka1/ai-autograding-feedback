@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+from pathlib import Path
 from typing import List, Optional, Tuple
 from dotenv import load_dotenv
 import openai
@@ -24,9 +25,11 @@ class OpenAIModel(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
-        scope: Optional[str] = None,
+        submission_file: Path,
         question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
+        test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> Tuple[str, str]:
         """
         Generate a response based on the given prompt and assignment context.
@@ -40,6 +43,8 @@ class OpenAIModel(Model):
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
         """
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
+
         if question_num:
             prompt += f" Identify and generate a response for the mistakes **only** in task {question_num}. "
             file_contents = self._get_question_contents(assignment_files, question_num)
@@ -52,7 +57,7 @@ class OpenAIModel(Model):
         response = self._call_openai(request)
         return request, response
 
-    def _get_file_contents(self, assignment_files: List[str]) -> str:
+    def _get_file_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieve contents from all provided files.
 
@@ -65,7 +70,7 @@ class OpenAIModel(Model):
         file_contents = ""
 
         for file_path in assignment_files:
-            file_name = os.path.basename(file_path)
+            file_name = file_path.name
             try:
                 with open(file_path, "r") as file:
                     lines = file.readlines()
@@ -84,7 +89,7 @@ class OpenAIModel(Model):
 
         return file_contents
 
-    def _get_pdf_contents(self, assignment_files: List[str]) -> str:
+    def _get_pdf_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieve and combine text extracted from PDF files.
 
@@ -96,13 +101,13 @@ class OpenAIModel(Model):
         """
         combined_content = ""
         for file_path in assignment_files:
-            file_name = os.path.basename(file_path)
+            file_name = file_path.name
             pdf_content = self._extract_text_from_pdf(file_path)
             combined_content += f"{file_name}:\n{pdf_content}\n\n"
 
         return combined_content
 
-    def _extract_text_from_pdf(self, pdf_path: str) -> str:
+    def _extract_text_from_pdf(self, pdf_path: Path) -> str:
         """
         Extract and clean text content from a single PDF file.
 
@@ -124,7 +129,7 @@ class OpenAIModel(Model):
         return text
 
     def _get_question_contents(
-        self, assignment_files: List[str], question_num: int
+        self, assignment_files: List[Path], question_num: int
     ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
@@ -146,10 +151,8 @@ class OpenAIModel(Model):
         task_found = False
 
         for file_path in assignment_files:
-            if (
-                not file_path.endswith(".txt")
-                or "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+            if ("error_output" in file_path.name
+                or file_path.name == ".DS_Store"
             ):
                 continue
 

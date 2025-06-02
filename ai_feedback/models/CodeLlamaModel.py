@@ -2,6 +2,7 @@ import ollama
 import os
 import sys
 import re
+from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -21,8 +22,11 @@ class CodeLlamaModel(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
+        submission_file: Path,
         question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
+        test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt
@@ -37,6 +41,8 @@ class CodeLlamaModel(Model):
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
                                        or None if no valid response is returned.
         """
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
+
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
@@ -63,7 +69,7 @@ class CodeLlamaModel(Model):
         return request, response["message"]["content"]
 
     def _get_question_contents(
-        self, assignment_files: List[str], question_num: int
+        self, assignment_files: List[Path], question_num: int
     ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
@@ -86,14 +92,12 @@ class CodeLlamaModel(Model):
 
         for file_path in assignment_files:
             if (
-                not file_path.endswith(".txt")
-                or "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                "error_output" in file_path.name
+                or file_path.suffix == ".DS_Store"
             ):
                 continue
 
-            with open(file_path, "r", encoding="utf-8") as file:
-                content = file.read()
+            content = file_path.read_text()
 
             intro_match = re.search(
                 r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
@@ -118,7 +122,7 @@ class CodeLlamaModel(Model):
 
         return file_contents.strip()
 
-    def _get_file_contents(self, assignment_files: List[str]) -> str:
+    def _get_file_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieves and concatenates the contents of all assignment files.
 
@@ -130,14 +134,13 @@ class CodeLlamaModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if not file_path.suffix == ".DS_Store":
                 continue
 
-            file_name = os.path.basename(file_path)
+            file_name = file_path.name
 
             try:
-                with open(file_path, "r") as file:
-                    content = file.read()
+                content = file_path.read_text()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
