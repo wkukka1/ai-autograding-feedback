@@ -53,12 +53,7 @@ If the "text" scope is selected, the program will identify student errors in the
 If the "image" scope is selected, the program will identify issues in submission images, optionally comparing them to reference solutions. Question numbers can be specified by adding the tag `markus_question_name: <question name>` to the metadata for the code cell that generates the submission image. The previous cell's markdown content will be used as the question's context.
 
 ## Submission Type
-The program automatically detects submission type based on file extensions in the assignment directory:
-- Files ending with `_submission.ipynb` → jupyter notebook
-- Files ending with `_submission.py` → python file  
-- Files ending with `_submission.pdf` → PDF document
-
-The user can also explicitly specify the submission type using the `--submission_type` argument if auto-detection is not suitable.
+The user can explicitly specify the submission type using the `--submission_type` argument.
 
 Currently, jupyter notebook, pdf, and python assignments are supported.
 
@@ -317,8 +312,8 @@ Files:
 
 #### Python AutoTester Usage
 ##### Code Scope 
-1. Ensure the student has submitted a submission file (_submission suffixed).
-2. Ensure the instructor has submitted a solution file (_solution suffixed), llm_helpers.py (located in /markus_test_scripts), and python_tester_llm_code.py (located in /markus_test_scripts). Instructor can also upload another pytest file which can be run as its own test group. 
+1. Ensure the student has submitted a submission file.
+2. Ensure the instructor has submitted a solution file, llm_helpers.py (located in /markus_test_scripts), and python_tester_llm_code.py (located in /markus_test_scripts). Instructor can also upload another pytest file which can be run as its own test group. 
 3. Ensure the submission import statement in python_tester_llm_code.py matches the name of the student's submission file name.
 4. Create a Python Autotester Test Group to run the LLM File.
 5. In the Package Requirements section of the Test Group Settings for the LLM file, put: 
@@ -331,7 +326,7 @@ Along with any other packages that the submission or solution file uses.
 7. Ensure Markus Autotester docker container has the API Keys in an .env file and specified in the docker compose file.
 
 ##### Text Scope 
-- Do the same as the code scope, but ensure that the student submission and instructor solution are .pdf files with the same naming assumption. Also, ensure that python_tester_llm_pdf.py is uploaded as the test script. 
+- Do the same as the code scope, but ensure that the student submission and instructor solution are .pdf files. Also, ensure that python_tester_llm_pdf.py is uploaded as the test script. 
 
 #### Running Python Autotester Examples
 ##### CNN Example 
@@ -356,8 +351,8 @@ Along with any other packages that the submission or solution file uses.
 - Student uploads: student_pdf_submission.pdf
 
 #### Custom Tester Usage 
-1. Ensure the student has submitted a submission file (_submission suffixed).
-2. Ensure the instructor has submitted a solution file (_solution suffixed) and custom_tester_llm_code.sh (located in /markus_test_scripts). Instructor can also upload another script used to run its own test group. (See below for GGR274 Example.)
+1. Ensure the student has submitted a submission file.
+2. Ensure the instructor has submitted a solution file and custom_tester_llm_code.sh (located in /markus_test_scripts). Instructor can also upload another script used to run its own test group. (See below for GGR274 Example.)
 3. In the Markus Autotesting terminal: 
 ``` bash
  docker exec -it -u 0 markus-autotesting-server-1 /bin/bash
