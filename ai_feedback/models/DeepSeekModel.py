@@ -154,9 +154,15 @@ def _extract_text_from_file(file_path: Path) -> str:
     p = Path(file_path)
     ext = p.suffix.lower()
 
-    if ext == ".py" or ext == ".txt":
+    if ext == ".py":
         # Read Python source or plain text
-        return p.read_text(encoding="utf-8")
+        lines = file_path.read_text(encoding="utf-8").splitlines(keepends=True)
+        numbered = [
+            f"(Line {i + 1}) {line.rstrip() or ''}\n"
+            for i, line in enumerate(lines)
+        ]
+        header = f"=== {file_path.name} ===\n"
+        return header + "".join(numbered)
 
     elif ext == ".pdf":
         # Use PyPDF2 to pull text out of each page
@@ -168,6 +174,8 @@ def _extract_text_from_file(file_path: Path) -> str:
                 pages_text.append(text)
         return "\n\n".join(pages_text)
 
+    elif ext == '.txt':
+        return file_path.read_text(encoding="utf-8")
     else:
         raise ValueError(
             f"Unsupported file extension: {ext!r}. "
