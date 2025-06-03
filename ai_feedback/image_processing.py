@@ -96,7 +96,7 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
 
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
 
-    if solution_notebook.is_file():
+    if args.solution and solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
 
     if args.question:
