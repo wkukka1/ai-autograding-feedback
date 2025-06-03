@@ -12,7 +12,7 @@ from .helpers import arg_options
 from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
 
-def detect_submission_type(assignment_folder: str) -> str:
+def detect_submission_type(filename: str) -> str:
     """Automatically detect the submission type based on file extensions in the assignment folder.
     
     Args:
@@ -21,13 +21,12 @@ def detect_submission_type(assignment_folder: str) -> str:
     Returns:
         str: The detected submission type ("jupyter", "python", or "pdf").
     """
-    for filename in os.listdir(assignment_folder):
-        if filename.endswith("_submission.ipynb"):
-            return "jupyter"
-        elif filename.endswith("_submission.py"):
-            return "python"
-        elif filename.endswith("_submission.pdf"):
-            return "pdf"
+    if filename.endswith("_submission.ipynb"):
+        return "jupyter"
+    elif filename.endswith("_submission.py"):
+        return "python"
+    elif filename.endswith("_submission.pdf"):
+        return "pdf"
     
     print("Error: Could not auto-detect submission type.")
     sys.exit(1)
@@ -147,7 +146,7 @@ def main() -> int:
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
-        args.submission_type = detect_submission_type(args.assignment)
+        args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
 
