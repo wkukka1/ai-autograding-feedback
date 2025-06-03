@@ -21,11 +21,11 @@ def detect_submission_type(filename: str) -> str:
     Returns:
         str: The detected submission type ("jupyter", "python", or "pdf").
     """
-    if filename.endswith("_submission.ipynb"):
+    if filename.endswith(".ipynb"):
         return "jupyter"
-    elif filename.endswith("_submission.py"):
+    elif filename.endswith(".py"):
         return "python"
-    elif filename.endswith("_submission.pdf"):
+    elif filename.endswith(".pdf"):
         return "pdf"
     
     print("Error: Could not auto-detect submission type.")
