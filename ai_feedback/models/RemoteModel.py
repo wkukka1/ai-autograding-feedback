@@ -128,7 +128,6 @@ class RemoteModel(Model):
         if not task_found:
             print(f"Task {question_num} not found in any provided file.")
             sys.exit(1)
-        print(f"QUESTION CONTENTS : {file_contents}")
         return file_contents.strip()
 
     def _get_file_contents(self, assignment_files: List[Path]) -> str:
