@@ -32,23 +32,29 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     if not os.path.isfile(args.submission):
         raise FileNotFoundError(f"Submission file '{args.submission}' not found.")
     submission_file = Path(args.submission)
+
     solution_file = None
     if args.solution:
         if not os.path.isfile(args.solution):
             raise FileNotFoundError(f"Solution file '{args.solution}' not found.")
         solution_file = Path(args.solution)
+
     test_output_file = None
+
     if args.test_output:
         if not os.path.isfile(args.test_output):
             raise FileNotFoundError(f"Test output file '{args.test_output}' not found.")
         test_output_file = Path(args.test_output)
 
     if args.submission_type == "jupyter":
+        # convert submission notebooks to .txt if needed
         ensure_txt_file(args.submission, rename_files)
         submission_file = Path(args.submission.replace(".ipynb", ".txt"))
         if solution_file:
+            # convert solution notebooks to .txt if needed
             ensure_txt_file(args.solution, rename_files)
             solution_file = Path(args.solution.replace(".ipynb", ".txt"))
+
     elif args.submission_type != "python":
         raise SystemExit(f"Invalid submission type '{args.submission_type}'.")
 
