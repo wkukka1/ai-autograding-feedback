@@ -47,9 +47,6 @@ class RemoteModel(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
-        print("Solution file:", solution_file)
-        print(f"Submission file: {submission_file}")
-        print(f"TEST OUTPUT: {test_output}")
         assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
 
         if question_num:
@@ -106,7 +103,7 @@ class RemoteModel(Model):
             if (
                 file_path.suffix == '.txt' or
                 "error_output" in file_path.name
-                or file_path.suffix == ".DS_Store"
+                or file_path.name == ".DS_Store"
             ):
                 continue
 
@@ -143,7 +140,7 @@ class RemoteModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if file_path.suffix == '.txt' or file_path.suffix == (".DS_Store"):
+            if file_path.suffix == '.txt' or file_path.name == ".DS_Store":
                 continue
 
             file_name = os.path.basename(file_path)

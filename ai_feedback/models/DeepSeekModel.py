@@ -92,7 +92,7 @@ class DeepSeekModel(Model):
             if (
                 file_path.suffix == '.txt' or
                 "error_output" in file_path
-                or ".DS_Store" in file_path.name
+                or file_path.name == ".DS_Store"
             ):
                 continue
 
@@ -134,7 +134,7 @@ class DeepSeekModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if ".DS_Store" in file_path.name:
+            if file_path.name == ".DS_Store" or file_path.suffix == ".txt":
                 continue
 
             file_name = file_path.name
