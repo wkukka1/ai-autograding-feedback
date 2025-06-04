@@ -39,7 +39,8 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--output`           | Output type (from `arg_options.Output`)                           | ❌ |
 | `--solution`         | File path for the solution file                                   | ❌ |
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
-| `--submission_image` | File path for the image file                                      | ❌ |
+| `--submission_image` | File path for the submission image file                           | ❌ |
+| `--solution_image`   | File path for the solution image file                             | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
@@ -237,6 +238,7 @@ python -m ai_feedback \
   --solution <solution_file_path> \
   --test_output <test_ouput_path> \
   --submission_image <image_file_path> \
+  --solution_image <image_file_path> \
   --question <question_number> \
   --model <model_name> \
   --output <markdown|stdout|direct>
