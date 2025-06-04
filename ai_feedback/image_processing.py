@@ -1,4 +1,5 @@
 import base64
+import os
 from pathlib import Path
 
 from anthropic import Anthropic
@@ -107,13 +108,13 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     for question in questions:
         message = Message(role="user", content=prompt["prompt_content"], images=[])
 
-        # Add image attachments and extra information
-        if prompt.get("include_question_context", False):
+        # Always replace {context} when it appears
+        if "{context}" in message.content:
             context = read_question_context(OUTPUT_DIRECTORY, question)
             message.content = message.content.replace(
                 "{context}", "```\n" + context + "\n```"
             )
-        if prompt.get("include_image_size", False):
+        if "{image_size}" in message.content:
             submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, question)
             submission_image_path = submission_image_paths[
                 0
