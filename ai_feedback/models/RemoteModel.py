@@ -3,11 +3,9 @@ import json
 import os
 import sys
 import re
-from PyPDF2 import PdfReader
 from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 from dotenv import load_dotenv
 
 
@@ -39,8 +37,11 @@ class RemoteModel(Model):
 
         Args:
             prompt (str): The input prompt provided by the user.
-            assignment_files (List[str]): A list of paths to assignment files.
+            submission_file (Optional[Path]): The path to the submission file.
+            solution_file (Optional[Path]): The path to the solution file.
             question_num (Optional[int]): An optional question number to target specific content.
+            test_output (Optional[Path]): The path to the test output file.
+            scope (Optional[str]): The scope to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -73,7 +74,7 @@ class RemoteModel(Model):
 
         # Create the request
         request = urllib.request.Request(self.remote_url, data=json_data, headers=headers, method="POST")
-        print(f"PROMPT: {json_data}")
+
         # Send the request and get the response
         with urllib.request.urlopen(request) as response:
             # Print the status code and response data
@@ -92,7 +93,7 @@ class RemoteModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of file paths.
+            assignment_files (List[Path]): List of Path objects.
             question_num (int): The question number to extract from files.
 
         Returns:
@@ -109,7 +110,7 @@ class RemoteModel(Model):
             ):
                 continue
 
-            text = _extract_text_from_file(file_path)
+            text = file_path.read_text()
             intro_re = re.compile(r"(## Introduction\b.*?)(?=\n##|\Z)", re.DOTALL)
             task_re = re.compile(rf"(## Task {question_num}\b.*?)(?=\n##|\Z)", re.DOTALL)
 
@@ -135,7 +136,7 @@ class RemoteModel(Model):
         Retrieve the full contents of all assignment files.
 
         Args:
-            assignment_files (List[str]): List of file paths to be read.
+            assignment_files (List[Path]): List of Path objects to be read.
 
         Returns:
             str: Concatenated contents of all valid text files, with filenames as section headers.
@@ -148,7 +149,7 @@ class RemoteModel(Model):
             file_name = os.path.basename(file_path)
 
             try:
-               content = _extract_text_from_file(file_path)
+               content = file_path.read_text()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
@@ -156,31 +157,3 @@ class RemoteModel(Model):
             file_contents += f"## {file_name}\n{content}\n\n"
 
         return file_contents
-
-def _extract_text_from_file(file_path: Path) -> str:
-    """
-    Given a path to a .py, .pdf, or .txt file, return its text content.
-    Raises ValueError for unsupported extensions.
-    """
-    p = Path(file_path)
-    ext = p.suffix.lower()
-
-    if ext == ".py" or ext == ".txt":
-        # Read Python source or plain text
-        return p.read_text(encoding="utf-8")
-
-    elif ext == ".pdf":
-        # Use PyPDF2 to pull text out of each page
-        reader = PdfReader(str(p))
-        pages_text = []
-        for page in reader.pages:
-            text = page.extract_text()
-            if text:
-                pages_text.append(text)
-        return "\n\n".join(pages_text)
-
-    else:
-        raise ValueError(
-            f"Unsupported file extension: {ext!r}. "
-            "Use .py, .pdf, or .txt only."
-        )

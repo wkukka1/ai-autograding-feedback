@@ -1,11 +1,8 @@
 import ollama
-import os
 import sys
 import re
 from pathlib import Path
 from typing import List, Optional, Tuple
-
-from PyPDF2 import PdfReader
 
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -37,7 +34,10 @@ class CodeLlamaModel(Model):
 
         Args:
             prompt (str): The user's prompt to be fed into the model.
-            assignment_files (List[str]): A list of assignment file paths.
+            submission_file (Optional[Path]): The path to the submission file.
+            solution_file (Optional[Path]): The path to the solution file.
+            test_output (Optional[Path]): The path to the test output file.
+            scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional specific question number to extract content for.
 
         Returns:
@@ -52,6 +52,7 @@ class CodeLlamaModel(Model):
             file_contents = self._get_file_contents(assignment_files)
 
         request = f"Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
+
         response = ollama.chat(
             model=self.model["model"],
             messages=[
@@ -80,7 +81,7 @@ class CodeLlamaModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of file paths to parse.
+            assignment_files (List[Path]): List of Path objects to parse.
             question_num (int): The target task number to extract.
 
         Returns:
@@ -130,7 +131,7 @@ class CodeLlamaModel(Model):
         Retrieves and concatenates the contents of all assignment files.
 
         Args:
-            assignment_files (List[str]): A list of file paths.
+            assignment_files (List[Path]): A list of Path objects to parse.
 
         Returns:
             str: Combined file contents, each prefixed with its filename as a Markdown header.
@@ -143,7 +144,7 @@ class CodeLlamaModel(Model):
             file_name = file_path.name
 
             try:
-                content = _extract_text_from_file(file_path)
+                content = file_path.read_text()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
@@ -151,31 +152,3 @@ class CodeLlamaModel(Model):
             file_contents += f"## {file_name}\n{content}\n\n"
 
         return file_contents
-
-def _extract_text_from_file(file_path: Path) -> str:
-    """
-    Given a path to a .py, .pdf, or .txt file, return its text content.
-    Raises ValueError for unsupported extensions.
-    """
-    p = Path(file_path)
-    ext = p.suffix.lower()
-
-    if ext == ".py" or ext == ".txt":
-        # Read Python source or plain text
-        return p.read_text(encoding="utf-8")
-
-    elif ext == ".pdf":
-        # Use PyPDF2 to pull text out of each page
-        reader = PdfReader(str(p))
-        pages_text = []
-        for page in reader.pages:
-            text = page.extract_text()
-            if text:
-                pages_text.append(text)
-        return "\n\n".join(pages_text)
-
-    else:
-        raise ValueError(
-            f"Unsupported file extension: {ext!r}. "
-            "Use .py, .pdf, or .txt only."
-        )

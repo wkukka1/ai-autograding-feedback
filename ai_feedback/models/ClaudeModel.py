@@ -5,7 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import anthropic
 import PyPDF2
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -38,14 +38,13 @@ class ClaudeModel(Model):
             prompt (str): The user's prompt for the model.
             solution_file: path to the solution file.
             submission_file: path to the submission file.
+            test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
         """
-        request = ""
-
 
         if question_num:
             contents = self._get_question_contents(submission_file, "Submission", question_num) + "\n\n"

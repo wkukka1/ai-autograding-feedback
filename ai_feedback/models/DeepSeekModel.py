@@ -1,5 +1,4 @@
 import ollama
-import os
 import sys
 import re
 from pathlib import Path
@@ -33,7 +32,10 @@ class DeepSeekModel(Model):
 
         Args:
             prompt (str): The input prompt provided by the user.
-            assignment_files (List[str]): A list of paths to assignment files.
+            submission_file (Optional[Path]): The path to the submission file.
+            solution_file (Optional[Path]): The path to the solution file.
+            test_output (Optional[Path]): The path to the test output file.
+            scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional question number to target specific content.
 
         Returns:
@@ -77,7 +79,7 @@ class DeepSeekModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of file paths.
+            assignment_files (List[Path]): List of Path objects.
             question_num (int): The question number to extract from files.
 
         Returns:
@@ -125,7 +127,7 @@ class DeepSeekModel(Model):
         Retrieve the full contents of all assignment files.
 
         Args:
-            assignment_files (List[str]): List of file paths to be read.
+            assignment_files (List[Path]): List of Path objects to be read.
 
         Returns:
             str: Concatenated contents of all valid text files, with filenames as section headers.

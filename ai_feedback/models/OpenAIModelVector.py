@@ -51,7 +51,10 @@ class OpenAIModelVector(Model):
 
         Args:
             prompt (str): The user's prompt to feed into the model.
-            assignment_files (List[str]): A list of file paths to be uploaded for context.
+            submission_file (Optional[Path]): The path to a file to store the response to.
+            solution_file (Optional[Path]): The path to a file to store the response to.
+            test_output (Optional[Path]): The path to a file to store the response to.
+            scope (Optional[str]): The path to a file to store the response to.
             question_num (Optional[int]): An optional question number.
 
         Returns:

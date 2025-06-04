@@ -36,7 +36,9 @@ class OpenAIModel(Model):
 
         Args:
             prompt (str): The user's prompt to feed into the model.
-            assignment_files (List[str]): Paths to files to include in the prompt.
+            submission_file (Path): Path to the submission file.
+            solution_file (Path): Path to the solution file.
+            test_output (Path): Path to the test output file.
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific question number to focus on.
 
@@ -62,7 +64,7 @@ class OpenAIModel(Model):
         Retrieve contents from all provided files.
 
         Args:
-            assignment_files (List[str]): List of file paths.
+            assignment_files (List[Path]): List of Path objects.
 
         Returns:
             str: Combined content of all files, formatted with line numbers.
@@ -94,7 +96,7 @@ class OpenAIModel(Model):
         Retrieve and combine text extracted from PDF files.
 
         Args:
-            assignment_files (List[str]): List of PDF file paths.
+            assignment_files (List[Path]): List of Path objects that point to PDF files.
 
         Returns:
             str: Combined extracted text from all PDF files.
@@ -138,7 +140,7 @@ class OpenAIModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of assignment file paths.
+            assignment_files (List[Path]): List of Path objects.
             question_num (int): The question number to extract.
 
         Returns:
