@@ -85,6 +85,7 @@ class ClaudeModel(Model):
             str: Combined, formatted content of the files with line numbers.
         """
         file_contents = ""
+
         if not file_path:
             return ''
         file_name = file_path.name
