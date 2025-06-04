@@ -117,6 +117,7 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
                 "{context}", "```\n" + context + "\n```"
             )
         if prompt.get("include_image_size", False):
+            # Only consider one image per question
             image = PILImage.open(args.image)
             message.content = message.content.replace(
                 "{image_size}", f"{image.width} by {image.height}"
