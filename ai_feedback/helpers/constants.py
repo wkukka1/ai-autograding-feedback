@@ -14,5 +14,5 @@ HELP_MESSAGES = {
     "model": "The name of the LLM model to use for evaluation.",
     "output": "Format to display the output response.",
     "test_output": "The output of tests from evaluating the assignment.",
-    "image": "The file path for the image file.",
+    "submission_image": "The file path for the image file.",
 }

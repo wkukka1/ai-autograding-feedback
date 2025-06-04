@@ -217,14 +217,14 @@ def test_ggr274_image_question5b_llama_stdout(capsys):
     Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision, printing to stdout.
     python3 -m ai_feedback --prompt image_analyze --scope image \
       --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb \
-      --image test_submissions/ggr274_homework5/image_test2/student_submission.png \
+      --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png \
       --question "Question 5b" --model llama3.2-vision --output stdout
     """
     args = [
         "--prompt", "image_analyze",
         "--scope", "image",
         "--submission", "../test_submissions/ggr274_homework5/image_test2/student_submission.ipynb",
-        "--image", "../test_submissions/ggr274_homework5/image_test2/student_submission.png",
+        "--submission_image", "../test_submissions/ggr274_homework5/image_test2/student_submission.png",
         "--question", "Question 5b",
         "--model", "llama3.2-vision:90b",
         "--output", "stdout",

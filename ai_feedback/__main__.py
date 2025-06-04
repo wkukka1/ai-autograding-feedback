@@ -137,10 +137,10 @@ def main() -> int:
         default=None,
         help=HELP_MESSAGES["test_output"])
     parser.add_argument(
-        "--image",
+        "--submission_image",
         type=str,
         required=False,
-        help=HELP_MESSAGES["image"]
+        help=HELP_MESSAGES["submission_image"]
     )
     args = parser.parse_args()
 

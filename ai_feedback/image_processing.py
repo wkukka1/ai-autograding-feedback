@@ -91,7 +91,7 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     submission_notebook = Path(args.submission)
     if args.solution and args.solution != '':
         solution_notebook = Path(args.solution)
-    if not args.image:
+    if not args.submission_image:
         raise SystemExit(f"Missing image argument.")
 
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
@@ -117,15 +117,15 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
             )
         if prompt.get("include_image_size", False):
             # Only consider one image per question
-            image = PILImage.open(args.image)
+            image = PILImage.open(args.submission_image)
             message.content = message.content.replace(
                 "{image_size}", f"{image.width} by {image.height}"
             )
         if prompt.get("include_submission_image", False):
-            submission_image_path = args.image
+            submission_image_path = args.submission_image
             message.images.append(Image(value=submission_image_path))
         if prompt.get("include_solution_image", False):
-            solution_image_path = args.image
+            solution_image_path = args.submission_image
             message.images.append(Image(value=solution_image_path))
 
         # Prompt the LLM
