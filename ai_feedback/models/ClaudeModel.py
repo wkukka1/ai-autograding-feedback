@@ -54,9 +54,7 @@ class ClaudeModel(Model):
         elif scope == "text":
             file_contents = self._get_pdf_contents(submission_file, solution_file)
         else:
-            file_contents = self._get_file_contents(submission_file)
-            file_contents += '\n' + self._get_file_contents(solution_file)
-            file_contents += '\n' + self._get_file_contents(test_output)
+            file_contents = "\n".join(self._get_file_contents(f) for f in assignment_files)
 
         request += f"Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
 
