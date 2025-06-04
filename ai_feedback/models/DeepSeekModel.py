@@ -88,6 +88,7 @@ class DeepSeekModel(Model):
 
         for file_path in assignment_files:
             if (
+                file_path.suffix == '.txt' or
                 "error_output" in file_path
                 or file_path.endswith(".DS_Store")
             ):

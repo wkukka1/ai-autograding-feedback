@@ -151,7 +151,9 @@ class OpenAIModel(Model):
         task_found = False
 
         for file_path in assignment_files:
-            if ("error_output" in file_path.name
+            if (
+                file_path.suffix == '.txt' or
+                "error_output" in file_path.name
                 or file_path.name == ".DS_Store"
             ):
                 continue
