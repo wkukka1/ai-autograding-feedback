@@ -93,9 +93,9 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
         solution_notebook = Path(args.solution)
     if not args.submission_image:
         raise SystemExit(f"Missing image argument.")
-
+    # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
-
+    # Optionally extract solution images
     if args.solution and solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
 
@@ -122,9 +122,11 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
                 "{image_size}", f"{image.width} by {image.height}"
             )
         if prompt.get("include_submission_image", False):
+            # Only consider one image per question
             submission_image_path = args.submission_image
             message.images.append(Image(value=submission_image_path))
         if prompt.get("include_solution_image", False):
+            # Only consider one image per question
             solution_image_path = args.submission_image
             message.images.append(Image(value=solution_image_path))
 
