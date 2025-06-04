@@ -23,7 +23,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         Tuple[str, str]: A tuple containing the request and the model's generated response.
 
     Raises:
-        FileNotFoundError: If the specified assignment folder does not exist.
+        FileNotFoundError: If the specified submission or solution files do not exist.
         SystemExit: If the model name provided in args is not recognized.
     """
     submission_file = Path(args.submission)
