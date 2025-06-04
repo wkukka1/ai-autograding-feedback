@@ -26,7 +26,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
         Tuple[str, str]: A tuple containing the final request string and the model's generated response.
 
     Raises:
-        FileNotFoundError: If the assignment folder does not exist.
+        FileNotFoundError: If the submission, solution, or test_output file does not exist.
         SystemExit: If an invalid model is selected.
     """
     if not os.path.isfile(args.submission):
