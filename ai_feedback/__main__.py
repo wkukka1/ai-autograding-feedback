@@ -16,7 +16,7 @@ def detect_submission_type(filename: str) -> str:
     """Automatically detect the submission type based on file extensions in the assignment folder.
     
     Args:
-        assignment_folder (str): Path to the assignment directory.
+        filename (str): Path to the file.
         
     Returns:
         str: The detected submission type ("jupyter", "python", or "pdf").
