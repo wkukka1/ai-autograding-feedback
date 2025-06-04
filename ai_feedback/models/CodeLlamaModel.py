@@ -97,7 +97,7 @@ class CodeLlamaModel(Model):
             if (
                 file_path.suffix == '.txt' or
                 "error_output" in file_path.name
-                or file_path.suffix == ".DS_Store"
+                or file_path.name == ".DS_Store"
             ):
                 continue
 
@@ -138,7 +138,7 @@ class CodeLlamaModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if file_path.suffix == ".DS_Store":
+            if file_path.suffix == '.txt' or file_path.name == ".DS_Store":
                 continue
 
             file_name = file_path.name
