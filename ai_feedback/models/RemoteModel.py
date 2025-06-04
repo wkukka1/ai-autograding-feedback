@@ -101,31 +101,37 @@ class RemoteModel(Model):
 
         for file_path in assignment_files:
             if (
-                file_path.suffix == '.txt' or
+                file_path.suffix != '.txt' or
                 "error_output" in file_path.name
                 or file_path.name == ".DS_Store"
             ):
                 continue
 
-            text = file_path.read_text()
-            intro_re = re.compile(r"(## Introduction\b.*?)(?=\n##|\Z)", re.DOTALL)
-            task_re = re.compile(rf"(## Task {question_num}\b.*?)(?=\n##|\Z)", re.DOTALL)
+            content = file_path.read_text()
 
             # Extract Introduction block
-            intro = intro_re.search(text)
-            task = task_re.search(text)
-            if task:
+            intro_match = re.search(
+                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
+            )
+            intro_content = intro_match.group(1).strip() if intro_match else ""
+
+            # Extract Task block
+            task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
+            task_match = re.search(task_pattern, content, re.DOTALL)
+
+            task_content = ""
+            if task_match:
+                task_content = task_match.group(1).strip()
                 task_found = True
 
-            file_contents += f"\n\n---\n### {file_path.name}\n\n"
-            if intro:
-                file_contents += intro.group(1).strip() + "\n\n"
-            if task:
-                file_contents += task.group(1).strip() + "\n\n"
+            file_contents += f"\n\n---\n### {file_path}\n\n"
+            file_contents += intro_content + "\n\n" if intro_content else ""
+            file_contents += task_content + "\n\n"
 
         if not task_found:
             print(f"Task {question_num} not found in any provided file.")
             sys.exit(1)
+
         return file_contents.strip()
 
     def _get_file_contents(self, assignment_files: List[Path]) -> str:
@@ -140,7 +146,7 @@ class RemoteModel(Model):
         """
         file_contents = ""
         for file_path in assignment_files:
-            if file_path.suffix == '.txt' or file_path.name == ".DS_Store":
+            if file_path.suffix != '.txt' or file_path.name == ".DS_Store":
                 continue
 
             file_name = os.path.basename(file_path)

@@ -154,7 +154,7 @@ class OpenAIModel(Model):
 
         for file_path in assignment_files:
             if (
-                file_path.suffix == '.txt' or
+                file_path.suffix != '.txt' or
                 "error_output" in file_path.name
                 or file_path.name == ".DS_Store"
             ):
