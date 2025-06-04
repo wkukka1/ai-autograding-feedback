@@ -67,7 +67,6 @@ To view the predefined prompts, navigate to the ai_feedback/data/prompts folder.
 ```json
 {
   "prompt_content": "The text prompt that will be sent to the model",
-  "include_question_context": false,
   "include_submission_image": false,
   "include_solution_image": false
 }
@@ -81,7 +80,6 @@ Prompt Naming Conventions:
 If the --scope argument is provided and its value does not match the prefix of the selected --prompt, an error message will be displayed.
 
 Prompt Extra Options (for image scope only):
-- `include_question_context` (true/false): If set to true, a `{context}` field can be added to the prompt, which will be replaced with the markdown content of the cell before the code cell with the `markus_question_name` tag.
 - `include_submission_image` (true/false): Whether the student submission image should be attached in the prompt.
 - `include_solution_image` (true/false): Whether the solution image should be attached in the prompt.
 

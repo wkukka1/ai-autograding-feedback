@@ -5,6 +5,7 @@ from typing import Callable, List, Tuple
 
 from .helpers.arg_options import model_mapping
 from .helpers.file_converter import rename_files
+from .helpers.template_utils import render_prompt_template
 
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
@@ -56,20 +57,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
             )
         ]
 
-    for file in assignment_files:
-        filename = os.path.basename(file)
-        name_without_ext, _ = os.path.splitext(filename)
-
-        if name_without_ext.endswith("_solution"):
-            prompt += (
-                f"\nThe instructor's solution file you should reference is {filename}."
-            )
-        elif name_without_ext.endswith("_submission"):
-            prompt += f"\nThe student's code submission file you should reference is {filename}."
-        elif name_without_ext.endswith("test_output"):
-            prompt += (
-                f"\nThe student's error trace file you should reference is {filename}."
-            )
+    prompt = render_prompt_template(prompt, assignment_files=assignment_files)
 
     if args.model in model_mapping:
         model = model_mapping[args.model]()

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Tuple, List
 
 from .helpers.arg_options import model_mapping
+from .helpers.template_utils import render_prompt_template
 
 EXPECTED_SUFFIXES = ["_solution", "_submission"]
 
@@ -38,16 +39,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         and any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
     ]
 
-    for file in assignment_files:
-        filename = os.path.basename(file)
-        name_without_ext, _ = os.path.splitext(filename)
-
-        if name_without_ext.endswith("_solution"):
-            prompt += (
-                f"\nThe instructor's solution file you should reference is {filename}."
-            )
-        elif name_without_ext.endswith("_submission"):
-            prompt += f"\nThe student's code submission file you should reference is {filename}."
+    rendered_prompt = render_prompt_template(prompt, assignment_files=assignment_files)
 
     if args.model in model_mapping:
         model = model_mapping[args.model]()
@@ -55,17 +47,15 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         print("Invalid model selected for text scope.")
         sys.exit(1)
 
-    if args.scope == "text":
-        if args.question:
-            request, response = model.generate_response(
-                prompt=prompt,
-                scope=args.scope,
-                assignment_files=assignment_files,
-                question_num=args.question,
-            )
-        else:
-            request, response = model.generate_response(
-                prompt=prompt, scope=args.scope, assignment_files=assignment_files
-            )
+    if args.question:
+        request, response = model.generate_response(
+            prompt=rendered_prompt,
+            assignment_files=assignment_files,
+            question_num=args.question,
+        )
+    else:
+        request, response = model.generate_response(
+            prompt=rendered_prompt, assignment_files=assignment_files
+        )
 
     return request, response

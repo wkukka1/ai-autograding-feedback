@@ -1,6 +1,5 @@
 {
     "prompt_content": "Provide the differences between these two images regarding the graph elements below. Respond in table format.\n- Title\n- Axes\n- Scale\n- Graph Type\n- Font\n- Data Points",
-    "include_question_context": false,
     "include_submission_image": true,
     "include_solution_image": true
 }
