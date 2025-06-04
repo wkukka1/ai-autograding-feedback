@@ -30,7 +30,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
     if not submission_file.is_file():
         raise FileNotFoundError(f"Submission file '{submission_file}' not found.")
     solution_file = None
-    if args.solution and args.solution != '':
+    if args.solution:
         solution_file = Path(args.solution)
         if not solution_file.is_file():
             raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
