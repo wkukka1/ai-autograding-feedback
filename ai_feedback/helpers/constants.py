@@ -15,4 +15,5 @@ HELP_MESSAGES = {
     "output": "Format to display the output response.",
     "test_output": "The output of tests from evaluating the assignment.",
     "submission_image": "The file path for the image file.",
+    "solution_image": "The file path to the solution image."
 }
