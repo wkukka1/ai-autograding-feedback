@@ -13,7 +13,7 @@ from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
 
 def detect_submission_type(filename: str) -> str:
-    """Automatically detect the submission type based on file extensions in the assignment folder.
+    """Automatically detect the submission type based on file extensions.
     
     Args:
         filename (str): Path to the file.
@@ -141,6 +141,12 @@ def main() -> int:
         type=str,
         required=False,
         help=HELP_MESSAGES["submission_image"]
+    )
+    parser.add_argument(
+        "--solution_image",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["solution_image"]
     )
     args = parser.parse_args()
 

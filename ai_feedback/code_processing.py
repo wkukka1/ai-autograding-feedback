@@ -1,10 +1,11 @@
 import os
 import sys
 from pathlib import Path
-from typing import Callable, List, Tuple
+from typing import Callable, Tuple
 
 from .helpers.arg_options import model_mapping
 from .helpers.file_converter import rename_files
+from .helpers.template_utils import render_prompt_template
 
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
@@ -51,18 +52,9 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     elif args.submission_type != "python":
         raise SystemExit(f"Invalid submission type '{args.submission_type}'.")
 
-    prompt += (
-        f"\nThe student's code submission file you should reference is "
-        f"{submission_file.name}."
-    )
-    if solution_file:
-        prompt += (
-            f"\nThe instructor's solution file you should reference is "
-            f"{solution_file.name}."
-        )
-    if args.test_output:
-        prompt += (f"\nThe test output file you should reference is "
-                   f"{test_output_file.name}.")
+    assignment_files = [f for f in [args.submission, args.solution, args.test_output] if f]
+
+    prompt = render_prompt_template(prompt, assignment_files=assignment_files)
 
     if args.model in model_mapping:
         model = model_mapping[args.model]()
@@ -90,13 +82,15 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     return request, response
 
 
-def ensure_txt_file(file_path: str, rename_function: Callable) -> None:
-    """
-    Ensures a .txt version of the given file exists if needed (e.g., for Jupyter .ipynb files).
+def ensure_txt_file(file_path: str, rename_function: Callable[[Path], None]) -> None:
+    """Ensures a .txt version of the given file exists if needed (e.g., for Jupyter .ipynb files).
 
     Args:
-        file_path (str): Path to the original file.
-        rename_function (Callable): A function that converts or renames the file to .txt format.
+        file_path (str): Path to the assignment directory.
+        rename_function (Callable): A function that handles renaming or converting files.
+
+    Returns:
+        None
     """
     txt_file_path = file_path.replace(".ipynb", ".txt")
     if not os.path.exists(txt_file_path) and file_path.endswith(".ipynb"):

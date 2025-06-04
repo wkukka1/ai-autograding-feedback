@@ -1,7 +1,5 @@
 {
     "prompt_content": "Evaluate the graphs in the {image_size} image regarding the characteristics below and suggest improvements if needed. Respond with a JSON array of objects, where each object contains `description`, a description of the problem, and `location`, the location of the issue in the image as a bounding box in (x1, y1, x2, y2) format.\n- Main Title\n- Subplot Titles\n- Axis Labels\n- Scale numbers\n- Graph Type",
-    "include_question_context": false,
-    "include_image_size": true,
     "include_submission_image": true,
     "include_solution_image": false
 }

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Tuple, List
 
 from .helpers.arg_options import model_mapping
+from .helpers.template_utils import render_prompt_template
 
 
 def process_text(args, prompt: str) -> Tuple[str, str]:
@@ -34,15 +35,9 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         if not solution_file.is_file():
             raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
 
-    prompt += (
-        f"\nThe student's code submission file you should reference is "
-        f"{submission_file}."
-    )
-    if solution_file:
-        prompt += (
-            f"\nThe instructor's solution file you should reference is "
-            f"{solution_file}."
-        )
+    assignment_files = [args.submission, args.solution] if solution_file else [args.submission]
+
+    rendered_prompt = render_prompt_template(prompt, assignment_files=assignment_files)
 
     if args.model in model_mapping:
         model = model_mapping[args.model]()
@@ -50,21 +45,20 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         print("Invalid model selected for text scope.")
         sys.exit(1)
 
-    if args.scope == "text":
-        if args.question:
-            request, response = model.generate_response(
-                prompt=prompt,
-                solution_file=solution_file,
-                submission_file=submission_file,
-                scope=args.scope,
-                question_num=args.question,
-            )
-        else:
-            request, response = model.generate_response(
-                prompt=prompt,
-                solution_file=solution_file,
-                submission_file=submission_file,
-                scope=args.scope,
-            )
+    if args.question:
+        request, response = model.generate_response(
+            prompt=rendered_prompt,
+            solution_file=solution_file,
+            submission_file=submission_file,
+            scope=args.scope,
+            question_num=args.question,
+        )
+    else:
+        request, response = model.generate_response(
+            prompt=rendered_prompt,
+            solution_file=solution_file,
+            submission_file=submission_file,
+            scope=args.scope,
+        )
 
     return request, response

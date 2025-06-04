@@ -89,7 +89,7 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     Returns the LLM prompt delivered and the returned response."""
     OUTPUT_DIRECTORY = "output_images"
     submission_notebook = Path(args.submission)
-    if args.solution and args.solution != '':
+    if args.solution:
         solution_notebook = Path(args.solution)
     if not args.submission_image:
         raise SystemExit(f"Missing image argument.")
@@ -109,15 +109,16 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     for question in questions:
         message = Message(role="user", content=prompt["prompt_content"], images=[])
 
-        # Add image attachments and extra information
-        if prompt.get("include_question_context", False):
+        # Always replace {context} when it appears
+        if "{context}" in message.content:
             context = read_question_context(OUTPUT_DIRECTORY, question)
             message.content = message.content.replace(
                 "{context}", "```\n" + context + "\n```"
             )
-        if prompt.get("include_image_size", False):
+        if "{image_size}" in message.content:
+            submission_image_path = args.submission_image
             # Only consider one image per question
-            image = PILImage.open(args.submission_image)
+            image = PILImage.open(submission_image_path)
             message.content = message.content.replace(
                 "{image_size}", f"{image.width} by {image.height}"
             )
@@ -125,9 +126,9 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
             # Only consider one image per question
             submission_image_path = args.submission_image
             message.images.append(Image(value=submission_image_path))
-        if prompt.get("include_solution_image", False):
+        if prompt.get("include_solution_image", False) and args.solution_image:
             # Only consider one image per question
-            solution_image_path = args.submission_image
+            solution_image_path = args.solution_image
             message.images.append(Image(value=solution_image_path))
 
         # Prompt the LLM
