@@ -108,3 +108,14 @@ class OutputType(Enum):
 
     def __str__(self):
         return self.value
+
+class Mode(Enum):
+    """
+    Enum representing the output mode for invoking llama.cpp.
+    """
+
+    SERVER = "server"
+    CLI = "cli"
+
+    def __str__(self):
+        return self.value
