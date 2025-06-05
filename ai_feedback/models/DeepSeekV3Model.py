@@ -11,7 +11,7 @@ from .Model import Model
 class DeepseekV3Model(Model):
     def __init__(self):
         super().__init__()
-        self.llama_bin_path = '/data/llama.cpp/bin'
+        self.llama_bin_path = '/data1/llama.cpp/bin'
         self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
         self.gpu_layers = '40'
 
