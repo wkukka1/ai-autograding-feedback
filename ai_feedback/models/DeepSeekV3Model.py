@@ -36,9 +36,6 @@ class DeepseekV3Model(Model):
             "-p", f"'{prompt}'" # need to add quotes to the prompt since it is multiline
         ]
 
-        print(f"Working directory: {self.llama_bin_path}", file=sys.stdout, flush=True)
-        print(f"Full command: {' '.join(cmd)}", file=sys.stdout, flush=True)
-
         try:
             completed = subprocess.run(
                 cmd,
@@ -65,14 +62,19 @@ class DeepseekV3Model(Model):
 
         # Decode with 'replace' so invalid UTF-8 bytes become U+FFFD
         stdout_text = completed.stdout.decode('utf-8', errors='replace')
-        stderr_text = completed.stderr.decode('utf-8', errors='replace')
 
-        # Print both streams to help with debugging
+        if stdout_text.startswith(prompt):
+            # Remove “prompt” plus any single newline immediately after it
+            remainder = stdout_text[len(prompt):]
+            # If there’s a leading newline, drop it
+            if remainder.startswith("\n"):
+                remainder = remainder[1:]
+            response = remainder.strip()
+        else:
+            response = stdout_text.strip()
+
+        # DEBUG stdout
         print("=== llama-cli stdout ===", file=sys.stdout, flush=True)
-        print(stdout_text, file=sys.stdout, flush=True)
-        print("=== llama-cli stderr ===", file=sys.stdout, flush=True)
-        print(stderr_text, file=sys.stdout, flush=True)
+        print(response, file=sys.stdout, flush=True)
 
-        # Strip any trailing whitespace from the generated text
-        response = stdout_text.strip()
         return prompt, response
