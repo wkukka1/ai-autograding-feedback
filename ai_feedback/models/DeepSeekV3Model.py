@@ -147,7 +147,7 @@ class DeepseekV3Model(Model):
             "-m", self.model_path,
             "--n-gpu-layers", self.gpu_layers,
             "-no-cnv",
-            "-p", quoted_prompt
+            "-p", prompt
         ]
 
         try:
