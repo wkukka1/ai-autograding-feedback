@@ -42,8 +42,8 @@ class DeepseekV3Model(Model):
             completed = subprocess.run(
                 cmd,
                 check=True,
-                stdout=subprocess.STDOUT,
-                stderr=subprocess.PIPE,
+                # stdout=subprocess.STDOUT,
+                # stderr=subprocess.PIPE,
                 universal_newlines=True,
                 cwd=self.llama_bin_path,
                 timeout=120
