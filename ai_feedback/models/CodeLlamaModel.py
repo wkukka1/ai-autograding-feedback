@@ -152,3 +152,4 @@ class CodeLlamaModel(Model):
             file_contents += f"## {file_name}\n{content}\n\n"
 
         return file_contents
+
