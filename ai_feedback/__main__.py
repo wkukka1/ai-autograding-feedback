@@ -113,6 +113,14 @@ def main() -> int:
         default='stdout',
         help=HELP_MESSAGES["output"],
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.Mode),
+        required=False,
+        default="cli",
+        help=HELP_MESSAGES["mode"],
+    )
 
     args = parser.parse_args()
 

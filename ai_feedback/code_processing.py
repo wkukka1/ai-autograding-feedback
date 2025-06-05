@@ -71,10 +71,11 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 prompt=prompt,
                 assignment_files=assignment_files,
                 question_num=args.question,
+                mode=args.mode,
             )
         else:
             request, response = model.generate_response(
-                prompt=prompt, assignment_files=assignment_files
+                prompt=prompt, assignment_files=assignment_files, mode=args.mode
             )
 
     return request, response
