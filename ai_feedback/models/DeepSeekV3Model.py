@@ -221,6 +221,7 @@ class DeepseekV3Model(Model):
         Poll every second until either the server’s port is open or we hit timeout.
         Returns True if port became available, False if we timed out.
         """
+        time.sleep(5)
         start = time.time()
         while time.time() - start < timeout_s:
             if self._is_port_open(host, port):
