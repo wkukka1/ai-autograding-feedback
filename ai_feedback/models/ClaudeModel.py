@@ -34,6 +34,7 @@ class ClaudeModel(Model):
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
+
         Args:
             prompt (str): The user's prompt for the model.
             solution_file: path to the solution file.
@@ -41,6 +42,7 @@ class ClaudeModel(Model):
             test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
+
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
         """
@@ -112,9 +114,9 @@ class ClaudeModel(Model):
         Retrieves text content from PDF files specifically for student and instructor submissions.
 
         Args:
-           submission_file (Path): Path to the submission file.
-           solution_file (Path): Path to the solution file.
-           test_output (Path): Path to the test output file.
+            submission_file (Path): Path to the submission file.
+            solution_file (Path): Path to the solution file.
+            test_output (Path): Path to the test output file.
 
         Returns:
             str: Combined content of student and instructor PDFs.

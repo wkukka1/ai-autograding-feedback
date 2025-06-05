@@ -4,8 +4,6 @@ import re
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from httpx import request
-
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
@@ -46,8 +44,6 @@ class CodeLlamaModel(Model):
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
                                        or None if no valid response is returned.
         """
-        request = ""
-
         assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
 
         if question_num:
