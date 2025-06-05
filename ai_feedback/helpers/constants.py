@@ -8,8 +8,12 @@ HELP_MESSAGES = {
     "prompt": "The specific prompt to use for evaluating the assignment.",
     "prompt_text": "Additional messages to concatenate to the prompt.",
     "scope": "The section of the assignment the model should analyze (e.g., code or image).",
-    "assignment": "The name of the assignment to be evaluated.",
+    "submission": "The file path for the submission file.",
+    "solution": "The file path for the solution file.",
     "question": "The specific question number to analyze within the assignment (if applicable).",
     "model": "The name of the LLM model to use for evaluation.",
     "output": "Format to display the output response.",
+    "test_output": "The output of tests from evaluating the assignment.",
+    "submission_image": "The file path for the image file.",
+    "solution_image": "The file path to the solution image."
 }

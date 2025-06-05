@@ -10,7 +10,7 @@ For the code scope, the program takes three files:
 - A student's submission file
 - A test file 
 
-For the text scope, the program takes three files:
+For the text scope, the program takes two files:
 - An assignment's solution file
 - A student's submission file
 
@@ -26,18 +26,21 @@ For the image scope, the program takes up to two files, depending on the prompt 
 - Saves response output in Markdown format with a predefined template or prints to stdout.
 
 ## Argument Details
-| Argument          | Description                                      | Required |
-|------------------|--------------------------------------------------|----------|
-| `--submission_type` | Type of submission (from `arg_options.FileType`) | ❌ |
-| `--prompt`       | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
-| `--prompt_text`       | Additional string text prompt that can be fed to model. | ❌ ** |
-| `--prompt_custom`       | The name of prompt file uploaded to be used by model. | ❌ ** |
-| `--scope`        | Processing scope (`image` or `code` or `text`)             | ✅ |
-| `--assignment`   | Name of the directory which contains test files  | ✅ |
-| `--question`     | Specific question to evaluate                      | ❌ |
-| `--model`        | Model type (from `arg_options.Models`)           | ✅ |
-| `--output`       | Output type (from `arg_options.Output`)             | ❌ |
-
+| Argument             | Description                                                       | Required |
+|----------------------|-------------------------------------------------------------------|----------|
+| `--submission_type`  | Type of submission (from `arg_options.FileType`)                  | ❌ |
+| `--prompt`           | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
+| `--prompt_text`      | Additional string text prompt that can be fed to model.           | ❌ ** |
+| `--prompt_custom`    | The name of prompt file uploaded to be used by model.             | ❌ ** |
+| `--scope`            | Processing scope (`image` or `code` or `text`)                    | ✅ |
+| `--submission`       | Submission file path                                              | ✅ |
+| `--question`         | Specific question to evaluate                                     | ❌ |
+| `--model`            | Model type (from `arg_options.Models`)                            | ✅ |
+| `--output`           | Output type (from `arg_options.Output`)                           | ❌ |
+| `--solution`         | File path for the solution file                                   | ❌ |
+| `--test_output`      | File path for the file containing the results from tests          | ❌ |
+| `--submission_image` | File path for the submission image file                           | ❌ |
+| `--solution_image`   | File path for the solution image file                             | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
@@ -173,7 +176,6 @@ ai_feedback/test_responses_md/test1/openai/code_table_20250310_143500.md
 - When `--output direct` is selected, only the generated response will be sent to stdout.
 
 ## Test Files
-- The --assignment argument specifies the directory that contains the submission file (_submission suffix required) and solution file (_solution suffix required), which the model will analyze. See the /test_submissions directory for examples. 
 - Any subdirectory of /test_submissions can be run locally. More examples can be added to this directory using a similar fashion.
 
 ## GGR274 Test File Assumptions
@@ -232,7 +234,11 @@ python -m ai_feedback \
   --submission_type <file_type> \
   --prompt <prompt_name> \
   --scope <image|code|text> \
-  --assignment <assignment_directory> \
+  --submission <submission_file_path> \
+  --solution <solution_file_path> \
+  --test_output <test_ouput_path> \
+  --submission_image <image_file_path> \
+  --solution_image <image_file_path> \
   --question <question_number> \
   --model <model_name> \
   --output <markdown|stdout|direct>
@@ -247,28 +253,28 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt code_lines --scope code --assignment test_submissions/cnn_example --model openai --output stdout
+python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --output stdout
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
 ```bash
-python -m ai_feedback --prompt_text "Evaluate the student's code readability." --scope code --assignment test_submissions/cnn_example --model openai --output stdout
+python -m ai_feedback --prompt_text "Evaluate the student's code readability." --scope code --submission test_submissions/cnn_example/cnn_submission.py --model openai --output stdout
 ```
 
 #### Evaluate pdf_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt text_pdf_analyze --scope text --assignment test_submissions/pdf_example --model openai --output direct
+python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai --output direct
 ```
 
 #### Evaluate question1 of test1 of ggr274 homework using DeepSeek model 
 ```bash
 python -m ai_feedback --prompt code_table \
-  --scope code --assignment test_submissions/ggr274_homework5/test1 --question 1 --model deepSeek-R1:70B --output markdown
+  --scope code --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb --question 1 --model deepSeek-R1:70B --output markdown
 ```
 
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
-python3 -m ai_feedback --prompt image_analyze --scope image --assignment ./test_submissions/ggr274_homework5/image_test2 --question "Question 5b" --model llama3.2-vision --output stdout
+python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b --output stdout
 ```
 
 #### Using Ollama

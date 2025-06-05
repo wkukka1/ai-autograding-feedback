@@ -3,9 +3,9 @@ import json
 import os
 import sys
 import re
+from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 from dotenv import load_dotenv
 
 
@@ -26,21 +26,29 @@ class RemoteModel(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
+        submission_file: Path,
+        solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
+        test_output:Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
 
         Args:
             prompt (str): The input prompt provided by the user.
-            assignment_files (List[str]): A list of paths to assignment files.
+            submission_file (Optional[Path]): The path to the submission file.
+            solution_file (Optional[Path]): The path to the solution file.
             question_num (Optional[int]): An optional question number to target specific content.
+            test_output (Optional[Path]): The path to the test output file.
+            scope (Optional[str]): The scope to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
+
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
@@ -73,7 +81,7 @@ class RemoteModel(Model):
         return request, response
 
     def _get_question_contents(
-        self, assignment_files: List[str], question_num: int
+        self, assignment_files: List[Path], question_num: int
     ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
@@ -82,7 +90,7 @@ class RemoteModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of file paths.
+            assignment_files (List[Path]): List of Path objects.
             question_num (int): The question number to extract from files.
 
         Returns:
@@ -93,14 +101,13 @@ class RemoteModel(Model):
 
         for file_path in assignment_files:
             if (
-                not file_path.endswith(".txt")
-                or "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                file_path.suffix != '.txt'
+                or "error_output" in file_path.name
+                or file_path.name == ".DS_Store"
             ):
                 continue
 
-            with open(file_path, "r", encoding="utf-8") as file:
-                content = file.read()
+            content = file_path.read_text()
 
             # Extract Introduction block
             intro_match = re.search(
@@ -122,31 +129,30 @@ class RemoteModel(Model):
             file_contents += task_content + "\n\n"
 
         if not task_found:
-            print(f"Task {question_num} not found in any assignment file.")
+            print(f"Task {question_num} not found in any provided file.")
             sys.exit(1)
 
         return file_contents.strip()
 
-    def _get_file_contents(self, assignment_files: List[str]) -> str:
+    def _get_file_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieve the full contents of all assignment files.
 
         Args:
-            assignment_files (List[str]): List of file paths to be read.
+            assignment_files (List[Path]): List of Path objects to be read.
 
         Returns:
             str: Concatenated contents of all valid text files, with filenames as section headers.
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if file_path.suffix != '.txt' or file_path.name == ".DS_Store":
                 continue
 
             file_name = os.path.basename(file_path)
 
             try:
-                with open(file_path, "r") as file:
-                    content = file.read()
+               content = file_path.read_text()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue

@@ -1,7 +1,7 @@
 import ollama
-import os
 import sys
 import re
+from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -21,21 +21,29 @@ class DeepSeekModel(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
+        submission_file: Path,
         question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
+        test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
 
         Args:
             prompt (str): The input prompt provided by the user.
-            assignment_files (List[str]): A list of paths to assignment files.
+            submission_file (Optional[Path]): The path to the submission file.
+            solution_file (Optional[Path]): The path to the solution file.
+            test_output (Optional[Path]): The path to the test output file.
+            scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional question number to target specific content.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
+
         if question_num:
             file_contents = self._get_question_contents(assignment_files, question_num)
         else:
@@ -62,7 +70,7 @@ class DeepSeekModel(Model):
         return request, response["message"]["content"]
 
     def _get_question_contents(
-        self, assignment_files: List[str], question_num: int
+        self, assignment_files: List[Path], question_num: int
     ) -> str:
         """
         Retrieve contents of files specifically for a targeted question number.
@@ -71,7 +79,7 @@ class DeepSeekModel(Model):
         '## Introduction' and '## Task {question_num}'.
 
         Args:
-            assignment_files (List[str]): List of file paths.
+            assignment_files (List[Path]): List of Path objects.
             question_num (int): The question number to extract from files.
 
         Returns:
@@ -82,15 +90,13 @@ class DeepSeekModel(Model):
 
         for file_path in assignment_files:
             if (
-                not file_path.endswith(".txt")
-                or "error_output" in file_path
-                or file_path.endswith(".DS_Store")
+                file_path.suffix != '.txt'
+                or "error_output" in file_path.name
+                or file_path.name == ".DS_Store"
             ):
                 continue
 
-            with open(file_path, "r", encoding="utf-8") as file:
-                content = file.read()
-
+            content = file_path.read_text()
             # Extract Introduction block
             intro_match = re.search(
                 r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
@@ -116,26 +122,25 @@ class DeepSeekModel(Model):
 
         return file_contents.strip()
 
-    def _get_file_contents(self, assignment_files: List[str]) -> str:
+    def _get_file_contents(self, assignment_files: List[Path]) -> str:
         """
         Retrieve the full contents of all assignment files.
 
         Args:
-            assignment_files (List[str]): List of file paths to be read.
+            assignment_files (List[Path]): List of Path objects to be read.
 
         Returns:
             str: Concatenated contents of all valid text files, with filenames as section headers.
         """
         file_contents = ""
         for file_path in assignment_files:
-            if not file_path.endswith(".txt") or file_path.endswith(".DS_Store"):
+            if file_path.name == ".DS_Store" or file_path.suffix != ".txt":
                 continue
 
-            file_name = os.path.basename(file_path)
+            file_name = file_path.name
 
             try:
-                with open(file_path, "r") as file:
-                    content = file.read()
+                content = file_path.read_text()
             except Exception as e:
                 print(f"Error reading file {file_name}: {e}")
                 continue
