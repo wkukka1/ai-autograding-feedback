@@ -10,7 +10,7 @@ from .Model import Model
 class DeepseekV3Model(Model):
     def __init__(self):
         super().__init__()
-        self.server_port = 8000
+        self.server_port = 8080
         self.llama_bin_path = '/data1/llama.cpp/bin'
         self.llama_server_path = '/data1/GGUF'
         self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
@@ -56,7 +56,7 @@ class DeepseekV3Model(Model):
         #     print("Detected existing llama-server on port "
         #           f"{self.server_port}; reusing it.", file=sys.stdout, flush=True)
 
-        url = f"http://{self.server_host}:{self.server_port}/completion"
+        url = f"http://{self.server_host}:{self.server_port}/v1/completion"
 
         payload = {
             "prompt": prompt,
