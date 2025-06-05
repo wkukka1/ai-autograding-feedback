@@ -28,12 +28,15 @@ class DeepseekV3Model(Model):
             Optional[Tuple[str, str]]: A tuple containing the model response or None if the response was invalid.
 
         """
+        # Need to add quotes to the prompt since prompts are multiline
+        quoted_prompt = f"'{prompt}'"
+
         cmd = [
             "./llama-cli",
             "-m", self.model_path,
             "--n-gpu-layers", self.gpu_layers,
             "-no-cnv",
-            "-p", f"'{prompt}'" # need to add quotes to the prompt since it is multiline
+            "-p", quoted_prompt
         ]
 
         try:
@@ -63,9 +66,9 @@ class DeepseekV3Model(Model):
         # Decode with 'replace' so invalid UTF-8 bytes become U+FFFD
         stdout_text = completed.stdout.decode('utf-8', errors='replace')
 
-        if stdout_text.startswith(prompt):
+        if stdout_text.startswith(quoted_prompt):
             # Remove “prompt” plus any single newline immediately after it
-            remainder = stdout_text[len(prompt):]
+            remainder = stdout_text[len(quoted_prompt):]
             # If there’s a leading newline, drop it
             if remainder.startswith("\n"):
                 remainder = remainder[1:]
