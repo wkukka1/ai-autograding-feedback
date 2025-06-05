@@ -12,22 +12,21 @@ from .helpers import arg_options
 from .helpers.constants import TEST_OUTPUTS_DIRECTORY, HELP_MESSAGES
 
 
-def detect_submission_type(assignment_folder: str) -> str:
-    """Automatically detect the submission type based on file extensions in the assignment folder.
+def detect_submission_type(filename: str) -> str:
+    """Automatically detect the submission type based on file extensions.
     
     Args:
-        assignment_folder (str): Path to the assignment directory.
+        filename (str): Path to the file.
         
     Returns:
         str: The detected submission type ("jupyter", "python", or "pdf").
     """
-    for filename in os.listdir(assignment_folder):
-        if filename.endswith("_submission.ipynb"):
-            return "jupyter"
-        elif filename.endswith("_submission.py"):
-            return "python"
-        elif filename.endswith("_submission.pdf"):
-            return "pdf"
+    if filename.endswith(".ipynb"):
+        return "jupyter"
+    elif filename.endswith(".py"):
+        return "python"
+    elif filename.endswith(".pdf"):
+        return "pdf"
     
     print("Error: Could not auto-detect submission type.")
     sys.exit(1)
@@ -82,9 +81,15 @@ def main() -> int:
         help=HELP_MESSAGES["prompt"],
     )
     parser.add_argument(
-        "--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"]
+        "--prompt_text",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["prompt_text"]
     )
-    parser.add_argument("--prompt_custom", action="store_true", required=False)
+    parser.add_argument(
+        "--prompt_custom",
+        action="store_true",
+        required=False)
     parser.add_argument(
         "--scope",
         type=str,
@@ -93,10 +98,22 @@ def main() -> int:
         help=HELP_MESSAGES["scope"],
     )
     parser.add_argument(
-        "--assignment", type=str, required=True, help=HELP_MESSAGES["assignment"]
+        "--submission",
+        type=str,
+        required=True,
+        help=HELP_MESSAGES["submission"]
     )
     parser.add_argument(
-        "--question", type=str, required=False, help=HELP_MESSAGES["question"]
+        "--solution",
+        type=str,
+        required=False,
+        default="",
+        help=HELP_MESSAGES["solution"])
+    parser.add_argument(
+        "--question",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["question"]
     )
     parser.add_argument(
         "--model",
@@ -113,12 +130,29 @@ def main() -> int:
         default='stdout',
         help=HELP_MESSAGES["output"],
     )
-
+    parser.add_argument(
+        "--test_output",
+        type=str,
+        required=False,
+        default=None,
+        help=HELP_MESSAGES["test_output"])
+    parser.add_argument(
+        "--submission_image",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["submission_image"]
+    )
+    parser.add_argument(
+        "--solution_image",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["solution_image"]
+    )
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
-        args.submission_type = detect_submission_type(args.assignment)
+        args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
 
@@ -172,12 +206,12 @@ def main() -> int:
 
         markdown_template = load_markdown_template()
         markdown_output = markdown_template.format(
-            assignment=args.assignment,
             question=args.question if args.question else "N/A",
             model=args.model,
             request=request,
             response=response,
             timestamp=timestamp,
+            submission=args.submission,
         )
         with open(markdown_filename, "w") as md_file:
             md_file.write(markdown_output)

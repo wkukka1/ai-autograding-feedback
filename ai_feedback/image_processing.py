@@ -1,5 +1,4 @@
 import base64
-import os
 from pathlib import Path
 
 from anthropic import Anthropic
@@ -89,13 +88,15 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
     """Generates feedback for an image submission.
     Returns the LLM prompt delivered and the returned response."""
     OUTPUT_DIRECTORY = "output_images"
-    submission_notebook = Path("./", args.assignment, "student_submission.ipynb")
-    solution_notebook = Path("./", args.assignment, "solution.ipynb")
-
+    submission_notebook = Path(args.submission)
+    if args.solution:
+        solution_notebook = Path(args.solution)
+    if not args.submission_image:
+        raise SystemExit(f"Missing image argument.")
     # Extract submission images
     extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
     # Optionally extract solution images
-    if solution_notebook.is_file():
+    if args.solution and solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
 
     if args.question:
@@ -115,25 +116,19 @@ def process_image(args, prompt: dict) -> tuple[str, str]:
                 "{context}", "```\n" + context + "\n```"
             )
         if "{image_size}" in message.content:
-            submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, question)
-            submission_image_path = submission_image_paths[
-                0
-            ]  # Only consider one image per question
+            submission_image_path = args.submission_image
+            # Only consider one image per question
             image = PILImage.open(submission_image_path)
             message.content = message.content.replace(
                 "{image_size}", f"{image.width} by {image.height}"
             )
         if prompt.get("include_submission_image", False):
-            submission_image_paths = read_submission_images(OUTPUT_DIRECTORY, question)
-            submission_image_path = submission_image_paths[
-                0
-            ]  # Only consider one image per question
+            # Only consider one image per question
+            submission_image_path = args.submission_image
             message.images.append(Image(value=submission_image_path))
-        if prompt.get("include_solution_image", False):
-            solution_image_paths = read_solution_images(OUTPUT_DIRECTORY, question)
-            solution_image_path = solution_image_paths[
-                0
-            ]  # Only consider one image per question
+        if prompt.get("include_solution_image", False) and args.solution_image:
+            # Only consider one image per question
+            solution_image_path = args.solution_image
             message.images.append(Image(value=solution_image_path))
 
         # Prompt the LLM

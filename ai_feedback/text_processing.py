@@ -6,8 +6,6 @@ from typing import Tuple, List
 from .helpers.arg_options import model_mapping
 from .helpers.template_utils import render_prompt_template
 
-EXPECTED_SUFFIXES = ["_solution", "_submission"]
-
 
 def process_text(args, prompt: str) -> Tuple[str, str]:
     """
@@ -25,19 +23,19 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         Tuple[str, str]: A tuple containing the request and the model's generated response.
 
     Raises:
-        FileNotFoundError: If the specified assignment folder does not exist.
+        FileNotFoundError: If the specified submission or solution files do not exist.
         SystemExit: If the model name provided in args is not recognized.
     """
-    assignment_folder = f"{args.assignment}"
-    if not os.path.exists(assignment_folder):
-        raise FileNotFoundError(f"Assignment folder '{assignment_folder}' not found.")
+    submission_file = Path(args.submission)
+    if not submission_file.is_file():
+        raise FileNotFoundError(f"Submission file '{submission_file}' not found.")
+    solution_file = None
+    if args.solution:
+        solution_file = Path(args.solution)
+        if not solution_file.is_file():
+            raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
 
-    assignment_files: List[str] = [
-        os.path.join(assignment_folder, f)
-        for f in os.listdir(assignment_folder)
-        if os.path.isfile(os.path.join(assignment_folder, f))
-        and any(os.path.splitext(f)[0].endswith(suffix) for suffix in EXPECTED_SUFFIXES)
-    ]
+    assignment_files = [args.submission, args.solution] if solution_file else [args.submission]
 
     rendered_prompt = render_prompt_template(prompt, assignment_files=assignment_files)
 
@@ -50,12 +48,17 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
     if args.question:
         request, response = model.generate_response(
             prompt=rendered_prompt,
-            assignment_files=assignment_files,
+            solution_file=solution_file,
+            submission_file=submission_file,
+            scope=args.scope,
             question_num=args.question,
         )
     else:
         request, response = model.generate_response(
-            prompt=rendered_prompt, assignment_files=assignment_files
+            prompt=rendered_prompt,
+            solution_file=solution_file,
+            submission_file=submission_file,
+            scope=args.scope,
         )
 
     return request, response
