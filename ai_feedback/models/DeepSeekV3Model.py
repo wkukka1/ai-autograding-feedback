@@ -32,7 +32,7 @@ class DeepseekV3Model(Model):
             "./llama-cli",
             "-m", self.model_path,
             "--n-gpu-layers", self.gpu_layers,
-            "-p", prompt
+            "-p", f"'prompt'" # need to add quotes to the prompt since it is multiline
         ]
 
         print(f"Working directory: {self.llama_bin_path}", file=sys.stdout, flush=True)
