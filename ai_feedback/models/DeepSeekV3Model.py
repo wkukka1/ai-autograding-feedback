@@ -5,6 +5,8 @@ import requests
 import time
 from typing import List, Optional, Tuple
 
+from pathlib import Path
+
 from .Model import Model
 
 class DeepseekV3Model(Model):
@@ -18,11 +20,14 @@ class DeepseekV3Model(Model):
         self.server_host = '127.0.0.1'
 
     def generate_response(
-            self,
-            prompt: str,
-            assignment_files: List[str],
-            mode: Optional[str] = 'server',
-            question_num: Optional[int] = None,
+        self,
+        prompt: str,
+        submission_file: Path,
+        mode: Optional[str],
+        solution_file: Optional[Path] = None,
+        scope: Optional[str] = None,
+        question_num: Optional[int] = None,
+        test_output: Optional[Path] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.

@@ -23,10 +23,11 @@ class CodeLlamaModel(Model):
         self,
         prompt: str,
         submission_file: Path,
-        question_num: Optional[int] = None,
+        mode: Optional[str],
         solution_file: Optional[Path] = None,
-        test_output: Optional[Path] = None,
         scope: Optional[str] = None,
+        question_num: Optional[int] = None,
+        test_output: Optional[Path] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt
