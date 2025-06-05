@@ -76,6 +76,9 @@ class DeepseekV3Model(Model):
         else:
             response = stdout_text.strip()
 
+        if response.endswith("[end of text]"):
+            response = response[:-len("[end of text]")]
+
         # DEBUG stdout
         print("=== llama-cli stdout ===", file=sys.stdout, flush=True)
         print(response, file=sys.stdout, flush=True)
