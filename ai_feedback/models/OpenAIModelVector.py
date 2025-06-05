@@ -1,6 +1,7 @@
 import os
 from typing import List, Optional
 from dotenv import load_dotenv
+from pathlib import Path
 import openai
 from .Model import Model
 from ..helpers.constants import SYSTEM_INSTRUCTIONS
@@ -39,15 +40,21 @@ class OpenAIModelVector(Model):
     def generate_response(
         self,
         prompt: str,
-        assignment_files: List[str],
+        submission_file: Path,
         question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
+        test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
     ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.
 
         Args:
             prompt (str): The user's prompt to feed into the model.
-            assignment_files (List[str]): A list of file paths to be uploaded for context.
+            submission_file (Optional[Path]): The path to a file to store the response to.
+            solution_file (Optional[Path]): The path to a file to store the response to.
+            test_output (Optional[Path]): The path to a file to store the response to.
+            scope (Optional[str]): The path to a file to store the response to.
             question_num (Optional[int]): An optional question number.
 
         Returns:
@@ -58,9 +65,10 @@ class OpenAIModelVector(Model):
 
         request = "Uploaded Files: "
         file_ids: List[str] = []
+        assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
 
         for file_path in assignment_files:
-            base, ext = os.path.splitext(file_path)
+            base, ext = file_path.stem, file_path.suffix
             file_id = self._upload_file(file_path)
             file_ids.append(file_id)
             request += base
@@ -74,7 +82,7 @@ class OpenAIModelVector(Model):
         request = f"\n{SYSTEM_INSTRUCTIONS}\n{prompt}"
         return request, response
 
-    def _upload_file(self, file_path: str) -> str:
+    def _upload_file(self, file_path: Path) -> str:
         """
         Upload a file to OpenAI storage and link it to the vector store.
 
