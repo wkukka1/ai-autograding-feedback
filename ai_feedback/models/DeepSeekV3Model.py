@@ -57,10 +57,9 @@ class DeepseekV3Model(Model):
                   f"{self.server_port}; reusing it.", file=sys.stdout, flush=True)
 
         url = f"http://{self.server_host}:{self.server_port}/completion"
-        quoted_prompt = f"'{prompt}'"
 
         payload = {
-            "prompt": quoted_prompt,
+            "prompt": prompt,
         }
 
         try:
@@ -87,8 +86,8 @@ class DeepseekV3Model(Model):
             print("Keeping existing llama-server running (we did not start it).", file=sys.stdout, flush=True)
 
 
-        if model_output.startswith(quoted_prompt):
-            tail = model_output[len(quoted_prompt):]
+        if model_output.startswith(prompt):
+            tail = model_output[len(prompt):]
             if tail.startswith("\n"):
                 tail = tail[1:]
             model_output = tail
