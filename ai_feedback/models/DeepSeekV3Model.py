@@ -58,7 +58,7 @@ class DeepseekV3Model(Model):
             response = response.strip()
 
         # DEBUG
-        print("=== llama-server returned ===", file=sys.stdout, flush=True)
+        print(f"=== llama-{mode} returned ===", file=sys.stdout, flush=True)
         print(response, file=sys.stdout, flush=True)
 
         return prompt, response
