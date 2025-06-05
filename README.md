@@ -26,17 +26,18 @@ For the image scope, the program takes up to two files, depending on the prompt 
 - Saves response output in Markdown format with a predefined template or prints to stdout.
 
 ## Argument Details
-| Argument          | Description                                      | Required |
-|------------------|--------------------------------------------------|----------|
-| `--submission_type` | Type of submission (from `arg_options.FileType`) | ❌ |
-| `--prompt`       | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
-| `--prompt_text`       | Additional string text prompt that can be fed to model. | ❌ ** |
-| `--prompt_custom`       | The name of prompt file uploaded to be used by model. | ❌ ** |
-| `--scope`        | Processing scope (`image` or `code` or `text`)             | ✅ |
-| `--assignment`   | Name of the directory which contains test files  | ✅ |
-| `--question`     | Specific question to evaluate                      | ❌ |
-| `--model`        | Model type (from `arg_options.Models`)           | ✅ |
-| `--output`       | Output type (from `arg_options.Output`)             | ❌ |
+| Argument            | Description                                                      | Required |
+|---------------------|------------------------------------------------------------------|----------|
+| `--submission_type` | Type of submission (from `arg_options.FileType`)                 | ❌ |
+| `--prompt`          | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
+| `--prompt_text`     | Additional string text prompt that can be fed to model.          | ❌ ** |
+| `--prompt_custom`   | The name of prompt file uploaded to be used by model.            | ❌ ** |
+| `--scope`           | Processing scope (`image` or `code` or `text`)                   | ✅ |
+| `--assignment`      | Name of the directory which contains test files                  | ✅ |
+| `--question`        | Specific question to evaluate                                    | ❌ |
+| `--model`           | Model type (from `arg_options.Models`)                           | ✅ |
+| `--output`          | Output type (from `arg_options.Output`)                          | ❌ |
+| `--mode`            | How to invoke llama.cpp (from `arg_options.Mode`)            | ❌ |
 
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
@@ -235,7 +236,8 @@ python -m ai_feedback \
   --assignment <assignment_directory> \
   --question <question_number> \
   --model <model_name> \
-  --output <markdown|stdout|direct>
+  --output <markdown|stdout|direct> \
+  --mode <server|cli>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
