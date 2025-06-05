@@ -64,3 +64,4 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
         )
 
     return request, response
+

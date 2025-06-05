@@ -103,3 +103,4 @@ def ensure_txt_file(file_path: str, rename_function: Callable[[Path], None]) -> 
     txt_file_path = file_path.replace(".ipynb", ".txt")
     if not os.path.exists(txt_file_path) and file_path.endswith(".ipynb"):
         rename_function(Path(file_path))
+
