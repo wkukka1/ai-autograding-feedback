@@ -32,6 +32,7 @@ class DeepseekV3Model(Model):
             "./llama-cli",
             "-m", self.model_path,
             "--n-gpu-layers", self.gpu_layers,
+            "-no-cnv",
             "-p", f"'{prompt}'" # need to add quotes to the prompt since it is multiline
         ]
 
