@@ -210,3 +210,4 @@ class ClaudeModel(Model):
             sys.exit(1)
 
         return file_contents.strip()
+        
