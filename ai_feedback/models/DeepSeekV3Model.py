@@ -45,9 +45,8 @@ class DeepseekV3Model(Model):
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                universal_newlines=True,
                 cwd=self.llama_bin_path,
-                timeout=120
+                timeout=300
             )
         except subprocess.TimeoutExpired as e:
             # If the process hangs for more than 2 mins, print whatever has been captured so far
@@ -64,15 +63,16 @@ class DeepseekV3Model(Model):
                 f"llama.cpp failed (code {e.returncode}): {e.stderr.strip()}"
             )
 
-        stdout_content = completed.stdout
-        stderr_content = completed.stderr
+        # Decode with 'replace' so invalid UTF-8 bytes become U+FFFD
+        stdout_text = completed.stdout.decode('utf-8', errors='replace')
+        stderr_text = completed.stderr.decode('utf-8', errors='replace')
 
         # Print both streams to help with debugging
         print("=== llama-cli stdout ===", file=sys.stdout, flush=True)
-        print(stdout_content, file=sys.stdout, flush=True)
+        print(stdout_text, file=sys.stdout, flush=True)
         print("=== llama-cli stderr ===", file=sys.stdout, flush=True)
-        print(stderr_content, file=sys.stdout, flush=True)
+        print(stderr_text, file=sys.stdout, flush=True)
 
         # Strip any trailing whitespace from the generated text
-        generated_response = stdout_content.strip()
-        return prompt, generated_response
+        response = stdout_text.strip()
+        return prompt, response
