@@ -49,12 +49,13 @@ class DeepseekV3Model(Model):
                 tail = tail[1:]
             response = tail
 
+        response = response.strip()
+
         # Remove end of response marker
         end_marker = "[end of text]"
         if response.endswith(end_marker):
             response = response[: -len(end_marker)]
-
-        response = response.strip()
+            response = response.strip()
 
         # DEBUG
         print("=== llama-server returned ===", file=sys.stdout, flush=True)
