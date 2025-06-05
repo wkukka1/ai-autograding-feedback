@@ -32,18 +32,17 @@ class DeepseekV3Model(Model):
             "./llama-cli",
             "-m", self.model_path,
             "--n-gpu-layers", self.gpu_layers,
-            "-p", f"'prompt'" # need to add quotes to the prompt since it is multiline
+            "-p", f"'{prompt}'" # need to add quotes to the prompt since it is multiline
         ]
 
         print(f"Working directory: {self.llama_bin_path}", file=sys.stdout, flush=True)
         print(f"Full command: {' '.join(cmd)}", file=sys.stdout, flush=True)
 
         try:
-            print(f"Prompt: {prompt}")
             completed = subprocess.run(
                 cmd,
                 check=True,
-                stdout=subprocess.PIPE,
+                stdout=subprocess.STDOUT,
                 stderr=subprocess.PIPE,
                 universal_newlines=True,
                 cwd=self.llama_bin_path,
