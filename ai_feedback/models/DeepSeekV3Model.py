@@ -23,11 +23,11 @@ class DeepseekV3Model(Model):
         self,
         prompt: str,
         submission_file: Path,
-        mode: Optional[str],
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
+        mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.

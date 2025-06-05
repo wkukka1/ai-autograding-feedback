@@ -26,11 +26,11 @@ class OpenAIModel(Model):
         self,
         prompt: str,
         submission_file: Path,
-        mode: Optional[str],
-        solution_file: Optional[Path] = None,
-        scope: Optional[str] = None,
         question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
+        mode: Optional[str] = None,
     ) -> Tuple[str, str]:
         """
         Generate a response based on the given prompt and assignment context.
