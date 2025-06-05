@@ -39,6 +39,7 @@ class DeepseekV3Model(Model):
         if mode == 'server':
             response = self.get_response_server(prompt)
         else:
+            prompt = f"'{prompt}'"
             response = self.get_response_cli(prompt)
 
         # Remove prompt from response
@@ -140,7 +141,6 @@ class DeepseekV3Model(Model):
             str: The model response or None if the response was invalid.
         """
         # Need to add quotes to the prompt since prompts are multiline
-        quoted_prompt = f"'{prompt}'"
 
         cmd = [
             "./llama-cli",
