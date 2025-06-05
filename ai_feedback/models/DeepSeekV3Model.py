@@ -38,7 +38,7 @@ class DeepseekV3Model(Model):
             file_contents = self._get_file_contents(assignment_files)
 
         request = f"Prompt: {prompt} \n\nFiles to Reference: \n{file_contents}"
-
+        print(f"REQUEST :{request}")
         cmd = [
             "./llama-cli",
             "-m", self.model_path,
