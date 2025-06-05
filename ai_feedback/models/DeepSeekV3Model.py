@@ -64,7 +64,7 @@ class DeepseekV3Model(Model):
 
         try:
             print(f"Sending request to {url} with payload:\n{payload}\n", file=sys.stdout, flush=True)
-            response = requests.post(url, json=payload, timeout=60)
+            response = requests.post(url, json=payload, timeout=300)
             response.raise_for_status()
         except requests.RequestException as e:
             print("ERROR: Request to llama-server failed:", str(e), file=sys.stderr, flush=True)
