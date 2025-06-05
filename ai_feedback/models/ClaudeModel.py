@@ -43,7 +43,7 @@ class ClaudeModel(Model):
             test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
-            mode (Optional[str]): Optional mode for this model.
+            mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

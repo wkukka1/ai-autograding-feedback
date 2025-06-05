@@ -38,7 +38,7 @@ class DeepseekV3Model(Model):
             solution_file (Path): Path Object pointing to the solution file.
             scope (Optional[str]): Optional scope to use for this model.
             test_output (Optional[Path]): Path Object pointing to the test output file.
-            mode (Optional[str]): Optional mode for this model.
+            mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
 
         Returns:
