@@ -56,7 +56,7 @@ class DeepseekV3Model(Model):
             print("Detected existing llama-server on port "
                   f"{self.server_port}; reusing it.", file=sys.stdout, flush=True)
 
-        url = f"http://{self.server_host}:{self.server_port}/v1/completions"
+        url = f"http://{self.server_host}:{self.server_port}/v1/chat/completions"
         quoted_prompt = f"'{prompt}'"
 
         payload = {
