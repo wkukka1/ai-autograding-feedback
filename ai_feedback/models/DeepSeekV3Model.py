@@ -36,25 +36,25 @@ class DeepseekV3Model(Model):
         """
 
         # Check if the server is up
-        server_was_running = self._is_port_open(self.server_host, self.server_port)
-        server_proc = None
-
-        if not server_was_running:
-            # Not running we start it and wait for readiness
-            server_proc = self._start_server()
-
-            print(f"Waiting up to 5 minutes for llama-server to be ready...", file=sys.stdout, flush=True)
-            ready = self._wait_for_server(self.server_host, self.server_port, 300)
-            if not ready:
-                # If the server never came up, kill what we started and bail
-                print("ERROR: llama-server never opened port.", file=sys.stderr, flush=True)
-                self._stop_server(server_proc)
-                raise RuntimeError("Failed to start llama-server within timeout.")
-
-            print("llama-server is now listening.", file=sys.stdout, flush=True)
-        else:
-            print("Detected existing llama-server on port "
-                  f"{self.server_port}; reusing it.", file=sys.stdout, flush=True)
+        # server_was_running = self._is_port_open(self.server_host, self.server_port)
+        # server_proc = None
+        #
+        # if not server_was_running:
+        #     # Not running we start it and wait for readiness
+        #     server_proc = self._start_server()
+        #
+        #     print(f"Waiting up to 5 minutes for llama-server to be ready...", file=sys.stdout, flush=True)
+        #     ready = self._wait_for_server(self.server_host, self.server_port, 300)
+        #     if not ready:
+        #         # If the server never came up, kill what we started and bail
+        #         print("ERROR: llama-server never opened port.", file=sys.stderr, flush=True)
+        #         self._stop_server(server_proc)
+        #         raise RuntimeError("Failed to start llama-server within timeout.")
+        #
+        #     print("llama-server is now listening.", file=sys.stdout, flush=True)
+        # else:
+        #     print("Detected existing llama-server on port "
+        #           f"{self.server_port}; reusing it.", file=sys.stdout, flush=True)
 
         url = f"http://{self.server_host}:{self.server_port}/completion"
 
@@ -68,8 +68,8 @@ class DeepseekV3Model(Model):
             response.raise_for_status()
         except requests.RequestException as e:
             print("ERROR: Request to llama-server failed:", str(e), file=sys.stderr, flush=True)
-            if server_proc:
-                self._stop_server(server_proc)
+            # if server_proc:
+            #     self._stop_server(server_proc)
             raise
 
         data = response.json()
@@ -80,10 +80,10 @@ class DeepseekV3Model(Model):
             print("ERROR: Unexpected JSON format from llama-server:", data, file=sys.stderr, flush=True)
             model_output = ""
 
-        if server_proc:
-            self._stop_server(server_proc)
-        else:
-            print("Keeping existing llama-server running (we did not start it).", file=sys.stdout, flush=True)
+        # if server_proc:
+        #     self._stop_server(server_proc)
+        # else:
+        #     print("Keeping existing llama-server running (we did not start it).", file=sys.stdout, flush=True)
 
 
         if model_output.startswith(prompt):
