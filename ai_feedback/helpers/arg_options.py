@@ -61,7 +61,7 @@ model_mapping = {
     "codellama:latest": models.CodeLlamaModel,
     "claude-3.7-sonnet": models.ClaudeModel,
     "remote": models.RemoteModel,
-    "deepSeek-V3": models.DeepseekV3Model,
+    "deepSeek-v3": models.DeepseekV3Model,
 }
 
 
@@ -78,7 +78,7 @@ class Models(Enum):
     CODELLAMA = "codellama:latest"
     CLAUDE = "claude-3.7-sonnet"
     REMOTE = "remote"
-    DEEPSEEKV3 = "deepSeek-V3"
+    DEEPSEEKV3 = "deepSeek-v3"
 
     def __str__(self):
         return self.value
