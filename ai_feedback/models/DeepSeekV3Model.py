@@ -129,7 +129,7 @@ class DeepseekV3Model(Model):
             model_output = data["choices"][0]["text"]
         except (KeyError, IndexError):
             print("ERROR: Unexpected JSON format from llama-server:", data, file=sys.stderr, flush=True)
-            raise KeyError("Unexpected JSON format from llama-server.")
+            model_output = ''
 
         if server_proc:
             self._stop_server(server_proc)
