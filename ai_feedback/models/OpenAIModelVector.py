@@ -57,6 +57,7 @@ class OpenAIModelVector(Model):
             test_output (Optional[Path]): The path to a file to store the response to.
             scope (Optional[str]): The path to a file to store the response to.
             question_num (Optional[int]): An optional question number.
+            mode (Optional[str]): Optional mode for this model.
 
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.

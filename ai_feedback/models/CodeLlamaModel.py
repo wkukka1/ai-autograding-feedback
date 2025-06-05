@@ -40,6 +40,7 @@ class CodeLlamaModel(Model):
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional specific question number to extract content for.
+            mode (Optional[str]): Optional mode for this model.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,

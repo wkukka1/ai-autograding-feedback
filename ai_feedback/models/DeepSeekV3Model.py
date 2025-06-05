@@ -34,7 +34,11 @@ class DeepseekV3Model(Model):
 
         Args:
             prompt (str): The input prompt provided by the user.
-            assignment_files (List[str]): A list of paths to assignment files.
+            submission_file (Path): Path Object pointing to the submission file.
+            solution_file (Path): Path Object pointing to the solution file.
+            scope (Optional[str]): Optional scope to use for this model.
+            test_output (Optional[Path]): Path Object pointing to the test output file.
+            mode (Optional[str]): Optional mode for this model.
             question_num (Optional[int]): An optional question number to target specific content.
 
         Returns:

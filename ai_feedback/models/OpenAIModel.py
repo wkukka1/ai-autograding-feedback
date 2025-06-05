@@ -42,6 +42,7 @@ class OpenAIModel(Model):
             test_output (Path): Path to the test output file.
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific question number to focus on.
+            mode (Optional[str]): Optional mode for this model.
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.

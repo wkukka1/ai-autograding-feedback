@@ -38,6 +38,7 @@ class DeepSeekModel(Model):
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional question number to target specific content.
+            mode (Optional[str]): Optional mode for this model.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
