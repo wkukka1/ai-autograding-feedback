@@ -44,7 +44,7 @@ class DeepseekV3Model(Model):
             server_proc = self._start_server()
 
             print(f"Waiting up to 5 minutes for llama-server to be ready...", file=sys.stdout, flush=True)
-            ready = self._wait_for_server(self.server_host, self.server_port, 300)
+            ready = self._wait_for_server(300)
             if not ready:
                 # If the server never came up, kill what we started and bail
                 print("ERROR: llama-server never opened port.", file=sys.stderr, flush=True)
@@ -216,17 +216,22 @@ class DeepseekV3Model(Model):
         )
         return server_proc
 
-    def _wait_for_server(self, host: str, port: int, timeout_s: int) -> bool:
+    def _wait_for_server(self, timeout_s: int) -> bool:
         """
-        Poll every second until either the server’s port is open or we hit timeout.
+        Poll every second until either the server’s returns healthy or we hit timeout.
         Returns True if port became available, False if we timed out.
         """
-        time.sleep(5)
+        url = f"http://{self.server_host}:{self.server_port}/health"
         start = time.time()
         while time.time() - start < timeout_s:
-            if self._is_port_open(host, port):
-                return True
-            time.sleep(1.0)
+            try:
+                resp = requests.get(url, timeout=5)
+                if resp.status_code == 200:
+                    return True
+            except requests.RequestException:
+                pass
+            print(f"→ /health not ready yet; retrying in 3 seconds", file=sys.stdout, flush=True)
+            time.sleep(3)
         return False
 
     def _stop_server(self, proc: subprocess.Popen) -> None:
