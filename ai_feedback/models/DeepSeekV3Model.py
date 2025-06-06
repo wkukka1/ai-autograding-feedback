@@ -15,7 +15,7 @@ class DeepSeekV3Model(Model):
     def __init__(self):
         super().__init__()
         raw_url = os.getenv("LLAMA_SERVER_URL", "").strip()
-        self.server_url = raw_url if raw_url else None
+        self.server_url = raw_url if raw_url and ":" in raw_url else None
         self.llama_bin_path = '/data1/llama.cpp/bin'
         self.llama_server_path = '/data1/GGUF'
         self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
@@ -95,8 +95,7 @@ class DeepSeekV3Model(Model):
             response = requests.post(url, json=payload, timeout=300)
             response.raise_for_status()
         except requests.RequestException as e:
-            print("ERROR: Request to llama-server failed:", str(e), file=sys.stderr, flush=True)
-            raise
+            raise RuntimeError("ERROR: Request to llama-server failed:", str(e), file=sys.stderr, flush=True)
 
         data = response.json()
 
