@@ -46,6 +46,8 @@ class DeepseekV3Model(Model):
                                        or None if the response was invalid.
         """
         if llama_mode == 'server':
+            if not self.server_url:
+                raise RuntimeError("Error: Environment variable LLAMA_SERVER_URL not set")
             response = self.get_response_server(prompt)
         else:
             prompt = f"'{prompt}'"
