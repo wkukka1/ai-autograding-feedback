@@ -41,7 +41,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
-| `--mode`             | How to invoke deepSeek-v3 (choices in `arg_options.Mode`)         | ❌ |
+| `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)    | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
@@ -243,7 +243,7 @@ python -m ai_feedback \
   --question <question_number> \
   --model <model_name> \
   --output <markdown|stdout|direct> \
-  --mode <server|cli>
+  --llama_mode <server|cli>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
