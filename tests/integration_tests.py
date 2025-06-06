@@ -313,3 +313,4 @@ def test_deepseek_v3_server_mode_code_scope_stdout(capsys, monkeypatch):
 
     assert "FAKE SERVER RESPONSE LINE 1" in output
     assert "FAKE SERVER RESPONSE LINE 2" in output
+
