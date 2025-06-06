@@ -76,7 +76,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 solution_file=solution_file,
                 test_output=test_output_file,
                 question_num=args.question,
-                mode=args.mode,
+                llama_mode=args.llama_mode,
             )
         else:
             request, response = model.generate_response(
@@ -84,7 +84,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 submission_file=submission_file,
                 solution_file=solution_file,
                 test_output=test_output_file,
-                mode=args.mode
+                llama_mode=args.llama_mode
             )
 
     return request, response

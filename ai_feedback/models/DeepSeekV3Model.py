@@ -27,7 +27,7 @@ class DeepseekV3Model(Model):
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
-        mode: Optional[str] = None,
+        llama_mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -38,14 +38,14 @@ class DeepseekV3Model(Model):
             solution_file (Path): Path Object pointing to the solution file.
             scope (Optional[str]): Optional scope to use for this model.
             test_output (Optional[Path]): Path Object pointing to the test output file.
-            mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
-        if mode == 'server':
+        if llama_server == 'server':
             response = self.get_response_server(prompt)
         else:
             prompt = f"'{prompt}'"

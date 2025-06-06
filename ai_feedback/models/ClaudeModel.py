@@ -31,7 +31,7 @@ class ClaudeModel(Model):
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
-        mode: Optional[str] = None,
+        llama_mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -43,7 +43,7 @@ class ClaudeModel(Model):
             test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
-            mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

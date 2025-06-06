@@ -109,7 +109,7 @@ class OutputType(Enum):
     def __str__(self):
         return self.value
 
-class Mode(Enum):
+class LlamaMode(Enum):
     """
     Enum representing the output mode for invoking llama.cpp.
     """

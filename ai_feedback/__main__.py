@@ -149,12 +149,12 @@ def main() -> int:
         help=HELP_MESSAGES["solution_image"]
     )
     parser.add_argument(
-        "--mode",
+        "--llama_mode",
         type=str,
-        choices=arg_options.get_enum_values(arg_options.Mode),
+        choices=arg_options.get_enum_values(arg_options.LlamaMode),
         required=False,
         default="cli",
-        help=HELP_MESSAGES["mode"],
+        help=HELP_MESSAGES["llama_mode"],
     )
 
     args = parser.parse_args()
