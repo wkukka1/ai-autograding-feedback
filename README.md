@@ -279,6 +279,22 @@ python -m ai_feedback --prompt code_table \
 python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b --output stdout
 ```
 
+#### Evalute the Jupyter notebook of test1 of ggr274 using DeepSeek-v3 via llama.cpp server
+```sh
+python3 -m ai_feedback --prompt code_table --scope code \
+        --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
+        --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
+        --model deepSeek-v3 --llama_mode server
+```
+
+#### Evalute the Jupyter notebook of test1 of ggr274 using DeepSeek-v3 via llama.cpp cli
+```sh
+python3 -m ai_feedback --prompt code_table --scope code \
+        --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
+        --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
+        --model deepSeek-v3 --llama_mode cli
+```
+
 #### Using Ollama
 In order to run this project on Bigmouth:
 1. SSH into teach.cs
