@@ -66,10 +66,6 @@ class DeepseekV3Model(Model):
             response = response[: -len(end_marker)]
             response = response.strip()
 
-        # DEBUG
-        print(f"=== llama-{llama_mode} returned ===", file=sys.stdout, flush=True)
-        print(response, file=sys.stdout, flush=True)
-
         return prompt, response
 
     def get_response_server(
