@@ -14,7 +14,6 @@ class DeepseekV3Model(Model):
     def __init__(self):
         super().__init__()
         self.server_url = os.getenv("LLAMA_SERVER_URL")
-        print(f"LLAMA_SERVER_URL: {self.server_url}")
         self.llama_bin_path = '/data1/llama.cpp/bin'
         self.llama_server_path = '/data1/GGUF'
         self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
