@@ -155,3 +155,4 @@ class DeepSeekV3Model(Model):
 
         # Decode with 'replace' so invalid UTF-8 bytes become U+FFFD
         return completed.stdout.decode('utf-8', errors='replace')
+
