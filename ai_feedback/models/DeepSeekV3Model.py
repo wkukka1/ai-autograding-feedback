@@ -10,10 +10,12 @@ from .Model import Model
 
 load_dotenv()
 
+
 class DeepSeekV3Model(Model):
     def __init__(self):
         super().__init__()
-        self.server_url = os.getenv("LLAMA_SERVER_URL")
+        raw_url = os.getenv("LLAMA_SERVER_URL", "").strip()
+        self.server_url = raw_url if raw_url else None
         self.llama_bin_path = '/data1/llama.cpp/bin'
         self.llama_server_path = '/data1/GGUF'
         self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
@@ -48,10 +50,10 @@ class DeepSeekV3Model(Model):
         if llama_mode == 'server':
             if not self.server_url:
                 raise RuntimeError("Error: Environment variable LLAMA_SERVER_URL not set")
-            response = self.get_response_server(prompt)
+            response = self._get_response_server(prompt)
         else:
             prompt = f"'{prompt}'"
-            response = self.get_response_cli(prompt)
+            response = self._get_response_cli(prompt)
 
         # Remove prompt from response
         if response.startswith(prompt):
@@ -70,7 +72,7 @@ class DeepSeekV3Model(Model):
 
         return prompt, response
 
-    def get_response_server(
+    def _get_response_server(
             self,
             prompt: str,
     ) -> str:
@@ -106,7 +108,7 @@ class DeepSeekV3Model(Model):
 
         return model_output
 
-    def get_response_cli(
+    def _get_response_cli(
             self,
             prompt: str,
     ) -> str:
