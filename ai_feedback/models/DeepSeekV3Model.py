@@ -10,7 +10,7 @@ from .Model import Model
 
 load_dotenv()
 
-class DeepseekV3Model(Model):
+class DeepSeekV3Model(Model):
     def __init__(self):
         super().__init__()
         self.server_url = os.getenv("LLAMA_SERVER_URL")

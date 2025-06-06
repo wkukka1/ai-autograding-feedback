@@ -61,7 +61,7 @@ model_mapping = {
     "codellama:latest": models.CodeLlamaModel,
     "claude-3.7-sonnet": models.ClaudeModel,
     "remote": models.RemoteModel,
-    "deepSeek-v3": models.DeepseekV3Model,
+    "deepSeek-v3": models.DeepSeekV3Model,
 }
 
 

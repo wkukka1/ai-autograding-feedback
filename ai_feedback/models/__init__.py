@@ -4,4 +4,4 @@ from .DeepSeekModel import DeepSeekModel
 from .ClaudeModel import ClaudeModel
 from .OpenAIModel import OpenAIModel
 from .RemoteModel import RemoteModel
-from .DeepSeekV3Model import DeepseekV3Model
+from .DeepSeekV3Model import DeepSeekV3Model
