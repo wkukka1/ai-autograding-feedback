@@ -50,15 +50,7 @@ class DeepSeekV3Model(Model):
                 raise RuntimeError("Error: Environment variable LLAMA_SERVER_URL not set")
             response = self._get_response_server(prompt)
         else:
-            prompt = f"'{prompt}'"
             response = self._get_response_cli(prompt)
-
-        # Remove prompt from response
-        if response.startswith(prompt):
-            tail = response[len(prompt):]
-            if tail.startswith("\n"):
-                tail = tail[1:]
-            response = tail
 
         response = response.strip()
 
