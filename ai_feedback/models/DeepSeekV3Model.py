@@ -124,7 +124,7 @@ class DeepSeekV3Model(Model):
             LLAMA_CLI_PATH,
             "-m", LLAMA_MODEL_PATH,
             "--n-gpu-layers", GPU_LAYERS,
-            "-no-cnv",
+            "--single-turn",
             "-p", prompt,
             "--no-display-prompt"
         ]
