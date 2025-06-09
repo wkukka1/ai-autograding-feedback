@@ -10,7 +10,7 @@ from .helpers.template_utils import render_prompt_template
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
 
-def process_code(args, prompt: str) -> Tuple[str, str]:
+def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]:
     """
     Processes assignment files and generates a response using the selected model.
 
@@ -76,6 +76,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 solution_file=solution_file,
                 test_output=test_output_file,
                 question_num=args.question,
+                system_instructions=system_instructions
             )
         else:
             request, response = model.generate_response(
@@ -83,6 +84,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 submission_file=submission_file,
                 solution_file=solution_file,
                 test_output=test_output_file,
+                system_instructions=system_instructions
             )
 
     return request, response
@@ -101,4 +103,3 @@ def ensure_txt_file(file_path: str, rename_function: Callable[[Path], None]) -> 
     txt_file_path = file_path.replace(".ipynb", ".txt")
     if not os.path.exists(txt_file_path) and file_path.endswith(".ipynb"):
         rename_function(Path(file_path))
-

@@ -106,3 +106,12 @@ class OutputType(Enum):
 
     def __str__(self):
         return self.value
+
+class SystemPrompt(Enum):
+    """
+    Enum representing different types of system prompts for AI models.
+    """
+    TEST_FEEDBACK = "student_test_feedback"
+
+    def __str__(self):
+        return self.value

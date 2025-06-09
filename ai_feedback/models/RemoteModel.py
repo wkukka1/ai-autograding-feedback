@@ -31,6 +31,7 @@ class RemoteModel(Model):
         question_num: Optional[int] = None,
         test_output:Optional[Path] = None,
         scope: Optional[str] = None,
+        system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -54,7 +55,7 @@ class RemoteModel(Model):
         else:
             file_contents = self._get_file_contents(assignment_files)
 
-        request = f"Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
+        request = f"System Instructions: {system_instructions}\n\n Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
         load_dotenv()
 
         headers = {
@@ -68,7 +69,7 @@ class RemoteModel(Model):
 
         # Convert the data to JSON format
         json_data = json.dumps(data).encode("utf-8")
-
+        print(f"REQUEST: \n {json_data}")
         # Create the request
         request = urllib.request.Request(self.remote_url, data=json_data, headers=headers, method="POST")
 

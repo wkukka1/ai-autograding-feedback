@@ -9,7 +9,6 @@ from typing import List, Optional, Tuple
 from pathlib import Path
 
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
 # Load environment variables from .env file
 load_dotenv()
@@ -31,6 +30,7 @@ class ClaudeModel(Model):
             scope: Optional[str] = None,
             question_num: Optional[int] = None,
             test_output: Optional[Path] = None,
+            system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -64,7 +64,7 @@ class ClaudeModel(Model):
             model="claude-3-7-sonnet-20250219",
             max_tokens=1000,
             temperature=0.5,
-            system=SYSTEM_INSTRUCTIONS,
+            system=system_instructions,
             messages=[{"role": "user", "content": request}],
         )
 

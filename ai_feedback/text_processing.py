@@ -7,7 +7,7 @@ from .helpers.arg_options import model_mapping
 from .helpers.template_utils import render_prompt_template
 
 
-def process_text(args, prompt: str) -> Tuple[str, str]:
+def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]:
     """
     Processes text-based assignment files and generates a response using the selected model.
 
@@ -52,6 +52,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
             submission_file=submission_file,
             scope=args.scope,
             question_num=args.question,
+            system_instructions=system_instructions,
         )
     else:
         request, response = model.generate_response(
@@ -59,6 +60,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
             solution_file=solution_file,
             submission_file=submission_file,
             scope=args.scope,
+            system_instructions=system_instructions,
         )
 
     return request, response

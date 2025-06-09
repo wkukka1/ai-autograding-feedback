@@ -5,8 +5,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
-
 
 class CodeLlamaModel(Model):
 
@@ -16,7 +14,6 @@ class CodeLlamaModel(Model):
         """
         self.model = {
             "model": "codellama:latest",
-            "instructions": SYSTEM_INSTRUCTIONS,
         }
 
     def generate_response(
@@ -27,6 +24,7 @@ class CodeLlamaModel(Model):
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
+        system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt
@@ -56,7 +54,7 @@ class CodeLlamaModel(Model):
         response = ollama.chat(
             model=self.model["model"],
             messages=[
-                {"role": "system", "content": self.model["instructions"]},
+                {"role": "system", "content": system_instructions},
                 {"role": "user", "content": request},
             ],
         )

@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 import openai
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,7 +29,6 @@ class OpenAIModelVector(Model):
         self.model = self.client.beta.assistants.create(
             name="Markus LLM model",
             model="gpt-4-turbo",
-            instructions=SYSTEM_INSTRUCTIONS,
             tools=[{"type": "file_search"}],
             tool_resources={
                 "file_search": {"vector_store_ids": [self.vector_store.id]}
@@ -45,6 +43,7 @@ class OpenAIModelVector(Model):
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
+        system_instructions: Optional[List[str]] = None,
     ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.
@@ -60,6 +59,7 @@ class OpenAIModelVector(Model):
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.
         """
+        self.model = self.client.beta.assistants.update(assistant_id=self.model.id, instructions=system_instructions)
         if not self.model:
             raise RuntimeError("Model was not created successfully.")
 

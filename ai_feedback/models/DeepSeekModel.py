@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 from typing import List, Optional, Tuple
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
 
 class DeepSeekModel(Model):
@@ -13,10 +12,7 @@ class DeepSeekModel(Model):
         """
         Initializes the DeepSeekModel with model name and system instructions.
         """
-        self.model = {
-            "model": "deepseek-r1:70b",
-            "instructions": SYSTEM_INSTRUCTIONS,
-        }
+        self.model = {"model": "deepseek-r1:70b"}
 
     def generate_response(
         self,
@@ -26,6 +22,7 @@ class DeepSeekModel(Model):
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
+        system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -54,7 +51,7 @@ class DeepSeekModel(Model):
         response = ollama.chat(
             model=self.model["model"],
             messages=[
-                {"role": "system", "content": self.model["instructions"]},
+                {"role": "system", "content": system_instructions},
                 {"role": "user", "content": request},
             ],
         )

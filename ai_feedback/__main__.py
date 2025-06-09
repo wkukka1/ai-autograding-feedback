@@ -5,6 +5,8 @@ import sys
 from datetime import datetime
 from typing import Tuple
 
+from pathlib import Path
+
 from . import image_processing
 from . import code_processing
 from . import text_processing
@@ -148,6 +150,12 @@ def main() -> int:
         required=False,
         help=HELP_MESSAGES["solution_image"]
     )
+    parser.add_argument(
+        "--system_prompt",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["system_prompt"],
+    )
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided
@@ -155,6 +163,14 @@ def main() -> int:
         args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
+    system_instructions = ''
+
+    if args.system_prompt:
+        system_prompt_path = Path(args.system_prompt)
+        try:
+            system_instructions = system_prompt_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Error: File '{args.system_prompt}' not found.")
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
@@ -193,9 +209,9 @@ def main() -> int:
         prompt["prompt_content"] = prompt_content
         request, response = image_processing.process_image(args, prompt)
     elif args.scope == "text":
-        request, response = text_processing.process_text(args, prompt_content)
+        request, response = text_processing.process_text(args, prompt_content, system_instructions)
     else:
-        request, response = code_processing.process_code(args, prompt_content)
+        request, response = code_processing.process_code(args, prompt_content, system_instructions)
 
     if args.output == "markdown":
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
