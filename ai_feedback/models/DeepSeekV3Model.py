@@ -9,17 +9,15 @@ from pathlib import Path
 from .Model import Model
 
 load_dotenv()
-
+LLAMA_MODEL_PATH = os.getenv('LLAMA_MODEL_PATH', '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf')
+LLAMA_CLI_PATH = os.getenv('LLAMA_CLI_PATH', '/data1/llama.cpp/bin/llama-cli')
+LLAMA_SERVER_URL = os.getenv("LLAMA_SERVER_URL", "").strip()
+LLAMA_SERVER_URL = LLAMA_SERVER_URL if LLAMA_SERVER_URL and ":" in LLAMA_SERVER_URL else None
+GPU_LAYERS = 40
 
 class DeepSeekV3Model(Model):
     def __init__(self):
         super().__init__()
-        raw_url = os.getenv("LLAMA_SERVER_URL", "").strip()
-        self.server_url = raw_url if raw_url and ":" in raw_url else None
-        self.llama_bin_path = '/data1/llama.cpp/bin'
-        self.llama_server_path = '/data1/GGUF'
-        self.model_path = '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf'
-        self.gpu_layers = '40'
 
     def generate_response(
         self,
@@ -48,7 +46,7 @@ class DeepSeekV3Model(Model):
                                        or None if the response was invalid.
         """
         if llama_mode == 'server':
-            if not self.server_url:
+            if not LLAMA_SERVER_URL:
                 raise RuntimeError("Error: Environment variable LLAMA_SERVER_URL not set")
             response = self._get_response_server(prompt)
         else:
@@ -85,7 +83,7 @@ class DeepSeekV3Model(Model):
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
         """
-        url = f"http://{self.server_url}/v1/completions"
+        url = f"http://{LLAMA_SERVER_URL}/v1/completions"
 
         payload = {
             "prompt": prompt,
@@ -123,11 +121,12 @@ class DeepSeekV3Model(Model):
         # Need to add quotes to the prompt since prompts are multiline
 
         cmd = [
-            "./llama-cli",
-            "-m", self.model_path,
-            "--n-gpu-layers", self.gpu_layers,
+            LLAMA_CLI_PATH,
+            "-m", LLAMA_MODEL_PATH,
+            "--n-gpu-layers", GPU_LAYERS,
             "-no-cnv",
-            "-p", prompt
+            "-p", prompt,
+            "--no-display-prompt"
         ]
 
         try:
@@ -136,7 +135,6 @@ class DeepSeekV3Model(Model):
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                cwd=self.llama_bin_path,
                 timeout=300
             )
         except subprocess.TimeoutExpired as e:
@@ -156,4 +154,3 @@ class DeepSeekV3Model(Model):
 
         # Decode with 'replace' so invalid UTF-8 bytes become U+FFFD
         return completed.stdout.decode('utf-8', errors='replace')
-
