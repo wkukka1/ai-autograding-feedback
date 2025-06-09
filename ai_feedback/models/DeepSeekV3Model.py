@@ -13,7 +13,7 @@ LLAMA_MODEL_PATH = os.getenv('LLAMA_MODEL_PATH', '/data1/GGUF/DeepSeek-V3-0324-U
 LLAMA_CLI_PATH = os.getenv('LLAMA_CLI_PATH', '/data1/llama.cpp/bin/llama-cli')
 LLAMA_SERVER_URL = os.getenv("LLAMA_SERVER_URL", "").strip()
 LLAMA_SERVER_URL = LLAMA_SERVER_URL if LLAMA_SERVER_URL and ":" in LLAMA_SERVER_URL else None
-GPU_LAYERS = 40
+GPU_LAYERS = "40"
 
 class DeepSeekV3Model(Model):
     def __init__(self):
