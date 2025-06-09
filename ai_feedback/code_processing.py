@@ -21,6 +21,7 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
     Args:
         args: Command-line argument namespace containing submission_type, assignment, model, scope, and question.
         prompt (str): The initial user prompt to be modified and passed to the model.
+        system_instructions (str): instructions for the model
 
     Returns:
         Tuple[str, str]: A tuple containing the final request string and the model's generated response.

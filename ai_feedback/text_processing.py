@@ -18,6 +18,7 @@ def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]
     Args:
         args: Command-line argument namespace containing assignment, model, scope, and question attributes.
         prompt (str): The initial user prompt.
+        system_instructions (str): instructions for the model
 
     Returns:
         Tuple[str, str]: A tuple containing the request and the model's generated response.

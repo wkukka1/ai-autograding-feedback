@@ -27,11 +27,11 @@ class RemoteModel(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
         test_output:Optional[Path] = None,
         scope: Optional[str] = None,
-        system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -43,6 +43,7 @@ class RemoteModel(Model):
             question_num (Optional[int]): An optional question number to target specific content.
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
+            system_instructions (str): instructions for the model
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,

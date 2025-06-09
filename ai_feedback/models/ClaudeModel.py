@@ -26,11 +26,11 @@ class ClaudeModel(Model):
             self,
             prompt: str,
             submission_file: Path,
+            system_instructions: str,
             solution_file: Optional[Path] = None,
             scope: Optional[str] = None,
             question_num: Optional[int] = None,
             test_output: Optional[Path] = None,
-            system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -42,6 +42,7 @@ class ClaudeModel(Model):
             test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
+            system_instructions (str): instructions for the model
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

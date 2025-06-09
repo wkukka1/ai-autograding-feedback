@@ -25,11 +25,11 @@ class OpenAIModel(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
-        system_instructions: Optional[List[str]] = None,
     ) -> Tuple[str, str]:
         """
         Generate a response based on the given prompt and assignment context.
@@ -41,6 +41,7 @@ class OpenAIModel(Model):
             test_output (Path): Path to the test output file.
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific question number to focus on.
+            system_instructions (str): instructions for the model
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.

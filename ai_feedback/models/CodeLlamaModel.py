@@ -20,11 +20,11 @@ class CodeLlamaModel(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
-        system_instructions: Optional[List[str]] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt
@@ -37,6 +37,7 @@ class CodeLlamaModel(Model):
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
             question_num (Optional[int]): An optional specific question number to extract content for.
+            system_instructions (str): instructions for the model
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,

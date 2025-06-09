@@ -155,6 +155,7 @@ def main() -> int:
         type=str,
         required=False,
         help=HELP_MESSAGES["system_prompt"],
+        default="ai_feedback/data/prompts/system/student_test_feedback.md"
     )
     args = parser.parse_args()
 
