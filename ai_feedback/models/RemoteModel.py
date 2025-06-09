@@ -56,7 +56,7 @@ class RemoteModel(Model):
         else:
             file_contents = self._get_file_contents(assignment_files)
 
-        request = f"System Instructions: {system_instructions}\n\n Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
+        request = f"Prompt: {prompt}\n\nFiles to Reference:\n{file_contents}"
         load_dotenv()
 
         headers = {
@@ -66,6 +66,7 @@ class RemoteModel(Model):
         data = {
             "content": request,
             "model": self.model_name,
+            "system_instructions": system_instructions
         }
 
         # Convert the data to JSON format
