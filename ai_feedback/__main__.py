@@ -164,14 +164,12 @@ def main() -> int:
         args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
-    system_instructions = ''
 
-    if args.system_prompt:
-        system_prompt_path = Path(args.system_prompt)
-        try:
-            system_instructions = system_prompt_path.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Error: File '{args.system_prompt}' not found.")
+    system_prompt_path = Path(args.system_prompt)
+    try:
+        system_instructions = system_prompt_path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Error: File '{args.system_prompt}' not found.")
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
