@@ -41,6 +41,8 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
+| `--system_prompt`    | File path for the system instructions prompt                      | ❌ |
+
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
@@ -242,6 +244,7 @@ python -m ai_feedback \
   --question <question_number> \
   --model <model_name> \
   --output <markdown|stdout|direct>
+  --system_prompt <prompt_file_path>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
@@ -253,7 +256,8 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --output stdout
+python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --system_prompt ai_feedback/data/prompts/system/student_test_feedback.md
+
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
