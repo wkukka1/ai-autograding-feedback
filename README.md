@@ -42,7 +42,6 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
 | `--system_prompt`    | File path for the system instructions prompt                      | ❌ |
-
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
