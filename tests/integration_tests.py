@@ -58,7 +58,7 @@ def mock_and_capture(request):
     patch("ai_feedback.models.Model.Model.generate_response",
           side_effect=fake_base).start()
 
-    def fake_openai_call(prompt):
+    def fake_openai_call(prompt, system_instructions):
         all_prompts.append((test_name, "OpenAIModel._call_openai", prompt))
         return prompt
 
@@ -135,10 +135,9 @@ def test_cnn_example_openai_stdout(capsys):
         "--submission", "../test_submissions/cnn_example/cnn_submission.py",
         "--solution",   "../test_submissions/cnn_example/cnn_solution.py",
         "--model", "openai",
+        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
     output = run_cli_and_capture(args, capsys)
-
-    assert "You are a helpful assistant" in output
     assert "Prompt: Compare the student's code and solution code. For each mistake" in output
     assert "(Line 1) import numpy as np" in output
     assert "=== cnn_submission.py ===" in output
@@ -161,9 +160,9 @@ def test_cnn_example_custom_prompt_stdout(capsys):
         "--submission", "../test_submissions/cnn_example/cnn_submission.py",
         "--model", "openai",
         "--output", "stdout",
+        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
     output = run_cli_and_capture(args, capsys)
-    assert "You are a helpful assistant that provides detailed feedback on students" in output
     assert "Prompt: Evaluate the student's code readability." in output
     assert "=== cnn_submission.py ===" in output
     assert "(Line 1) import numpy as np" in output
@@ -182,10 +181,10 @@ def test_pdf_example_openai_direct(capsys):
         "--submission", "../test_submissions/pdf_example/student_pdf_submission.pdf",
         "--model", "openai",
         "--output", "direct",
+        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
 
     output = run_cli_and_capture(args, capsys)
-    assert "You are a helpful assistant that provides detailed feedback on students" in output
     assert "Prompt: Does the student correctly respond to the question, and meet all the" in output
     assert "student_pdf_submission.pdf" in output
     assert "Normalization allows each feature to have an equal influence on the mode" in output
