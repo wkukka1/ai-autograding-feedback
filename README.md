@@ -259,7 +259,7 @@ python -m ai_feedback --prompt_text "Evaluate the student's code readability." -
 
 #### Evaluate pdf_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai
+python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai --output test_file --output_template verbose
 ```
 
 #### Evaluate question1 of test1 of ggr274 homework using DeepSeek model 
