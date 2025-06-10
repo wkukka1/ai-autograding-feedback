@@ -34,7 +34,7 @@ def detect_submission_type(filename: str) -> str:
     sys.exit(1)
 
 
-def load_markdown_template(template) -> str:
+def load_markdown_template(template: str) -> str:
     """
     Loads the markdown template used for formatting output.
 
@@ -208,9 +208,9 @@ def main() -> int:
     else:
         request, response = code_processing.process_code(args, prompt_content)
 
-    template = load_markdown_template(args.output_template)
+    markdown_template = load_markdown_template(args.output_template)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_text = template.format(
+    output_text = markdown_template.format(
         question=args.question or "N/A",
         model=args.model,
         request=request,
