@@ -36,11 +36,12 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--submission`       | Submission file path                                              | ✅ |
 | `--question`         | Specific question to evaluate                                     | ❌ |
 | `--model`            | Model type (from `arg_options.Models`)                            | ✅ |
-| `--output`           | Output type (from `arg_options.Output`)                           | ❌ |
+| `--output`           | File path for where to record the output                          | ❌ |
 | `--solution`         | File path for the solution file                                   | ❌ |
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
+| `--output_template`  | Output template file (from `arg_options.OutputTemplate)           | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
@@ -162,19 +163,13 @@ Models:
 - llava:34b [Documentation](https://ollama.com/library/llava)
 
 ## Output Structure
-- When `--output markdown` is selected, the script will:
-1. Load `ai_feedback/data/output/output_template.md`
+- When `--output filepath` is given, the script will:
+1. Load the template for the output based on the `--output_template` (Options defined in ai_feedback/helpers/arg_options.OutputTemplate)
 2. Format it with the provided arguments and processing results.
-3. Save it under `ai_feedback/test_responses_md/<assignment>/<model>/<prompt>_<timestamp>.md`
+3. Save it under `filepath`
 
-Example Markdown file name:
-```
-ai_feedback/test_responses_md/test1/openai/code_table_20250310_143500.md
-```
-
-- When the `--output` argument is not given, the prompt used and generated response will be sent to stdout.
-- When `--output direct` is selected, only the generated response will be sent to stdout.
-
+- When the `--output` argument is not given, the prompt used and generated response will be sent to stdout in the format selected by `--output_template`.
+- When the `--output_template` argument is not given it will default to `response_only` which is only the response from the model
 ## Test Files
 - Any subdirectory of /test_submissions can be run locally. More examples can be added to this directory using a similar fashion.
 
@@ -241,7 +236,8 @@ python -m ai_feedback \
   --solution_image <image_file_path> \
   --question <question_number> \
   --model <model_name> \
-  --output <markdown|stdout|direct>
+  --output <file_path_to> \
+  --output_template <file_name>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
@@ -253,28 +249,28 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --output stdout
+python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
 ```bash
-python -m ai_feedback --prompt_text "Evaluate the student's code readability." --scope code --submission test_submissions/cnn_example/cnn_submission.py --model openai --output stdout
+python -m ai_feedback --prompt_text "Evaluate the student's code readability." --scope code --submission test_submissions/cnn_example/cnn_submission.py --model openai
 ```
 
 #### Evaluate pdf_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai --output direct
+python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai
 ```
 
 #### Evaluate question1 of test1 of ggr274 homework using DeepSeek model 
 ```bash
 python -m ai_feedback --prompt code_table \
-  --scope code --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb --question 1 --model deepSeek-R1:70B --output markdown
+  --scope code --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb --question 1 --model deepSeek-R1:70B
 ```
 
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
-python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b --output stdout
+python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b
 ```
 
 #### Using Ollama
