@@ -38,6 +38,9 @@ def load_markdown_template(template) -> str:
     """
     Loads the markdown template used for formatting output.
 
+    Args:
+        template (str): name of markdown template.
+
     Returns:
         str: The markdown template as a string.
 
@@ -51,7 +54,7 @@ def load_markdown_template(template) -> str:
         with open(template_file, "r") as file:
             return file.read()
     except FileNotFoundError:
-        print("Error: Markdown template file 'verbose.md' not found.")
+        print(f"Error: Markdown template file '{template}.md' not found.")
         sys.exit(1)
 
 
