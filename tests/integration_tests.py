@@ -195,7 +195,6 @@ def test_ggr274_question1_deepseek(capsys):
     python -m ai_feedback --prompt code_table --scope code \
         --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
         --question 1 --model deepSeek-R1:70B --output tests/test_responses_md/test_ggr274_q1_response.md
-
     """
     args = [
         "--prompt", "code_table",
