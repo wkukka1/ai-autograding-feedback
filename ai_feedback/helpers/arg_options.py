@@ -94,15 +94,13 @@ class FileType(Enum):
     def __str__(self):
         return self.value
 
-
-class OutputType(Enum):
+class OutputTemplate(Enum):
     """
-    Enum representing the output format types for the LLM's results.
+    Enum representing different output template types that the application can process.
     """
 
-    STDOUT = "stdout"
-    MARKDOWN = "markdown"
-    DIRECT = "direct"
+    RESPONSE_ONLY = 'response_only'
+    VERBOSE = 'verbose'
 
     def __str__(self):
         return self.value

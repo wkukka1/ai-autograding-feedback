@@ -5,6 +5,8 @@ import sys
 from datetime import datetime
 from typing import Tuple
 
+from pathlib import Path
+
 from . import image_processing
 from . import code_processing
 from . import text_processing
@@ -32,7 +34,7 @@ def detect_submission_type(filename: str) -> str:
     sys.exit(1)
 
 
-def load_markdown_template() -> str:
+def load_markdown_template(template) -> str:
     """
     Loads the markdown template used for formatting output.
 
@@ -44,12 +46,12 @@ def load_markdown_template() -> str:
     """
     try:
         template_file = os.path.join(
-            os.path.dirname(__file__), "data/output/output_template.md"
+            os.path.dirname(__file__), f"data/output/{template}.md"
         )
         with open(template_file, "r") as file:
             return file.read()
     except FileNotFoundError:
-        print("Error: Markdown template file 'output_template.md' not found.")
+        print("Error: Markdown template file 'verbose.md' not found.")
         sys.exit(1)
 
 
@@ -125,9 +127,8 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=str,
-        choices=arg_options.get_enum_values(arg_options.OutputType),
         required=False,
-        default='stdout',
+        default='',
         help=HELP_MESSAGES["output"],
     )
     parser.add_argument(
@@ -147,6 +148,13 @@ def main() -> int:
         type=str,
         required=False,
         help=HELP_MESSAGES["solution_image"]
+    )
+    parser.add_argument(
+        "--output_template",
+        required=False,
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.OutputTemplate),
+        default='response_only'
     )
     args = parser.parse_args()
 
@@ -197,32 +205,25 @@ def main() -> int:
     else:
         request, response = code_processing.process_code(args, prompt_content)
 
-    if args.output == "markdown":
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        assignment_directory = f"{TEST_OUTPUTS_DIRECTORY}/{args.model}"
-        os.makedirs(assignment_directory, exist_ok=True)
+    template = load_markdown_template(args.output_template)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_text = template.format(
+        question=args.question or "N/A",
+        model=args.model,
+        request=request,
+        response=response,
+        timestamp=timestamp,
+        submission=args.submission,
+    )
 
-        markdown_filename = f"{assignment_directory}/{args.prompt}_{timestamp}.md"
-
-        markdown_template = load_markdown_template()
-        markdown_output = markdown_template.format(
-            question=args.question if args.question else "N/A",
-            model=args.model,
-            request=request,
-            response=response,
-            timestamp=timestamp,
-            submission=args.submission,
-        )
-        with open(markdown_filename, "w") as md_file:
-            md_file.write(markdown_output)
-        print(f"Markdown report saved to `{markdown_filename}`")
-
-    elif args.output == "stdout":
-        print(response)
-
-    elif args.output == "direct":
-        print(response)
-
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w") as f:
+            f.write(output_text)
+        print(f"Markdown report saved to `{output_path}`")
+    else:
+        print(output_text)
     return 0
 
 

@@ -160,7 +160,6 @@ def test_cnn_example_custom_prompt_stdout(capsys):
         "--scope", "code",
         "--submission", "../test_submissions/cnn_example/cnn_submission.py",
         "--model", "openai",
-        "--output", "stdout",
     ]
     output = run_cli_and_capture(args, capsys)
     assert "You are a helpful assistant that provides detailed feedback on students" in output
@@ -174,14 +173,13 @@ def test_pdf_example_openai_direct(capsys):
     Evaluate pdf_example test using openAI model and direct output mode.
     python -m ai_feedback --prompt text_pdf_analyze --scope text \
         --submission test_submissions/pdf_example/student_pdf_submission.pdf \
-        --model openai --output direct
+        --model openai
     """
     args = [
         "--prompt", "text_pdf_analyze",
         "--scope", "text",
         "--submission", "../test_submissions/pdf_example/student_pdf_submission.pdf",
         "--model", "openai",
-        "--output", "direct",
     ]
 
     output = run_cli_and_capture(args, capsys)
@@ -191,13 +189,13 @@ def test_pdf_example_openai_direct(capsys):
     assert "Normalization allows each feature to have an equal influence on the mode" in output
 
 
-def test_ggr274_question1_deepseek_markdown(capsys):
+def test_ggr274_question1_deepseek(capsys):
     """
     Example 4:
     Evaluate question 1 of test1 of ggr274 homework using DeepSeek model, output as Markdown.
     python -m ai_feedback --prompt code_table --scope code \
         --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
-        --question 1 --model deepSeek-R1:70B --output markdown
+        --question 1 --model deepSeek-R1:70B
     """
     args = [
         "--prompt", "code_table",
@@ -205,7 +203,6 @@ def test_ggr274_question1_deepseek_markdown(capsys):
         "--submission", "../test_submissions/ggr274_homework5/test1/student_submission.ipynb",
         "--question", "1",
         "--model", "deepSeek-R1:70B",
-        "--output", "markdown",
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Markdown report saved" in output
@@ -227,7 +224,6 @@ def test_ggr274_image_question5b_llama_stdout(capsys):
         "--submission_image", "../test_submissions/ggr274_homework5/image_test2/student_submission.png",
         "--question", "Question 5b",
         "--model", "llama3.2-vision:90b",
-        "--output", "stdout",
     ]
 
     output = run_cli_and_capture(args, capsys)
