@@ -127,7 +127,7 @@ def test_cnn_example_openai_stdout(capsys):
     python -m ai_feedback --prompt code_lines --scope code \
         --submission test_submissions/cnn_example/cnn_submission \
         --solution test_submissions/cnn_example/cnn_solution.py \
-        --model openai --output stdout
+        --model openai
     """
     args = [
         "--prompt", "code_lines",
@@ -152,8 +152,7 @@ def test_cnn_example_custom_prompt_stdout(capsys):
     python -m ai_feedback --prompt_text "Evaluate the student's code readability." \
         --scope code \
         --submission test_submissions/cnn_example/cnn_submission.py \
-        --model openai \
-        --output stdout
+        --model openai
     """
     args = [
         "--prompt_text", "Evaluate the student's code readability.",
@@ -167,7 +166,7 @@ def test_cnn_example_custom_prompt_stdout(capsys):
     assert "=== cnn_submission.py ===" in output
     assert "(Line 1) import numpy as np" in output
 
-def test_pdf_example_openai_direct(capsys):
+def test_pdf_example_openai(capsys):
     """
     Example 3:
     Evaluate pdf_example test using openAI model and direct output mode.
@@ -195,7 +194,8 @@ def test_ggr274_question1_deepseek(capsys):
     Evaluate question 1 of test1 of ggr274 homework using DeepSeek model, output as Markdown.
     python -m ai_feedback --prompt code_table --scope code \
         --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
-        --question 1 --model deepSeek-R1:70B
+        --question 1 --model deepSeek-R1:70B --output tests/test_responses_md/test_ggr274_q1_response.md
+
     """
     args = [
         "--prompt", "code_table",
@@ -203,6 +203,7 @@ def test_ggr274_question1_deepseek(capsys):
         "--submission", "../test_submissions/ggr274_homework5/test1/student_submission.ipynb",
         "--question", "1",
         "--model", "deepSeek-R1:70B",
+        "--output", "tests/test_responses_md/test_ggr274_q1_response.md"
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Markdown report saved" in output
@@ -215,7 +216,7 @@ def test_ggr274_image_question5b_llama_stdout(capsys):
     python3 -m ai_feedback --prompt image_analyze --scope image \
       --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb \
       --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png \
-      --question "Question 5b" --model llama3.2-vision --output stdout
+      --question "Question 5b" --model llama3.2-vision
     """
     args = [
         "--prompt", "image_analyze",
