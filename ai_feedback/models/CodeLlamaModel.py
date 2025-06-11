@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 
 from .Model import Model
 
+
 class CodeLlamaModel(Model):
 
     def __init__(self) -> None:

@@ -135,7 +135,6 @@ def test_cnn_example_openai_stdout(capsys):
         "--submission", "../test_submissions/cnn_example/cnn_submission.py",
         "--solution",   "../test_submissions/cnn_example/cnn_solution.py",
         "--model", "openai",
-        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Prompt: Compare the student's code and solution code. For each mistake" in output
@@ -160,7 +159,6 @@ def test_cnn_example_custom_prompt_stdout(capsys):
         "--submission", "../test_submissions/cnn_example/cnn_submission.py",
         "--model", "openai",
         "--output", "stdout",
-        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Prompt: Evaluate the student's code readability." in output
@@ -181,7 +179,6 @@ def test_pdf_example_openai_direct(capsys):
         "--submission", "../test_submissions/pdf_example/student_pdf_submission.pdf",
         "--model", "openai",
         "--output", "direct",
-        "--system_prompt",  "../ai_feedback/data/prompts/system/student_test_feedback.md"
     ]
 
     output = run_cli_and_capture(args, capsys)

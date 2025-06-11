@@ -12,5 +12,5 @@ HELP_MESSAGES = {
     "test_output": "The output of tests from evaluating the assignment.",
     "submission_image": "The file path for the image file.",
     "solution_image": "The file path to the solution image.",
-    "system_prompt": "One of the options defined in args.SystemPrompts for system instructions to the AI Model.",
+    "system_prompt": "The specific system instructions to send to the AI Model.",
 }

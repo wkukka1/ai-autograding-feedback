@@ -71,7 +71,7 @@ class RemoteModel(Model):
 
         # Convert the data to JSON format
         json_data = json.dumps(data).encode("utf-8")
-        print(f"REQUEST: \n {json_data}")
+
         # Create the request
         request = urllib.request.Request(self.remote_url, data=json_data, headers=headers, method="POST")
 
