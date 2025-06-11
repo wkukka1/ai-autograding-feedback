@@ -154,8 +154,9 @@ def main() -> int:
         "--system_prompt",
         type=str,
         required=False,
+        choices=arg_options.get_enum_values(arg_options.SystemPrompt),
         help=HELP_MESSAGES["system_prompt"],
-        default="ai_feedback/data/prompts/system/student_test_feedback.md"
+        default="student_test_feedback"
     )
     args = parser.parse_args()
 
@@ -165,11 +166,9 @@ def main() -> int:
 
     prompt_content = ""
 
-    system_prompt_path = Path(args.system_prompt)
-    try:
-        system_instructions = system_prompt_path.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Error: File '{args.system_prompt}' not found.")
+    system_prompt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"data/prompts/system/{args.system_prompt}.md")
+    with open(system_prompt_path, "r") as file:
+        system_instructions = file.read()
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
