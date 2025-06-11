@@ -9,9 +9,9 @@ from pathlib import Path
 from .Model import Model
 
 load_dotenv()
-LLAMA_MODEL_PATH = os.getenv('LLAMA_MODEL_PATH', '/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf')
-LLAMA_CLI_PATH = os.getenv('LLAMA_CLI_PATH', '/data1/llama.cpp/bin/llama-cli')
-LLAMA_SERVER_URL = os.getenv("LLAMA_SERVER_URL", "").strip()
+LLAMA_MODEL_PATH = os.getenv('LLAMA_MODEL_PATH')
+LLAMA_CLI_PATH = os.getenv('LLAMA_CLI_PATH')
+LLAMA_SERVER_URL = os.getenv("LLAMA_SERVER_URL").strip()
 LLAMA_SERVER_URL = LLAMA_SERVER_URL if LLAMA_SERVER_URL and ":" in LLAMA_SERVER_URL else None
 GPU_LAYERS = "40"
 
@@ -46,10 +46,10 @@ class DeepSeekV3Model(Model):
                                        or None if the response was invalid.
         """
         if llama_mode == 'server':
-            if not LLAMA_SERVER_URL:
-                raise RuntimeError("Error: Environment variable LLAMA_SERVER_URL not set")
+            self._ensure_env_vars('LLAMA_SERVER_URL')
             response = self._get_response_server(prompt)
         else:
+            self._ensure_env_vars('LLAMA_MODEL_PATH', 'LLAMA_CLI_PATH')
             response = self._get_response_cli(prompt)
 
         response = response.strip()
@@ -61,6 +61,22 @@ class DeepSeekV3Model(Model):
             response = response.strip()
 
         return prompt, response
+
+    def _ensure_env_vars(self, *names):
+        """
+        Ensure that each of the given variable names exists in globals() and is truthy.
+
+        Args:
+            *names (str): One or more names of environment‐variable strings to validate.
+
+        Raises:
+            RuntimeError: If any of the specified variables is missing or has a falsy value.
+        """
+        missing = [n for n in names if not globals().get(n)]
+        if missing:
+            raise RuntimeError(
+                f"Error: Environment variable(s) {', '.join(missing)} not set"
+            )
 
     def _get_response_server(
             self,
@@ -75,7 +91,7 @@ class DeepSeekV3Model(Model):
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
         """
-        url = f"http://{LLAMA_SERVER_URL}/v1/completions"
+        url = f"{LLAMA_SERVER_URL}/v1/completions"
 
         payload = {
             "prompt": prompt,
