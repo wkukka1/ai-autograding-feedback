@@ -133,13 +133,13 @@ class DeepSeekV3Model(Model):
             "-m", LLAMA_MODEL_PATH,
             "--n-gpu-layers", GPU_LAYERS,
             "--single-turn",
-            "-p", prompt,
             "--no-display-prompt"
         ]
 
         try:
             completed = subprocess.run(
                 cmd,
+                input=prompt,
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
