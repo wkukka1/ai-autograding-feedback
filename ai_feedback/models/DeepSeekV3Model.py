@@ -139,7 +139,7 @@ class DeepSeekV3Model(Model):
         try:
             completed = subprocess.run(
                 cmd,
-                input=prompt,
+                input=prompt.encode(),
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
