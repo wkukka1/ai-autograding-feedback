@@ -255,7 +255,7 @@ python -m ai_feedback -h
 
 #### Evaluate cnn_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai
+python -m ai_feedback --prompt code_lines --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --output stdout
 ```
 
 #### Evaluate cnn_example test using openAI model and custom prompt 
