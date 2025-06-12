@@ -10,7 +10,7 @@ from .helpers.template_utils import render_prompt_template
 EXPECTED_SUFFIXES = ["_solution", "test_output", "_submission"]
 
 
-def process_code(args, prompt: str) -> Tuple[str, str]:
+def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]:
     """
     Processes assignment files and generates a response using the selected model.
 
@@ -21,6 +21,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
     Args:
         args: Command-line argument namespace containing submission_type, assignment, model, scope, and question.
         prompt (str): The initial user prompt to be modified and passed to the model.
+        system_instructions (str): instructions for the model
 
     Returns:
         Tuple[str, str]: A tuple containing the final request string and the model's generated response.
@@ -76,6 +77,7 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 solution_file=solution_file,
                 test_output=test_output_file,
                 question_num=args.question,
+                system_instructions=system_instructions,
                 llama_mode=args.llama_mode,
             )
         else:
@@ -84,7 +86,8 @@ def process_code(args, prompt: str) -> Tuple[str, str]:
                 submission_file=submission_file,
                 solution_file=solution_file,
                 test_output=test_output_file,
-                llama_mode=args.llama_mode
+                system_instructions=system_instructions,
+                llama_mode=args.llama_mode,
             )
 
     return request, response
@@ -103,4 +106,3 @@ def ensure_txt_file(file_path: str, rename_function: Callable[[Path], None]) -> 
     txt_file_path = file_path.replace(".ipynb", ".txt")
     if not os.path.exists(txt_file_path) and file_path.endswith(".ipynb"):
         rename_function(Path(file_path))
-

@@ -23,6 +23,7 @@ class DeepSeekV3Model(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
@@ -36,6 +37,7 @@ class DeepSeekV3Model(Model):
             prompt (str): The input prompt provided by the user.
             submission_file (Path): Path Object pointing to the submission file.
             solution_file (Path): Path Object pointing to the solution file.
+            system_instructions (str): The system instructions provided by the user.
             scope (Optional[str]): Optional scope to use for this model.
             test_output (Optional[Path]): Path Object pointing to the test output file.
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
@@ -45,6 +47,7 @@ class DeepSeekV3Model(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        prompt = f"{system_instructions}\n{prompt}"
         if llama_mode == 'server':
             self._ensure_env_vars('LLAMA_SERVER_URL')
             response = self._get_response_server(prompt)
