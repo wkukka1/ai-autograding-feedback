@@ -1,5 +1,0 @@
-{
-    "prompt_content": "For each mistake, give the line of code from the student's submission file which is causing it and explain to the student why there is an error. Don't give away any solution. Be concise.\n\n{file_references}\n\nFiles to Reference:\n{file_contents}",
-    "include_submission_image": false,
-    "include_solution_image": false
-}
