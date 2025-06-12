@@ -23,14 +23,15 @@ class ClaudeModel(Model):
         self.client = anthropic.Anthropic(api_key=os.getenv("CLAUDE_API_KEY"))
 
     def generate_response(
-            self,
-            prompt: str,
-            submission_file: Path,
-            system_instructions: str,
-            solution_file: Optional[Path] = None,
-            scope: Optional[str] = None,
-            question_num: Optional[int] = None,
-            test_output: Optional[Path] = None,
+        self,
+        prompt: str,
+        submission_file: Path,
+        system_instructions: str,
+        solution_file: Optional[Path] = None,
+        scope: Optional[str] = None,
+        question_num: Optional[int] = None,
+        test_output: Optional[Path] = None,
+        llama_mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -43,6 +44,7 @@ class ClaudeModel(Model):
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific task number to extract from text files.
             system_instructions (str): instructions for the model
+            llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

@@ -3,9 +3,6 @@ import json
 import os
 import sys
 from datetime import datetime
-from typing import Tuple
-
-from pathlib import Path
 
 from . import image_processing
 from . import code_processing
@@ -158,6 +155,15 @@ def main() -> int:
         help=HELP_MESSAGES["system_prompt"],
         default="student_test_feedback"
     )
+    parser.add_argument(
+        "--llama_mode",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.LlamaMode),
+        required=False,
+        default="cli",
+        help=HELP_MESSAGES["llama_mode"],
+    )
+
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided

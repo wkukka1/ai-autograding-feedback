@@ -44,6 +44,7 @@ class OpenAIModelVector(Model):
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
+        llama_mode: Optional[str] = None,
     ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.
@@ -56,6 +57,7 @@ class OpenAIModelVector(Model):
             scope (Optional[str]): The path to a file to store the response to.
             question_num (Optional[int]): An optional question number.
             system_instructions (str): instructions for the model
+            llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.
@@ -80,7 +82,7 @@ class OpenAIModelVector(Model):
         response = self._call_openai(prompt)
         self._cleanup_resources(file_ids)
 
-        request = f"\n{SYSTEM_INSTRUCTIONS}\n{prompt}"
+        request = f"\n{system_instructions}\n{prompt}"
         return request, response
 
     def _upload_file(self, file_path: Path) -> str:
