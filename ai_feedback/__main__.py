@@ -52,6 +52,30 @@ def load_markdown_template() -> str:
         sys.exit(1)
 
 
+def load_markdown_prompt(prompt_name: str) -> dict:
+    """Loads a markdown prompt file.
+    
+    Args:
+        prompt_name (str): Name of the prompt file (without extension)
+        
+    Returns:
+        dict: Dictionary containing prompt_content
+        
+    Raises:
+        SystemExit: If the prompt file is not found
+    """
+    try:
+        prompt_file = os.path.join(
+            os.path.dirname(__file__), f"data/prompts/user/{prompt_name}.md"
+        )
+        with open(prompt_file, "r") as file:
+            prompt_content = file.read()
+        return {"prompt_content": prompt_content}
+    except FileNotFoundError:
+        print(f"Error: Prompt file '{prompt_name}.md' not found in user subfolder.")
+        sys.exit(1)
+
+
 def main() -> int:
     """
     Parses command-line arguments to determine the type of submission, scope,
@@ -199,12 +223,8 @@ def main() -> int:
                 )
                 sys.exit(1)
 
-            prompt_filename = os.path.join(
-                os.path.dirname(__file__), f"data/prompts/{args.prompt}.json"
-            )
-            with open(prompt_filename, "r") as prompt_file:
-                prompt = json.load(prompt_file)
-                prompt_content += prompt["prompt_content"]
+            prompt = load_markdown_prompt(args.prompt)
+            prompt_content += prompt["prompt_content"]
 
         if args.prompt_text:
             prompt_content += args.prompt_text

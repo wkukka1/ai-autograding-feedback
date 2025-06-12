@@ -1,5 +1,0 @@
-{
-    "prompt_content": "Compare the student's code and solution code. For each mistake, output the exact line(s) of code from the student's submission file which is causing it. Don't ouput anything else.\n\n{file_references}\n\nFiles to Reference:\n{file_contents}",
-    "include_submission_image": false,
-    "include_solution_image": false
-}

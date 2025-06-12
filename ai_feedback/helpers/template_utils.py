@@ -5,12 +5,15 @@ from ollama import Image
 import PyPDF2
 
 
-def render_prompt_template(prompt_content: str, assignment_files: list[str] = None, **kwargs) -> str:
+def render_prompt_template(prompt_content: str, assignment_files: list[str] = None, 
+                          has_submission_image: bool = False, has_solution_image: bool = False, **kwargs) -> str:
     """Render a prompt template by replacing placeholders with actual values.
     
     Args:
         prompt_content (str): The prompt template with placeholders like {file_contents}
         assignment_files (list[str], optional): List of file paths for file-based placeholders
+        has_submission_image (bool): Whether a submission image is present
+        has_solution_image (bool): Whether a solution image is present
         **kwargs: Additional key-value pairs for placeholder replacement
         
     Returns:
@@ -24,6 +27,23 @@ def render_prompt_template(prompt_content: str, assignment_files: list[str] = No
             
         if '{file_contents}' in prompt_content and 'file_contents' not in template_data:
             template_data['file_contents'] = gather_file_contents(assignment_files)
+    
+    # Handle image placeholders with context-aware replacement
+    if '{submission_image}' in prompt_content and 'submission_image' not in template_data:
+        if has_submission_image and has_solution_image:
+            template_data['submission_image'] = 'The first attached image is the student\'s submission.'
+        elif has_submission_image:
+            template_data['submission_image'] = 'The attached image is the student\'s submission.'
+        else:
+            template_data['submission_image'] = '[Submission Image Attached]'
+            
+    if '{solution_image}' in prompt_content and 'solution_image' not in template_data:
+        if has_submission_image and has_solution_image:
+            template_data['solution_image'] = 'The second attached image is the expected solution.'
+        elif has_solution_image:
+            template_data['solution_image'] = 'The attached image is the expected solution.'
+        else:
+            template_data['solution_image'] = '[Solution Image Attached]'
     
     return prompt_content.format(**template_data)
 
