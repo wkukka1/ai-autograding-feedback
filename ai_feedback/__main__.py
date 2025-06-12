@@ -3,7 +3,6 @@ import json
 import os
 import sys
 from datetime import datetime
-from typing import Tuple
 
 from pathlib import Path
 
@@ -55,6 +54,30 @@ def load_markdown_template(template: str) -> str:
             return file.read()
     except FileNotFoundError:
         print(f"Error: Markdown template file '{template}.md' not found.")
+        sys.exit(1)
+
+
+def load_markdown_prompt(prompt_name: str) -> dict:
+    """Loads a markdown prompt file.
+
+    Args:
+        prompt_name (str): Name of the prompt file (without extension)
+
+    Returns:
+        dict: Dictionary containing prompt_content
+
+    Raises:
+        SystemExit: If the prompt file is not found
+    """
+    try:
+        prompt_file = os.path.join(
+            os.path.dirname(__file__), f"data/prompts/user/{prompt_name}.md"
+        )
+        with open(prompt_file, "r") as file:
+            prompt_content = file.read()
+        return {"prompt_content": prompt_content}
+    except FileNotFoundError:
+        print(f"Error: Prompt file '{prompt_name}.md' not found in user subfolder.")
         sys.exit(1)
 
 
@@ -159,6 +182,23 @@ def main() -> int:
         choices=arg_options.get_enum_values(arg_options.OutputTemplate),
         default='response_only'
     )
+    parser.add_argument(
+        "--system_prompt",
+        type=str,
+        required=False,
+        choices=arg_options.get_enum_values(arg_options.SystemPrompt),
+        help=HELP_MESSAGES["system_prompt"],
+        default="student_test_feedback"
+    )
+    parser.add_argument(
+        "--llama_mode",
+        type=str,
+        choices=arg_options.get_enum_values(arg_options.LlamaMode),
+        required=False,
+        default="cli",
+        help=HELP_MESSAGES["llama_mode"],
+    )
+
     args = parser.parse_args()
 
     # Auto-detect submission type if not provided
@@ -166,6 +206,10 @@ def main() -> int:
         args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
+
+    system_prompt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"data/prompts/system/{args.system_prompt}.md")
+    with open(system_prompt_path, "r") as file:
+        system_instructions = file.read()
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
@@ -190,12 +234,8 @@ def main() -> int:
                 )
                 sys.exit(1)
 
-            prompt_filename = os.path.join(
-                os.path.dirname(__file__), f"data/prompts/{args.prompt}.json"
-            )
-            with open(prompt_filename, "r") as prompt_file:
-                prompt = json.load(prompt_file)
-                prompt_content += prompt["prompt_content"]
+            prompt = load_markdown_prompt(args.prompt)
+            prompt_content += prompt["prompt_content"]
 
         if args.prompt_text:
             prompt_content += args.prompt_text
@@ -204,9 +244,9 @@ def main() -> int:
         prompt["prompt_content"] = prompt_content
         request, response = image_processing.process_image(args, prompt)
     elif args.scope == "text":
-        request, response = text_processing.process_text(args, prompt_content)
+        request, response = text_processing.process_text(args, prompt_content, system_instructions)
     else:
-        request, response = code_processing.process_code(args, prompt_content)
+        request, response = code_processing.process_code(args, prompt_content, system_instructions)
 
     markdown_template = load_markdown_template(args.output_template)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
