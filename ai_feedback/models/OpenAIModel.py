@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 import openai
 import PyPDF2
 from .Model import Model
-from ..helpers.constants import SYSTEM_INSTRUCTIONS
 
 load_dotenv()
 
@@ -26,6 +25,7 @@ class OpenAIModel(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -42,6 +42,7 @@ class OpenAIModel(Model):
             test_output (Path): Path to the test output file.
             scope (Optional[str]): The content scope.
             question_num (Optional[int]): Specific question number to focus on.
+            system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
@@ -57,8 +58,8 @@ class OpenAIModel(Model):
         else:
             file_contents = self._get_file_contents(assignment_files)
 
-        request = f"{SYSTEM_INSTRUCTIONS}\n\nPrompt: {prompt}\nFiles to Reference:\n{file_contents}"
-        response = self._call_openai(request)
+        request = f"Prompt: {prompt}\nFiles to Reference:\n{file_contents}"
+        response = self._call_openai(request, system_instructions)
         return request, response
 
     def _get_file_contents(self, assignment_files: List[Path]) -> str:
@@ -187,7 +188,7 @@ class OpenAIModel(Model):
 
         return file_contents.strip()
 
-    def _call_openai(self, prompt: str) -> str:
+    def _call_openai(self, prompt: str, system_instructions: str) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.
 
@@ -200,7 +201,7 @@ class OpenAIModel(Model):
         response = self.client.chat.completions.create(
             model="gpt-4-turbo",
             messages=[
-                {"role": "system", "content": SYSTEM_INSTRUCTIONS},
+                {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
             max_tokens=1000,

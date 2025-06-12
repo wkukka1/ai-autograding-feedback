@@ -57,7 +57,7 @@ def mock_and_capture(request):
     patch("ai_feedback.models.Model.Model.generate_response",
           side_effect=fake_base).start()
 
-    def fake_openai_call(prompt):
+    def fake_openai_call(prompt, system_instructions):
         all_prompts.append((test_name, "OpenAIModel._call_openai", prompt))
         return prompt
 

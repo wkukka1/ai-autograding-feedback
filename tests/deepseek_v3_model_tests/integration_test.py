@@ -6,7 +6,7 @@ from pathlib import Path
 from tests.test_helper import run_cli_and_capture
 
 
-def test_deepseek_v3_cli_code_scope_stdout(capsys):
+def test_deepseek_v3_cli_code_scope_stdout(capsys, monkeypatch):
     """
     Evaluate a simple code-scope test using DeepSeekV3Model in CLI mode,
     printing to stdout. We mock subprocess.run so that llama-cli never actually runs.
@@ -16,6 +16,8 @@ def test_deepseek_v3_cli_code_scope_stdout(capsys):
         --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
         --model deepSeek-v3
     """
+    monkeypatch.setenv("LLAMA_CLI_PATH", "/path/to/fake/llama-cli")
+    monkeypatch.setenv("LLAMA_MODEL_PATH", "/data1/GGUF/DeepSeek-V3-0324-UD-Q2_K_XL/DeepSeek-V3-0324-UD-Q2_K_XL.gguf")
     # Prepare fake CompletedProcess: stdout begins with the quoted prompt,
     # then a newline, then some dummy AI content followed by the end marker.
     fake_prompt = "'code_table'"

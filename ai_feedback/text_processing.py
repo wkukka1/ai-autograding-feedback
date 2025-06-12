@@ -1,13 +1,12 @@
-import os
 import sys
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple
 
 from .helpers.arg_options import model_mapping
 from .helpers.template_utils import render_prompt_template
 
 
-def process_text(args, prompt: str) -> Tuple[str, str]:
+def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]:
     """
     Processes text-based assignment files and generates a response using the selected model.
 
@@ -18,6 +17,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
     Args:
         args: Command-line argument namespace containing assignment, model, scope, and question attributes.
         prompt (str): The initial user prompt.
+        system_instructions (str): instructions for the model
 
     Returns:
         Tuple[str, str]: A tuple containing the request and the model's generated response.
@@ -52,6 +52,7 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
             submission_file=submission_file,
             scope=args.scope,
             question_num=args.question,
+            system_instructions=system_instructions,
             llama_mode=args.llama_mode
         )
     else:
@@ -60,8 +61,8 @@ def process_text(args, prompt: str) -> Tuple[str, str]:
             solution_file=solution_file,
             submission_file=submission_file,
             scope=args.scope,
+            system_instructions=system_instructions,
             llama_mode=args.llama_mode
         )
 
     return request, response
-

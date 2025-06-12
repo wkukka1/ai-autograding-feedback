@@ -3,7 +3,6 @@ import json
 import os
 import sys
 from datetime import datetime
-from typing import Tuple
 
 from . import image_processing
 from . import code_processing
@@ -149,6 +148,14 @@ def main() -> int:
         help=HELP_MESSAGES["solution_image"]
     )
     parser.add_argument(
+        "--system_prompt",
+        type=str,
+        required=False,
+        choices=arg_options.get_enum_values(arg_options.SystemPrompt),
+        help=HELP_MESSAGES["system_prompt"],
+        default="student_test_feedback"
+    )
+    parser.add_argument(
         "--llama_mode",
         type=str,
         choices=arg_options.get_enum_values(arg_options.LlamaMode),
@@ -164,6 +171,10 @@ def main() -> int:
         args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
+
+    system_prompt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"data/prompts/system/{args.system_prompt}.md")
+    with open(system_prompt_path, "r") as file:
+        system_instructions = file.read()
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
@@ -202,9 +213,9 @@ def main() -> int:
         prompt["prompt_content"] = prompt_content
         request, response = image_processing.process_image(args, prompt)
     elif args.scope == "text":
-        request, response = text_processing.process_text(args, prompt_content)
+        request, response = text_processing.process_text(args, prompt_content, system_instructions)
     else:
-        request, response = code_processing.process_code(args, prompt_content)
+        request, response = code_processing.process_code(args, prompt_content, system_instructions)
 
     if args.output == "markdown":
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
