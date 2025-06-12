@@ -224,7 +224,6 @@ def main() -> int:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w") as f:
             f.write(output_text)
-        print(f"Markdown report saved to `{output_path}`")
     else:
         print(output_text)
     return 0

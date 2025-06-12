@@ -259,7 +259,7 @@ python -m ai_feedback --prompt_text "Evaluate the student's code readability." -
 
 #### Evaluate pdf_example test using openAI model 
 ```bash
-python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai --output test_file --output_template verbose
+python -m ai_feedback --prompt text_pdf_analyze --scope text --submission test_submissions/pdf_example/student_pdf_submission.pdf --model openai
 ```
 
 #### Evaluate question1 of test1 of ggr274 homework using DeepSeek model 
@@ -271,6 +271,11 @@ python -m ai_feedback --prompt code_table \
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
 python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b
+```
+
+### Evaluate the bfs example with remote model to test_file using the verbose template
+```sh
+python -m ai_feedback --prompt code_lines --scope code --solution ./test_submissions/bfs_example/bfs_solution.py --submission test_submissions/bfs_example/bfs_submission.py --model remote --output --output test_file --output_template verbose
 ```
 
 #### Using Ollama
