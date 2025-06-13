@@ -27,10 +27,12 @@ class RemoteModel(Model):
         self,
         prompt: str,
         submission_file: Path,
+        system_instructions: str,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
         test_output:Optional[Path] = None,
         scope: Optional[str] = None,
+        llama_mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -42,6 +44,8 @@ class RemoteModel(Model):
             question_num (Optional[int]): An optional question number to target specific content.
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
+            system_instructions (str): instructions for the model
+            llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -57,6 +61,7 @@ class RemoteModel(Model):
         data = {
             "content": request,
             "model": self.model_name,
+            "system_instructions": system_instructions
         }
 
         # Convert the data to JSON format

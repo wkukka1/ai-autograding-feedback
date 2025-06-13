@@ -2,6 +2,7 @@ import os
 import sys
 import re
 from pathlib import Path
+from string import Template
 from typing import Optional, List
 from PIL import Image as PILImage
 from ollama import Image
@@ -11,6 +12,8 @@ import PyPDF2
 def render_prompt_template(
         prompt_content: str,
         submission: Path,
+        has_submission_image: bool = False,
+        has_solution_image: bool = False,
         solution: Optional[Path] = None,
         test_output: Optional[Path] = None,
         question_num: Optional[int] = None,
@@ -23,6 +26,9 @@ def render_prompt_template(
         solution (Path, optional): Path to the instructor's solution file
         test_output (Path, optional): Path to the student's test output or error trace file
         question_num (int, optional): The question number to use
+        prompt_content (str): The prompt template with placeholders like {file_contents}
+        has_submission_image (bool): Whether a submission image is present
+        has_solution_image (bool): Whether a solution image is present
         **kwargs: Additional key-value pairs for placeholder replacement
 
     Returns:
@@ -42,7 +48,29 @@ def render_prompt_template(
         prompt_content += "\n" + template_data['file_references']
     if 'file_contents' in template_data:
         prompt_content += "\n" + template_data['file_contents']
-    return prompt_content
+
+    # Handle image placeholders with context-aware replacement
+    if '{submission_image}' in prompt_content and 'submission_image' not in template_data:
+        if has_submission_image and has_solution_image:
+            template_data['submission_image'] = 'The first attached image is the student\'s submission.'
+        elif has_submission_image:
+            template_data['submission_image'] = 'The attached image is the student\'s submission.'
+        else:
+            template_data['submission_image'] = '[Submission Image Attached]'
+
+    if '{solution_image}' in prompt_content and 'solution_image' not in template_data:
+        if has_submission_image and has_solution_image:
+            template_data['solution_image'] = 'The second attached image is the expected solution.'
+        elif has_solution_image:
+            template_data['solution_image'] = 'The attached image is the expected solution.'
+        else:
+            template_data['solution_image'] = '[Solution Image Attached]'
+
+    if any(tok in prompt_content for tok in ('{file_references}', '{file_contents}',
+                                             '{submission_image}', '{solution_image}')):
+        return Template(prompt_content).safe_substitute(**template_data)
+    else:
+        return prompt_content
 
 def gather_file_references(
         submission: Path,

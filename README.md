@@ -41,13 +41,14 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
+| `--system_prompt`    | File path for the system instructions prompt                      | ❌ |
+| `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)    | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
 The program supports three scopes: code or text or image. Depending on which is selected, the program supports different models and prompts tailored for each option.
 
 If the "code" scope is selected, the program will identify student errors in the code sections of the assignment, comparing them to the solution code. Additionally, if the `--scope code` option is chosen, the `--question` option can also be specified to analyze the code for a particular question rather than the entire file. Currently, you can specify a question number if the file type is jupyter notebook.  In order to use the `--question` option, the question code in both the solution and submission file must be delimited by '## Task {#}'. See the File Formatting Assumptions section. 
-
 
 If the "text" scope is selected, the program will identify student errors in the written responses of the assignment, comparing them to the solution's rubric for written responses. If the 'text' scope is chosen, then 'pdf' must be chosen for the submission type. 
 
@@ -65,50 +66,56 @@ Currently, jupyter notebook, pdf, and python assignments are supported.
 
 ## Prompts
 The user can use this argument to specify which predefined prompt they wish the model to use.
-To view the predefined prompts, navigate to the ai_feedback/data/prompts folder. Each prompt is stored as a JSON object with the following structure:
+To view the predefined prompts, navigate to the ai_feedback/data/prompts/user folder. Each prompt is stored as a markdown file that can contain template placeholders with the following structure:
 
-```json
-{
-  "prompt_content": "The text prompt that will be sent to the model",
-  "include_submission_image": false,
-  "include_solution_image": false
-}
+```markdown
+Consider this question: 
+{context}
+
+{submission_image}
+
+Do the graphs in the attached image solve the problem? Do not include an example solution. 
 ```
 
+Prompt files are now stored as markdown (.md) files in the `ai_feedback/data/prompts/user/` directory. Each prompt can contain template placeholders that will be automatically replaced with relevant content.
+
 Prompt Naming Conventions:
-- Prompts to be used when --scope code is selected are prefixed with code_{}.json
-- Prompts to be used when --scope image is selected are prefixed with image_{}.json
-- Prompts to be used when --scope text is selected are prefixed with text_{}.json
+- Prompts to be used when --scope code is selected are prefixed with code_{}.md
+- Prompts to be used when --scope image is selected are prefixed with image_{}.md
+- Prompts to be used when --scope text is selected are prefixed with text_{}.md
 
 If the --scope argument is provided and its value does not match the prefix of the selected --prompt, an error message will be displayed.
 
-Prompt Extra Options (for image scope only):
-- `include_submission_image` (true/false): Whether the student submission image should be attached in the prompt.
-- `include_solution_image` (true/false): Whether the solution image should be attached in the prompt.
+All prompts are treated as templates that can contain special placeholder blocks, the following template placeholders are automatically replaced:
+- `{context}` - Question context
+- `{file_references}` - List of files being analyzed with descriptions
+- `{file_contents}` - Full contents of files with line numbers
+- `{submission_image}` - Student submission image
+- `{solution_image}` - Reference solution image
 
 ### Code Scope Prompts
 | Prompt Name          | Description                                  |
 |------------------|--------------------------------------------------|
-| `code_explanation.json` | Outputs paragraph explanation of errors. |
-| `code_hint.json`       | Outputs short hints on what errors are. |
-| `code_lines.json`        | Outputs only code lines where errors are caused.       |
-| `code_table.json`   | Outputs a table which shows the question requirement, the student’s attempt, and potential issue.  |
-| `code_template.json`     | Outputs a template format specified to include error type, description, solution. |
-| `code_annotation.json`     | Outputs a json object of a list of annotation objects to display student errors on MarkUs. This is intended for markus integration usage. |
+| `code_explanation.md` | Outputs paragraph explanation of errors. |
+| `code_hint.md`       | Outputs short hints on what errors are. |
+| `code_lines.md`        | Outputs only code lines where errors are caused.       |
+| `code_table.md`   | Outputs a table which shows the question requirement, the student’s attempt, and potential issue.  |
+| `code_template.md`     | Outputs a template format specified to include error type, description, solution. |
+| `code_annotation.md`     | Outputs a json object of a list of annotation objects to display student errors on MarkUs. This is intended for markus integration usage. |
 
 ### Image Scope Prompts
 | Prompt Name          | Description                                  |
 |------------------|--------------------------------------------------|
-| `image_analyze.json` | Outputs whether the submission image answers the question provided by the context. |
-| `image_analyze_annotations.json` | Outputs whether the submission image answers the question provided by the context as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
-| `image_compare.json` | Outputs table comparing style elements between submission and solution graphs. |
-| `image_style.json` | Outputs table checking the style elements in a submission graph. |
-| `image_style_annotations.json` | Outputs evaluations of style elements in a submission graph as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
+| `image_analyze.md` | Outputs whether the submission image answers the question provided by the context. |
+| `image_analyze_annotations.md` | Outputs whether the submission image answers the question provided by the context as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
+| `image_compare.md` | Outputs table comparing style elements between submission and solution graphs. |
+| `image_style.md` | Outputs table checking the style elements in a submission graph. |
+| `image_style_annotations.md` | Outputs evaluations of style elements in a submission graph as a list of JSON objects, each with a description of the issue and a location on the image. Intended for MarkUs integration usage. |
 
 ### Text Scope Prompts
 | Prompt Name          | Description                                  |
 |------------------|--------------------------------------------------|
-| `text_pdf_analyze.json` | Outputs whether the submission written response matches all the criteria specified in the solution. |
+| `text_pdf_analyze.md` | Outputs whether the submission written response matches all the criteria specified in the solution. |
 
 
 ## Prompt_text
@@ -241,7 +248,9 @@ python -m ai_feedback \
   --solution_image <image_file_path> \
   --question <question_number> \
   --model <model_name> \
-  --output <markdown|stdout|direct>
+  --output <markdown|stdout|direct> \
+  --system_prompt <prompt_file_path> \
+  --llama_mode <server|cli>
 ```
 
 - See the Arguments section for the different command line argument options, or run this command to see help messages and available choices:
@@ -275,6 +284,22 @@ python -m ai_feedback --prompt code_table \
 #### Evaluate the image for question 5b of ggr274 homework with Llama3.2-vision 
 ```sh
 python -m ai_feedback --prompt image_analyze --scope image --solution ./test_submissions/ggr274_homework5/image_test2/student_submission.ipynb --submission_image test_submissions/ggr274_homework5/image_test2/student_submission.png --question "Question 5b" --model llama3.2-vision:90b --output stdout
+```
+
+#### Evalute the Jupyter notebook of test1 of ggr274 using DeepSeek-v3 via llama.cpp server
+```sh
+python3 -m ai_feedback --prompt code_table --scope code \
+        --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
+        --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
+        --model deepSeek-v3 --llama_mode server
+```
+
+#### Evalute the Jupyter notebook of test1 of ggr274 using DeepSeek-v3 via llama.cpp cli
+```sh
+python3 -m ai_feedback --prompt code_table --scope code \
+        --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
+        --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
+        --model deepSeek-v3 --llama_mode cli
 ```
 
 #### Using Ollama
