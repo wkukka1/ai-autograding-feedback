@@ -45,7 +45,6 @@ def test_cnn_example_custom_prompt_stdout(capsys, mock_and_capture):
         "--scope", "code",
         "--submission", str(parent / "test_submissions/cnn_example/cnn_submission.py"),
         "--model", "openai",
-        "--output", "stdout",
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Prompt: Evaluate the student's code readability." in output
@@ -66,7 +65,6 @@ def test_pdf_example_openai_direct(capsys, mock_and_capture):
         "--scope", "text",
         "--submission", str(parent / "test_submissions/pdf_example/student_pdf_submission.pdf"),
         "--model", "openai",
-        "--output", "direct",
     ]
 
     output = run_cli_and_capture(args, capsys)

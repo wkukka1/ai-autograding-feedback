@@ -83,7 +83,6 @@ def test_deepseek_v3_server_mode_code_scope_stdout(capsys, monkeypatch):
             "--solution", str(parent / "test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb"),
             "--model", "deepSeek-v3",
             "--llama_mode", "server",
-            "--output", "stdout",
         ]
         output = run_cli_and_capture(args, capsys)
 

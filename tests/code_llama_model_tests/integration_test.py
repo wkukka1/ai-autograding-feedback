@@ -19,7 +19,6 @@ def test_ggr274_image_question5b_llama_stdout(capsys, mock_and_capture):
         "--submission_image", str(parent / "test_submissions/ggr274_homework5/image_test2/student_submission.png"),
         "--question", "Question 5b",
         "--model", "llama3.2-vision:90b",
-        "--output", "stdout",
     ]
 
     output = run_cli_and_capture(args, capsys)
