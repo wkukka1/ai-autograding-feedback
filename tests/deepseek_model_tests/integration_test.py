@@ -19,7 +19,8 @@ def test_ggr274_question1_deepseek_markdown(capsys, mock_and_capture):
         "--submission", str(parent / "test_submissions/ggr274_homework5/test1/student_submission.ipynb"),
         "--question", "1",
         "--model", "deepSeek-R1:70B",
-        "--output", "markdown",
     ]
     output = run_cli_and_capture(args, capsys)
-    assert "Markdown report saved" in output
+    assert "Compare the student's code and solution code" in output
+    assert "student_submission.ipynb" in output
+    assert "=== student_submission.ipynb ===\n" in output
