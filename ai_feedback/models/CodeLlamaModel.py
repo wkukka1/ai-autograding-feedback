@@ -1,6 +1,7 @@
-import ollama
 from pathlib import Path
 from typing import Optional, Tuple
+
+import ollama
 
 from .Model import Model
 
@@ -54,11 +55,7 @@ class CodeLlamaModel(Model):
             ],
         )
 
-        if (
-            not response
-            or "message" not in response
-            or "content" not in response["message"]
-        ):
+        if not response or "message" not in response or "content" not in response["message"]:
             print("Error: Invalid or empty response from Ollama.")
             return None
 

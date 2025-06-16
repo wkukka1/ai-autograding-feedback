@@ -40,7 +40,6 @@ class DeepSeekModel(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
-
         request = f"Prompt: {prompt}"
 
         response = ollama.chat(
@@ -51,11 +50,7 @@ class DeepSeekModel(Model):
             ],
         )
 
-        if (
-            not response
-            or "message" not in response
-            or "content" not in response["message"]
-        ):
+        if not response or "message" not in response or "content" not in response["message"]:
             print("Error: Invalid or empty response from Ollama.")
             return None
 

@@ -100,17 +100,17 @@ def gather_file_contents(assignment_files: List[Optional[Path]]) -> str:
 
     Args:
         assignment_files (list[str]): List of file paths to process
-        
+
     Returns:
         str: File contents formatted with line numbers
     """
     file_contents = ""
-    
+
     for file_path in assignment_files:
         if not file_path:
             continue
         filename = os.path.basename(file_path)
-        
+
         try:
             # Handle PDF files separately
             if filename.lower().endswith('.pdf'):
@@ -128,7 +128,7 @@ def gather_file_contents(assignment_files: List[Optional[Path]]) -> str:
                 # Handle regular text files
                 with open(file_path, "r", encoding="utf-8") as file:
                     lines = file.readlines()
-                
+
                 file_contents += f"=== {filename} ===\n"
                 for i, line in enumerate(lines, start=1):
                     stripped_line = line.rstrip("\n")
@@ -137,20 +137,20 @@ def gather_file_contents(assignment_files: List[Optional[Path]]) -> str:
                     else:
                         file_contents += f"(Line {i}) {line}"
                 file_contents += "\n"
-                
+
         except Exception as e:
             print(f"Error reading file {filename}: {e}")
             continue
-    
+
     return file_contents
 
 
 def extract_pdf_text(pdf_path: str) -> str:
     """Extract text content from a PDF file.
-    
+
     Args:
         pdf_path (str): Path to the PDF file
-        
+
     Returns:
         str: Extracted text content from the PDF
     """
@@ -158,11 +158,11 @@ def extract_pdf_text(pdf_path: str) -> str:
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             text = ""
-            
+
             for page_num in range(len(pdf_reader.pages)):
                 page = pdf_reader.pages[page_num]
                 text += page.extract_text() + "\n"
-            
+
             return text.strip()
     except Exception as e:
         print(f"Error extracting text from PDF {pdf_path}: {e}")
@@ -171,16 +171,17 @@ def extract_pdf_text(pdf_path: str) -> str:
 
 def gather_image_context(output_directory: str, question: str) -> str:
     """Gather question context for image prompts.
-    
+
     Args:
         output_directory (str): Directory containing extracted images
         question (str): Question identifier
-        
+
     Returns:
         str: Question context content
     """
     try:
         from ..helpers.image_reader import read_question_context
+
         return read_question_context(output_directory, question)
     except Exception as e:
         print(f"Error reading question context: {e}")
@@ -189,16 +190,17 @@ def gather_image_context(output_directory: str, question: str) -> str:
 
 def gather_image_size(output_directory: str, question: str) -> str:
     """Gather image size information for prompts.
-    
+
     Args:
         output_directory (str): Directory containing extracted images
         question (str): Question identifier
-        
+
     Returns:
         str: Image size in format "width by height"
     """
     try:
         from ..helpers.image_reader import read_submission_images
+
         submission_image_paths = read_submission_images(output_directory, question)
         if submission_image_paths:
             image = PILImage.open(submission_image_paths[0])
@@ -210,33 +212,33 @@ def gather_image_size(output_directory: str, question: str) -> str:
 
 def gather_images(output_directory: str, question: str, include_images: list[str]) -> list[Image]:
     """Gather images for attachment to message.
-    
+
     Args:
         output_directory (str): Directory containing extracted images
         question (str): Question identifier
         include_images (list[str]): List of image types to include ("submission", "solution")
-        
+
     Returns:
         list[Image]: List of Image objects for message attachment
     """
     images = []
-    
+
     try:
-        from ..helpers.image_reader import read_submission_images, read_solution_images
-        
+        from ..helpers.image_reader import read_solution_images, read_submission_images
+
         if "submission" in include_images:
             submission_paths = read_submission_images(output_directory, question)
             if submission_paths:
                 images.append(Image(value=submission_paths[0]))
-                
+
         if "solution" in include_images:
             solution_paths = read_solution_images(output_directory, question)
             if solution_paths:
                 images.append(Image(value=solution_paths[0]))
-                
+
     except Exception as e:
         print(f"Error gathering images: {e}")
-    
+
     return images
 
 def _get_question_contents(assignment_files: List[Optional[Path]], question_num: int

@@ -1,12 +1,14 @@
-import urllib.request
 import json
 import os
-import sys
 import re
+import sys
+import urllib.request
 from pathlib import Path
 from typing import List, Optional, Tuple
-from .Model import Model
+
 from dotenv import load_dotenv
+
+from .Model import Model
 
 
 class RemoteModel(Model):
@@ -14,12 +16,16 @@ class RemoteModel(Model):
 
     Currently is tied to ai_server (https://github.com/MarkUsProject/ai-server).
     """
+
     remote_url: str
     model_name: str
 
-    def __init__(self, remote_url: str = "http://polymouth.teach.cs.toronto.edu:5000/chat", model_name: str = "deepseek-coder-v2:latest") -> None:
-        """Initializes the remote model with a remote URL and model name.
-        """
+    def __init__(
+        self,
+        remote_url: str = "http://polymouth.teach.cs.toronto.edu:5000/chat",
+        model_name: str = "deepseek-coder-v2:latest",
+    ) -> None:
+        """Initializes the remote model with a remote URL and model name."""
         self.remote_url = remote_url
         self.model_name = model_name
 
@@ -30,7 +36,7 @@ class RemoteModel(Model):
         system_instructions: str,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
-        test_output:Optional[Path] = None,
+        test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
@@ -54,15 +60,8 @@ class RemoteModel(Model):
         request = f"Prompt: {prompt}"
         load_dotenv()
 
-        headers = {
-            "X-API-KEY": os.getenv("REMOTE_API_KEY"),
-            "Content-Type": "application/json"
-        }
-        data = {
-            "content": request,
-            "model": self.model_name,
-            "system_instructions": system_instructions
-        }
+        headers = {"X-API-KEY": os.getenv("REMOTE_API_KEY"), "Content-Type": "application/json"}
+        data = {"content": request, "model": self.model_name, "system_instructions": system_instructions}
 
         # Convert the data to JSON format
         json_data = json.dumps(data).encode("utf-8")
