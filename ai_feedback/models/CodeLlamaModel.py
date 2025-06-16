@@ -58,4 +58,4 @@ class CodeLlamaModel(Model):
             print("Error: Invalid or empty response from Ollama.")
             return None
 
-        return request, response["message"]["content"]
+        return prompt, response["message"]["content"]

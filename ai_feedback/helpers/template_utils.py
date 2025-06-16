@@ -44,13 +44,6 @@ def render_prompt_template(
     else:
         template_data['file_contents'] = gather_file_contents([submission, solution, test_output])
 
-    if '{file_references}' in prompt_content or '{file_contents}' in prompt_content:
-        return prompt_content.format(**template_data)
-    if 'file_references' in template_data:
-        prompt_content += "\n" + template_data['file_references']
-    if 'file_contents' in template_data:
-        prompt_content += "\n" + template_data['file_contents']
-
     # Handle image placeholders with context-aware replacement
     if '{submission_image}' in prompt_content and 'submission_image' not in template_data:
         if has_submission_image and has_solution_image:
@@ -72,12 +65,14 @@ def render_prompt_template(
         tok in prompt_content
         for tok in ('{file_references}', '{file_contents}', '{submission_image}', '{solution_image}')
     ):
-        return Template(prompt_content).safe_substitute(**template_data)
+        return prompt_content.format(**template_data)
     else:
         return prompt_content
 
-
-def gather_file_references(submission: Path, solution: Optional[Path], test_output: Optional[Path]) -> str:
+def gather_file_references(
+        submission: Path,
+        solution: Optional[Path],
+        test_output: Optional[Path]) -> str:
     """Generate file reference descriptions for prompt templates.
 
     Args:

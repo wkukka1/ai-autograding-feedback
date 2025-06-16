@@ -47,9 +47,8 @@ class OpenAIModel(Model):
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
         """
-        request = f"Prompt: {prompt}"
-        response = self._call_openai(request, system_instructions)
-        return request, response
+        response = self._call_openai(prompt, system_instructions)
+        return prompt, response
 
     def _call_openai(self, prompt: str, system_instructions: str) -> str:
         """
