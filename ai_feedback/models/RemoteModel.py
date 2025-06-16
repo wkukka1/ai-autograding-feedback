@@ -57,11 +57,10 @@ class RemoteModel(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
-        request = f"Prompt: {prompt}"
         load_dotenv()
 
         headers = {"X-API-KEY": os.getenv("REMOTE_API_KEY"), "Content-Type": "application/json"}
-        data = {"content": request, "model": self.model_name, "system_instructions": system_instructions}
+        data = {"content": prompt, "model": self.model_name, "system_instructions": system_instructions}
 
         # Convert the data to JSON format
         json_data = json.dumps(data).encode("utf-8")

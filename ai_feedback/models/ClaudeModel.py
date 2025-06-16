@@ -51,7 +51,7 @@ class ClaudeModel(Model):
         if question_num:
             request += f" Identify and generate a response for the mistakes **only** in question/task ${question_num}. "
 
-        request += f"Prompt: {prompt}"
+        request += prompt
 
         response = self.client.messages.create(
             model="claude-3-7-sonnet-20250219",

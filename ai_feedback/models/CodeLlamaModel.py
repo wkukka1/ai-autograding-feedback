@@ -45,13 +45,12 @@ class CodeLlamaModel(Model):
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
                                        or None if no valid response is returned.
         """
-        request = f"Prompt: {prompt}"
 
         response = ollama.chat(
             model=self.model["model"],
             messages=[
                 {"role": "system", "content": system_instructions},
-                {"role": "user", "content": request},
+                {"role": "user", "content": prompt},
             ],
         )
 

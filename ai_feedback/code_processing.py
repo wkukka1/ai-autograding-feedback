@@ -65,7 +65,6 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
         submission=submission_file,
         solution=solution_file,
         test_output=test_output_file,
-        submission_image=submission_image,
         question_num=args.question
     )
 
