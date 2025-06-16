@@ -1,13 +1,15 @@
-import os
 import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from unittest.mock import patch
 
 import pytest
 
 from ai_feedback.__main__ import main
+from ai_feedback.models.Model import Model
+from ai_feedback.models.OpenAIModel import OpenAIModel
 
 all_prompts = []
 
@@ -58,13 +60,25 @@ def mock_and_capture(request):
         all_prompts.append((test_name, "Model.generate_response", prompt))
         return prompt, prompt
 
-    patch("ai_feedback.models.Model.Model.generate_response", side_effect=fake_base).start()
+    model_patch = patch.object(Model, "generate_response", side_effect=fake_base)
+    model_patch.start()
 
-    def fake_openai_call(prompt, system_instructions):
-        all_prompts.append((test_name, "OpenAIModel._call_openai", prompt))
-        return prompt
+    def fake_generate_response(
+        self,
+        prompt: str,
+        submission_file: Path,
+        system_instructions: str,
+        question_num: Optional[int] = None,
+        solution_file: Optional[Path] = None,
+        test_output: Optional[Path] = None,
+        scope: Optional[str] = None,
+        llama_mode: Optional[str] = None,
+    ):
+        all_prompts.append((test_name, "OpenAIModel.generate_response", prompt))
+        return prompt, f"[MOCKED RESPONSE] \n {prompt}"
 
-    patch("ai_feedback.models.OpenAIModel._call_openai", side_effect=fake_openai_call).start()
+    openai_patch = patch.object(OpenAIModel, "generate_response", side_effect=fake_generate_response, autospec=True)
+    openai_patch.start()
 
     class DummyMsg:
         def __init__(self, text):
@@ -79,28 +93,20 @@ def mock_and_capture(request):
         all_prompts.append((test_name, "image_processing.chat", text))
         return DummyReply(text)
 
-    patch("ai_feedback.image_processing.chat", side_effect=fake_ip_chat).start()
+    ip_patch = patch("ai_feedback.image_processing.chat", side_effect=fake_ip_chat)
+    ip_patch.start()
 
     def fake_ds_chat(model, messages, **kwargs):
         text = messages[-1]["content"]
         all_prompts.append((test_name, "ollama.chat", text))
         return {"message": {"content": text}}
 
-    patch("ollama.chat", side_effect=fake_ds_chat).start()
+    ds_patch = patch("ollama.chat", side_effect=fake_ds_chat)
+    ds_patch.start()
 
     yield
+
     patch.stopall()
-
-
-def run_cli_and_capture(argv_list, capsys):
-    orig_argv = sys.argv
-    sys.argv = ["ai_feedback"] + argv_list
-    try:
-        main()
-    finally:
-        sys.argv = orig_argv
-    captured = capsys.readouterr()
-    return captured.out
 
 
 def run_cli_and_capture(argv_list, capsys):
