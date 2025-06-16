@@ -33,5 +33,10 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -e .[dev]
       - name: Run tests
+        env:
+          LLAMA_MODEL_PATH: /fake/path/to/model.gguf
+          LLAMA_CLI_PATH: /fake/path/to/llama-cli
+          LLAMA_SERVER_URL: http://localhost:8080
+          OPENAI_API_KEY: fake-api-key
         run: |
             pytest -vv

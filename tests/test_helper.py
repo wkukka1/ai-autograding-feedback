@@ -110,9 +110,7 @@ def run_cli_and_capture(argv_list, capsys):
     """
     orig_argv = sys.argv
     sys.argv = ["ai_feedback"] + argv_list
-    os.environ['LLAMA_MODEL_PATH'] = 'fake/path/to/model.gguf'
-    os.environ['LLAMA_CLI_PATH'] = 'fake/path/to/llama-cli'
-    os.environ['OPENAI_API_KEY'] = 'fake/path/to/openai-api-key'
+
     try:
         main()
     finally:
