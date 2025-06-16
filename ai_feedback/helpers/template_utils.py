@@ -1,23 +1,25 @@
 import os
-import sys
 import re
+import sys
 from pathlib import Path
 from string import Template
-from typing import Optional, List
-from PIL import Image as PILImage
-from ollama import Image
+from typing import List, Optional
+
 import PyPDF2
+from ollama import Image
+from PIL import Image as PILImage
 
 
 def render_prompt_template(
-        prompt_content: str,
-        submission: Path,
-        has_submission_image: bool = False,
-        has_solution_image: bool = False,
-        solution: Optional[Path] = None,
-        test_output: Optional[Path] = None,
-        question_num: Optional[int] = None,
-        **kwargs) -> str:
+    prompt_content: str,
+    submission: Path,
+    has_submission_image: bool = False,
+    has_solution_image: bool = False,
+    solution: Optional[Path] = None,
+    test_output: Optional[Path] = None,
+    question_num: Optional[int] = None,
+    **kwargs,
+) -> str:
     """Render a prompt template by replacing placeholders with actual values.
 
     Args:
@@ -66,16 +68,16 @@ def render_prompt_template(
         else:
             template_data['solution_image'] = '[Solution Image Attached]'
 
-    if any(tok in prompt_content for tok in ('{file_references}', '{file_contents}',
-                                             '{submission_image}', '{solution_image}')):
+    if any(
+        tok in prompt_content
+        for tok in ('{file_references}', '{file_contents}', '{submission_image}', '{solution_image}')
+    ):
         return Template(prompt_content).safe_substitute(**template_data)
     else:
         return prompt_content
 
-def gather_file_references(
-        submission: Path,
-        solution: Optional[Path],
-        test_output: Optional[Path]) -> str:
+
+def gather_file_references(submission: Path, solution: Optional[Path], test_output: Optional[Path]) -> str:
     """Generate file reference descriptions for prompt templates.
 
     Args:
@@ -241,57 +243,55 @@ def gather_images(output_directory: str, question: str, include_images: list[str
 
     return images
 
-def _get_question_contents(assignment_files: List[Optional[Path]], question_num: int
-    ) -> str:
-        """
-        Retrieve contents of files specifically for a targeted question number.
 
-        Assumes files follow a specific markdown-like structure with sections titled
-        '## Introduction' and '## Task {question_num}'.
+def _get_question_contents(assignment_files: List[Optional[Path]], question_num: int) -> str:
+    """
+    Retrieve contents of files specifically for a targeted question number.
 
-        Args:
-            assignment_files (List[Optional[Path]]): List of Path or None objects to parse.
-            question_num (int): The target task number to extract.
+    Assumes files follow a specific markdown-like structure with sections titled
+    '## Introduction' and '## Task {question_num}'.
 
-        Returns:
-            str: Combined content of the introduction and the specified task from matching files.
+    Args:
+        assignment_files (List[Optional[Path]]): List of Path or None objects to parse.
+        question_num (int): The target task number to extract.
 
-        Raises:
-            SystemExit: If no matching task is found in the provided files.
-        """
-        file_contents = ""
-        task_found = False
+    Returns:
+        str: Combined content of the introduction and the specified task from matching files.
 
-        for file_path in assignment_files:
-            if (
-                not file_path
-                or file_path.suffix != '.txt'
-                or "error_output" in file_path.name
-                or file_path.name == ".DS_Store"
-            ):
-                continue
+    Raises:
+        SystemExit: If no matching task is found in the provided files.
+    """
+    file_contents = ""
+    task_found = False
 
-            content = file_path.read_text()
+    for file_path in assignment_files:
+        if (
+            not file_path
+            or file_path.suffix != '.txt'
+            or "error_output" in file_path.name
+            or file_path.name == ".DS_Store"
+        ):
+            continue
 
-            intro_match = re.search(
-                r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL
-            )
-            intro_content = intro_match.group(1).strip() if intro_match else ""
+        content = file_path.read_text()
 
-            task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
-            task_match = re.search(task_pattern, content, re.DOTALL)
+        intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+        intro_content = intro_match.group(1).strip() if intro_match else ""
 
-            task_content = ""
-            if task_match:
-                task_content = task_match.group(1).strip()
-                task_found = True
+        task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
+        task_match = re.search(task_pattern, content, re.DOTALL)
 
-            file_contents += f"\n\n---\n### {file_path}\n\n"
-            file_contents += intro_content + "\n\n" if intro_content else ""
-            file_contents += task_content + "\n\n"
+        task_content = ""
+        if task_match:
+            task_content = task_match.group(1).strip()
+            task_found = True
 
-        if not task_found:
-            print(f"Task {question_num} not found in any assignment file.")
-            sys.exit(1)
+        file_contents += f"\n\n---\n### {file_path}\n\n"
+        file_contents += intro_content + "\n\n" if intro_content else ""
+        file_contents += task_content + "\n\n"
 
-        return file_contents.strip()
+    if not task_found:
+        print(f"Task {question_num} not found in any assignment file.")
+        sys.exit(1)
+
+    return file_contents.strip()

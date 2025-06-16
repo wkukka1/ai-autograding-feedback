@@ -1,6 +1,8 @@
-import ollama
 from pathlib import Path
 from typing import Optional, Tuple
+
+import ollama
+
 from .Model import Model
 
 

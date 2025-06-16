@@ -65,7 +65,7 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
         submission=submission_file,
         solution=solution_file,
         test_output=test_output_file,
-        question_num=args.question
+        question_num=args.question,
     )
 
     if args.model in model_mapping:

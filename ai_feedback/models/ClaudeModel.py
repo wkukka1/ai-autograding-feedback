@@ -1,8 +1,8 @@
 import os
-import anthropic
+from pathlib import Path
 from typing import Optional, Tuple
 
-from pathlib import Path
+import anthropic
 from dotenv import load_dotenv
 
 from .Model import Model

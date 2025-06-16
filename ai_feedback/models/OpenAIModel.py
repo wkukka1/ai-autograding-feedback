@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
 from typing import Optional, Tuple
-from dotenv import load_dotenv
+
 import openai
+from dotenv import load_dotenv
+
 from .Model import Model
 
 load_dotenv()
