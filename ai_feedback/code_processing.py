@@ -59,7 +59,6 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
     elif args.submission_type != "python":
         raise SystemExit(f"Invalid submission type '{args.submission_type}'.")
 
-    submission_image = Path(args.submission_image) if args.submission_image else None
     prompt = render_prompt_template(
         prompt,
         submission=submission_file,

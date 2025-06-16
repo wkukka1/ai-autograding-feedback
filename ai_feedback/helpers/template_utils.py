@@ -61,13 +61,7 @@ def render_prompt_template(
         else:
             template_data['solution_image'] = '[Solution Image Attached]'
 
-    if any(
-        tok in prompt_content
-        for tok in ('{file_references}', '{file_contents}', '{submission_image}', '{solution_image}')
-    ):
-        return prompt_content.format(**template_data)
-    else:
-        return prompt_content
+    return prompt_content.format(**template_data)
 
 
 def gather_file_references(submission: Path, solution: Optional[Path], test_output: Optional[Path]) -> str:
