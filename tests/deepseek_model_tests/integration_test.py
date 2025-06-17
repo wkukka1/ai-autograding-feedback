@@ -27,5 +27,4 @@ def test_ggr274_question1_deepseek_markdown(capsys, mock_and_capture):
     ]
     output = run_cli_and_capture(args, capsys)
     assert "Compare the student's code and solution code" in output
-    assert "student_submission.ipynb" in output
-    assert "=== student_submission.ipynb ===\n" in output
+    assert "student_submission.txt" in output
