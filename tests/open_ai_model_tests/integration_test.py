@@ -28,7 +28,7 @@ def test_cnn_example_openai_stdout(capsys, mock_and_capture):
     ]
     output = run_cli_and_capture(args, capsys)
 
-    assert "Prompt: Compare the student's code and solution code. For each mistake" in output
+    assert "Compare the student's code and solution code. For each mistake" in output
     assert "(Line 1) import numpy as np" in output
     assert "=== cnn_submission.py ===" in output
     assert "=== cnn_solution.py ===" in output
@@ -48,7 +48,7 @@ def test_cnn_example_custom_prompt_stdout(capsys, mock_and_capture):
 
     args = [
         "--prompt_text",
-        "Evaluate the student's code readability.",
+        "Evaluate the student's code readability.\n {file_contents}",
         "--scope",
         "code",
         "--submission",
@@ -57,7 +57,7 @@ def test_cnn_example_custom_prompt_stdout(capsys, mock_and_capture):
         "openai",
     ]
     output = run_cli_and_capture(args, capsys)
-    assert "Prompt: Evaluate the student's code readability." in output
+    assert "Evaluate the student's code readability." in output
     assert "=== cnn_submission.py ===" in output
     assert "(Line 1) import numpy as np" in output
 
@@ -83,6 +83,6 @@ def test_pdf_example_openai_direct(capsys, mock_and_capture):
     ]
 
     output = run_cli_and_capture(args, capsys)
-    assert "Prompt: Does the student correctly respond to the question, and meet all the" in output
+    assert "Does the student correctly respond to the question, and meet all the" in output
     assert "student_pdf_submission.pdf" in output
     assert "Normalization allows each feature to have an equal influence on the mode" in output
