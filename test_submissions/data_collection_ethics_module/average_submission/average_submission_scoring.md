@@ -1,0 +1,16 @@
+## `average_submission.txt`
+
+### Submission Summary
+
+This student gives a reasonable argument but lacks structure and deep ethical reasoning:
+
+> If the data is already public, I think it’s probably okay to use it. People put stuff online knowing it’s out there. But companies should maybe still tell users they’re using it. It would be better if there was more transparency. I think it’s not a huge issue unless it harms someone. But I also see how it could go wrong. Like, some people wouldn’t want their photos in AI datasets. It depends on what the model is being used for.
+
+### Expected AI Response
+
+- Acknowledge basic awareness of the issue.
+- Recommend referencing ethical principles or clearer justification.
+- Suggest better organization and more specific examples.
+- Encourage critical evaluation of consequences.
+
+---
