@@ -70,8 +70,6 @@ class RemoteModel(Model):
 
         # Send the request and get the response
         with urllib.request.urlopen(request) as response:
-            # Print the status code and response data
-            print(response.status)
             response = json.loads(response.read().decode())
 
         return request, response
