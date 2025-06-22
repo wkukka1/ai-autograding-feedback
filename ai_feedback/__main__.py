@@ -102,7 +102,7 @@ def main() -> int:
         help=HELP_MESSAGES["prompt"],
     )
     parser.add_argument("--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"])
-    parser.add_argument("--prompt_custom", action="store_true", required=False)
+    parser.add_argument("--prompt_custom", type=str, required=False, help=HELP_MESSAGES["prompt_custom"])
     parser.add_argument(
         "--scope",
         type=str,

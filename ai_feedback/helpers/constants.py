@@ -3,6 +3,7 @@ HELP_MESSAGES = {
     "submission_type": "The format of the submission file (e.g., Jupyter notebook, Python script).",
     "prompt": "The specific prompt to use for evaluating the assignment.",
     "prompt_text": "Additional messages to concatenate to the prompt.",
+    "prompt_custom": "The path to a prompt to use.",
     "scope": "The section of the assignment the model should analyze (e.g., code or image).",
     "submission": "The file path for the submission file.",
     "solution": "The file path for the solution file.",
