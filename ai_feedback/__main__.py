@@ -169,8 +169,7 @@ def main() -> int:
         system_instructions = file.read()
 
     if args.prompt_custom:
-        prompt_filename = os.path.join("./", f"{args.prompt_text}.txt")
-        print(prompt_filename)
+        prompt_filename = os.path.join("./", args.prompt_custom)
         with open(prompt_filename, "r") as prompt_file:
             prompt_content += prompt_file.read()
     else:
