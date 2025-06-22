@@ -68,7 +68,11 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
     )
 
     if args.model in model_mapping:
-        model = model_mapping[args.model]()
+        model_class = model_mapping[args.model]
+        if model_class.__name__ == 'RemoteModel' and args.remote_model:
+            model = model_class(model_name=args.remote_model)
+        else:
+            model = model_class()
     else:
         print("Invalid model selected for code scope.")
         sys.exit(1)

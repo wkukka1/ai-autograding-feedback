@@ -121,6 +121,12 @@ def main() -> int:
         help=HELP_MESSAGES["model"],
     )
     parser.add_argument(
+        "--remote_model",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["remote_model"],
+    )
+    parser.add_argument(
         "--output",
         type=str,
         required=False,
