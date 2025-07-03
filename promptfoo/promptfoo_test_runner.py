@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import sys
 from typing import Tuple
 
 
@@ -26,7 +27,7 @@ def call_api(prompt: str, context: dict, metadata: dict) -> dict:
             submission_type = None
 
         cmd_args = [
-            "python3",
+            sys.executable,
             "-m",
             "ai_feedback",
             "--scope",
@@ -76,7 +77,7 @@ def call_api(prompt: str, context: dict, metadata: dict) -> dict:
         result = subprocess.run(
             cmd_args,
             capture_output=True,
-            env=env,
+            env={'PYTHONIOENCODING': 'utf-8', **env},
             text=True,
         )
 
