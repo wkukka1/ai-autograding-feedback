@@ -28,13 +28,21 @@ class Prompt(Enum):
     IMAGE_ANALYZE_ANNOTATION = "image_analyze_annotations"
     IMAGE_STYLE = "image_style"
     IMAGE_STYLE_ANNOTATIONS = "image_style_annotations"
+    IMAGE_OVERALL = "image_overall"
     CODE_LINES = "code_lines"
     CODE_TEMPLATE = "code_template"
     CODE_TABLE = "code_table"
     CODE_HINT = "code_hint"
     CODE_EXPLANATION = "code_explanation"
     CODE_ANNOTATION = "code_annotation"
+    CODE_FEEDBACK_V3 = "code_feedback_v3"
+    CODE_FEEDBACK_R1 = "code_feedback_r1"
+    CODE_FUNCTIONALITY = "code_functionality"
+    CODE_OVERALL = "code_overall"
     TEXT_PDF_ANALYZE = "text_pdf_analyze"
+    TEXT_ANALYZE_V3 = "text_analyze_v3"
+    TEXT_ANALYZE_R1 = "text_analyze_r1"
+    TEXT_EFT_PROOF = "text_eft_proof"
 
     def __str__(self):
         return self.value
@@ -105,6 +113,7 @@ class OutputTemplate(Enum):
 
     RESPONSE_ONLY = 'response_only'
     VERBOSE = 'verbose'
+    RESPONSE_AND_PROMPT = 'response_and_prompt'
 
     def __str__(self):
         return self.value
@@ -116,6 +125,9 @@ class SystemPrompt(Enum):
     """
 
     TEST_FEEDBACK = "student_test_feedback"
+    IMAGE_STYLE_GRADER = "image_style_grader"
+    CODE_FEEDBACK_V3 = "code_feedback_v3"
+    TEXT_FEEDBACK_V3 = "text_feedback_v3"
 
     def __str__(self):
         return self.value
