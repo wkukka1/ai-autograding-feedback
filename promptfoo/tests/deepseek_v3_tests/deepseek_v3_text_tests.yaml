@@ -1,0 +1,43 @@
+providers:
+  - id: 'file://../../promptfoo_test_runner.py'
+
+defaultTest:
+  vars:
+    model: deepSeek-v3
+    scope: text
+    submission_type: pdf
+
+scenarios:
+  - config:
+      - vars: { prompt: text_analyze_v3, system_prompt: text_feedback_v3 }
+    tests:
+      - vars:
+          submission_file: test_submissions/data_collection_ethics_module/average_submission/average_submission.txt
+          solution_file: test_submissions/data_collection_ethics_module/solution.txt
+
+      - vars:
+          submission_file: test_submissions/data_collection_ethics_module/excellent_submission/excellent_submission.txt
+          solution_file: test_submissions/data_collection_ethics_module/solution.txt
+
+      - vars:
+          submission_file: test_submissions/data_collection_ethics_module/off_topic_submission/off_topic_submission.txt
+          solution_file: test_submissions/data_collection_ethics_module/solution.txt
+
+      - vars:
+          submission_file: test_submissions/data_collection_ethics_module/weak_submission/weak_submission.txt
+          solution_file: test_submissions/data_collection_ethics_module/solution.txt
+
+      - vars:
+          submission_file: test_submissions/csc373_eft_optimality_proof/fail_submission/fail_submission.pdf
+          solution_file: test_submissions/csc373_eft_optimality_proof/solution.pdf
+          prompt: text_eft_proof
+
+      - vars:
+          submission_file: test_submissions/csc373_eft_optimality_proof/incomplete_submission/incomplete_submission.pdf
+          solution_file: test_submissions/csc373_eft_optimality_proof/solution.pdf
+          prompt: text_eft_proof
+
+      - vars:
+          submission_file: test_submissions/csc373_eft_optimality_proof/induction_submission/induction_submission.pdf
+          solution_file: test_submissions/csc373_eft_optimality_proof/solution.pdf
+          prompt: text_eft_proof
