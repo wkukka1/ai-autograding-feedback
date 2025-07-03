@@ -171,12 +171,12 @@ def main() -> int:
     system_prompt_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), f"data/prompts/system/{args.system_prompt}.md"
     )
-    with open(system_prompt_path, "r") as file:
+    with open(system_prompt_path, encoding='utf-8') as file:
         system_instructions = file.read()
 
     if args.prompt_custom:
         prompt_filename = os.path.join("./", args.prompt_custom)
-        with open(prompt_filename, "r") as prompt_file:
+        with open(prompt_filename, encoding='utf-8') as prompt_file:
             prompt_content += prompt_file.read()
     else:
         if args.prompt:
@@ -218,7 +218,7 @@ def main() -> int:
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write(output_text)
     else:
         print(output_text)
