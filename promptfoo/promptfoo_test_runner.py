@@ -38,8 +38,6 @@ def call_api(prompt: str, context: dict, metadata: dict) -> dict:
             options['prompt'],
             "--llama_mode",
             "server",
-            '--submission_type',
-            submission_type,
             "--output_template",
             "response_and_prompt",
         ]
