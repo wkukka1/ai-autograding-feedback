@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: codellama:latest
     scope: code
-    submission_type: python
 
 scenarios:
   - config:

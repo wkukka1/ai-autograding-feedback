@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: llava:34b
     scope: image
-    submission_type: jupyter
 
 scenarios:
   - config:

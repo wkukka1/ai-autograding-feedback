@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: deepSeek-v3
     scope: text
-    submission_type: pdf
 
 scenarios:
   - config:

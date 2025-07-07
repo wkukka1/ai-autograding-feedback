@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: llava:34b
     scope: image
-    submission_type: jupyter
     system_prompt: "You are a teaching-assistant for an undergraduate Data-Visualization course. A student submits one figure (PNG/JPG/PDF screenshot) with no accompanying text."
 
 scenarios:
