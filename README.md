@@ -323,7 +323,7 @@ python3 -m ai_feedback --prompt code_table --scope code \
 ```bash
 python -m ai_feedback --prompt code_annotations --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --json_schema ai_feedback/data/schema/code_annotation_schema.json
 ```
-                      
+
 #### Evaluate using custom prompt file path
 ```bash
 python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --scope code --submission test_submissions/csc108/correct_submission/correct_submission.py --solution test_submissions/csc108/solution.py --model codellama:latest
