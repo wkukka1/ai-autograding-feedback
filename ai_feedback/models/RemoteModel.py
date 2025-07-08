@@ -54,6 +54,7 @@ class RemoteModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             submission_image (Optional[str]): An optional path to a submission image file.
+            json_schema (Optional[str]): An optional json schema to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
