@@ -46,6 +46,7 @@ class OpenAIModel(Model):
             question_num (Optional[int]): Specific question number to focus on.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
@@ -68,7 +69,7 @@ class OpenAIModel(Model):
 
         Args:
             prompt (str): The fully constructed input prompt including file content.
-
+            schema (Optional[dict]): Optional json schema to use.
         Returns:
             str: The model's response text.
         """

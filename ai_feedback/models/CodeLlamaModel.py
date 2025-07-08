@@ -42,6 +42,7 @@ class CodeLlamaModel(Model):
             question_num (Optional[int]): An optional specific question number to extract content for.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,

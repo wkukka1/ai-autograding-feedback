@@ -47,6 +47,7 @@ class DeepSeekV3Model(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
+
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.

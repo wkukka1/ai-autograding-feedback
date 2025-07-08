@@ -58,6 +58,7 @@ class OpenAIModelVector(Model):
             question_num (Optional[int]): An optional question number.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.
@@ -111,6 +112,7 @@ class OpenAIModelVector(Model):
 
         Args:
             prompt (str): The input prompt for the assistant.
+            schema (Optional[dict]): Optional json schema to use.
 
         Returns:
             str: The assistant's generated response text.
