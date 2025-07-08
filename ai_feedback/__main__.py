@@ -193,8 +193,8 @@ def main() -> int:
             prompt = load_markdown_prompt(args.prompt)
             prompt_content += prompt["prompt_content"]
 
-        if args.prompt_text:
-            prompt_content += args.prompt_text
+    if args.prompt_text:
+        prompt_content += args.prompt_text
 
     if args.scope == "image":
         prompt["prompt_content"] = prompt_content
