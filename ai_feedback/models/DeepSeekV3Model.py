@@ -151,7 +151,8 @@ class DeepSeekV3Model(Model):
         ]
 
         if schema:
-            cmd += ["--json-schema", json.dumps(schema)]
+            raw_schema = schema["schema"] if "schema" in schema else schema
+            cmd += ["--json-schema", json.dumps(raw_schema)]
 
         try:
             completed = subprocess.run(
