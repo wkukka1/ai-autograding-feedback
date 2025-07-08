@@ -72,43 +72,19 @@ class OpenAIModel(Model):
         Returns:
             str: The model's response text.
         """
+        response_format = None
         if schema:
-            function_name = re.sub(r"[^a-zA-Z0-9_-]", "_", schema.get("title", "structured_output")).lower()
-
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_instructions},
-                    {"role": "user", "content": prompt},
-                ],
-                tools=[
-                    {
-                        "type": "function",
-                        "function": {
-                            "name": function_name,
-                            "description": schema.get("description", "Structured response."),
-                            "parameters": schema,
-                        },
-                    }
-                ],
-                tool_choice="required",
-                temperature=0.5,
-                max_tokens=1000,
-            )
-
-            tool_calls = response.choices[0].message.tool_calls
-            if tool_calls and tool_calls[0].function.arguments:
-                return tool_calls[0].function.arguments  # still a string
-            else:
-                return response.choices[0].message.content  # fallback to raw text
+            response_format = {"type": "json_schema", "json_schema": schema}
 
         response = self.client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-4o-mini-2024-07-18",
             messages=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=1000,
+            response_format=response_format,
             temperature=0.5,
+            max_tokens=1000,
         )
+
         return response.choices[0].message.content
