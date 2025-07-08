@@ -1,4 +1,6 @@
+import json
 import os
+import re
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -48,10 +50,19 @@ class OpenAIModel(Model):
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
         """
-        response = self._call_openai(prompt, system_instructions)
+        if json_schema:
+            schema_path = Path(json_schema)
+            if not schema_path.exists():
+                raise FileNotFoundError(f"JSON schema file not found: {schema_path}")
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+        else:
+            schema = None
+
+        response = self._call_openai(prompt, system_instructions, schema)
         return prompt, response
 
-    def _call_openai(self, prompt: str, system_instructions: str) -> str:
+    def _call_openai(self, prompt: str, system_instructions: str, schema: Optional[dict] = None) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.
 
@@ -61,6 +72,36 @@ class OpenAIModel(Model):
         Returns:
             str: The model's response text.
         """
+        if schema:
+            function_name = re.sub(r"[^a-zA-Z0-9_-]", "_", schema.get("title", "structured_output")).lower()
+
+            response = self.client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[
+                    {"role": "system", "content": system_instructions},
+                    {"role": "user", "content": prompt},
+                ],
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": function_name,
+                            "description": schema.get("description", "Structured response."),
+                            "parameters": schema,
+                        },
+                    }
+                ],
+                tool_choice="required",
+                temperature=0.5,
+                max_tokens=1000,
+            )
+
+            tool_calls = response.choices[0].message.tool_calls
+            if tool_calls and tool_calls[0].function.arguments:
+                return tool_calls[0].function.arguments  # still a string
+            else:
+                return response.choices[0].message.content  # fallback to raw text
+
         response = self.client.chat.completions.create(
             model="gpt-4-turbo",
             messages=[
