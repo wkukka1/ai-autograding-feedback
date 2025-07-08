@@ -99,7 +99,7 @@ class DeepSeekV3Model(Model):
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
         """
-        url = f"{LLAMA_SERVER_URL}/v1/chat/completions"
+        url = f"{LLAMA_SERVER_URL}/v1/completions"
 
         payload = {
             "messages": [
@@ -151,7 +151,7 @@ class DeepSeekV3Model(Model):
         ]
 
         if schema:
-            cmd += ["--json-schema", schema]
+            cmd += ["--json-schema", json.dumps(schema)]
 
         try:
             completed = subprocess.run(
