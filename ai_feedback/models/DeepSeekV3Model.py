@@ -104,7 +104,8 @@ class DeepSeekV3Model(Model):
         payload = {"prompt": prompt, "temperature": 0.7, "max_tokens": 1000}
 
         if schema:
-            payload["response_format"] = {"type": "json_schema", "schema": schema["schema"]}
+            raw_schema = schema.get("schema", schema)
+            payload["json_schema"] = raw_schema
 
         try:
             response = requests.post(url, json=payload, timeout=3000)
