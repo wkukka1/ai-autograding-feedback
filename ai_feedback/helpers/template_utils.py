@@ -104,28 +104,21 @@ def gather_file_contents(assignment_files: List[Optional[Path]]) -> str:
             # Handle PDF files separately
             if filename.lower().endswith('.pdf'):
                 text_content = extract_pdf_text(file_path)
-                file_contents += f"=== {filename} ===\n"
                 lines = text_content.split('\n')
-                for i, line in enumerate(lines, start=1):
-                    stripped_line = line.rstrip()
-                    if stripped_line.strip():
-                        file_contents += f"(Line {i}) {stripped_line}\n"
-                    else:
-                        file_contents += f"(Line {i}) \n"
-                file_contents += "\n"
             else:
                 # Handle regular text files
                 with open(file_path, "r", encoding="utf-8") as file:
                     lines = file.readlines()
 
-                file_contents += f"=== {filename} ===\n"
-                for i, line in enumerate(lines, start=1):
-                    stripped_line = line.rstrip("\n")
-                    if stripped_line.strip():
-                        file_contents += f"(Line {i}) {stripped_line}\n"
-                    else:
-                        file_contents += f"(Line {i}) {line}"
-                file_contents += "\n"
+            # Common processing for both file types
+            file_contents += f"=== {filename} ===\n"
+            for i, line in enumerate(lines, start=1):
+                stripped_line = line.rstrip('\n').rstrip()
+                if stripped_line.strip():
+                    file_contents += f"(Line {i}) {stripped_line}\n"
+                else:
+                    file_contents += f"(Line {i}) \n"
+            file_contents += "\n"
 
         except Exception as e:
             print(f"Error reading file {filename}: {e}")
