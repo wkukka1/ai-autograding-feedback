@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import List, Optional
@@ -28,7 +29,7 @@ class OpenAIModelVector(Model):
         self.vector_store = self.client.vector_stores.create(name="Markus LLM Vector Store")
         self.model = self.client.beta.assistants.create(
             name="Markus LLM model",
-            model="gpt-4-turbo",
+            model="gpt-4o-mini",
             tools=[{"type": "file_search"}],
             tool_resources={"file_search": {"vector_store_ids": [self.vector_store.id]}},
         )
@@ -65,6 +66,11 @@ class OpenAIModelVector(Model):
         if not self.model:
             raise RuntimeError("Model was not created successfully.")
 
+        schema = None
+        if json_schema:
+            with open(json_schema, "r") as f:
+                schema = json.load(f)
+
         request = "Uploaded Files: "
         file_ids: List[str] = []
         assignment_files = [f for f in (submission_file, solution_file, test_output) if f]
@@ -78,7 +84,7 @@ class OpenAIModelVector(Model):
         if question_num:
             prompt += f" Identify and generate a response for the mistakes **only** in task ${question_num}. "
 
-        response = self._call_openai(prompt)
+        response = self._call_openai(prompt, schema)
         self._cleanup_resources(file_ids)
 
         request = f"\n{system_instructions}\n{prompt}"
@@ -99,7 +105,7 @@ class OpenAIModelVector(Model):
             self.client.vector_stores.files.create(vector_store_id=self.vector_store.id, file_id=response.id)
         return response.id
 
-    def _call_openai(self, prompt: str) -> str:
+    def _call_openai(self, prompt: str, schema: Optional[dict] = None) -> str:
         """
         Send the user prompt to OpenAI's assistant model and retrieve the generated response.
 
@@ -113,7 +119,18 @@ class OpenAIModelVector(Model):
 
         self.client.beta.threads.messages.create(thread_id=thread.id, role="user", content=prompt)
 
-        run = self.client.beta.threads.runs.create(thread_id=thread.id, assistant_id=self.model.id)
+        response_format = None
+        if schema:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": schema,
+            }
+
+        run = self.client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=self.model.id,
+            **({"response_format": response_format} if response_format else {}),
+        )
 
         while run.status not in ["completed", "failed"]:
             run = self.client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
