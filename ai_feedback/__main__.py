@@ -174,6 +174,7 @@ def main() -> int:
     with open(system_prompt_path, encoding='utf-8') as file:
         system_instructions = file.read()
 
+    prompt = {}
     if args.prompt_custom:
         prompt_filename = os.path.join("./", args.prompt_custom)
         with open(prompt_filename, encoding='utf-8') as prompt_file:
@@ -195,6 +196,7 @@ def main() -> int:
 
     if args.prompt_text:
         prompt_content += args.prompt_text
+        prompt["prompt_content"] = prompt_content
 
     if args.scope == "image":
         prompt["prompt_content"] = prompt_content
