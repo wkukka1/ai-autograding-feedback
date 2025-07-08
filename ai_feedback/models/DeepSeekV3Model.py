@@ -109,7 +109,7 @@ class DeepSeekV3Model(Model):
         }
 
         if schema:
-            payload["response_format"] = {"type": "json_schema", "schema": schema}
+            payload["response_format"] = {"type": "json_schema", "schema": schema["schema"]}
 
         try:
             response = requests.post(url, json=payload, timeout=3000)
