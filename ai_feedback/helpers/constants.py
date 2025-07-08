@@ -16,4 +16,5 @@ HELP_MESSAGES = {
     "submission_image": "The file path for the image file.",
     "solution_image": "The file path to the solution image.",
     "system_prompt": "The specific system instructions to send to the AI Model.",
+    "json_schema": "file path to a json file that contains the schema for ai output",
 }

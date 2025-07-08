@@ -26,6 +26,7 @@ class CodeLlamaModel(Model):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt

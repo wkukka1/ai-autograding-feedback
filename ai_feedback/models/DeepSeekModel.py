@@ -24,6 +24,7 @@ class DeepSeekModel(Model):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.

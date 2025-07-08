@@ -43,6 +43,7 @@ class OpenAIModelVector(Model):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.

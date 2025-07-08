@@ -31,6 +31,7 @@ class DeepSeekV3Model(Model):
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.

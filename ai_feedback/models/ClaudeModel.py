@@ -29,6 +29,7 @@ class ClaudeModel(Model):
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -42,6 +43,7 @@ class ClaudeModel(Model):
             question_num (Optional[int]): Specific task number to extract from text files.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

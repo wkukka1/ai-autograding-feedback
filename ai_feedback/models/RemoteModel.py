@@ -39,6 +39,7 @@ class RemoteModel(Model):
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
         submission_image: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
