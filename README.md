@@ -29,9 +29,8 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | Argument             | Description                                                       | Required |
 |----------------------|-------------------------------------------------------------------|----------|
 | `--submission_type`  | Type of submission (from `arg_options.FileType`)                  | ❌ |
-| `--prompt`           | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
+| `--prompt`           | Pre-defined prompt name or file path to custom prompt file        | ❌ **|
 | `--prompt_text`      | Additional string text prompt that can be fed to model.           | ❌ ** |
-| `--prompt_custom`    | The name of prompt file uploaded to be used by model.             | ❌ ** |
 | `--scope`            | Processing scope (`image` or `code` or `text`)                    | ✅ |
 | `--submission`       | Submission file path                                              | ✅ |
 | `--question`         | Specific question to evaluate                                     | ❌ |
@@ -41,10 +40,10 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--test_output`      | File path for the file containing the results from tests          | ❌ |
 | `--submission_image` | File path for the submission image file                           | ❌ |
 | `--solution_image`   | File path for the solution image file                             | ❌ |
-| `--system_prompt`    | File path for the system instructions prompt                      | ❌ |
+| `--system_prompt`    | Pre-defined system prompt name or file path to custom system prompt | ❌ |
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)    | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)           | ❌ |
-** One of either prompt, prompt_custom, or prompt_text must be selected.
+** One of either `--prompt` or `--prompt_text` must be selected.
 
 ## Scope
 The program supports three scopes: code or text or image. Depending on which is selected, the program supports different models and prompts tailored for each option.
@@ -66,8 +65,15 @@ The user can also explicitly specify the submission type using the `--submission
 Currently, jupyter notebook, pdf, and python assignments are supported.
 
 ## Prompts
-The user can use this argument to specify which predefined prompt they wish the model to use.
-To view the predefined prompts, navigate to the ai_feedback/data/prompts/user folder. Each prompt is stored as a markdown file that can contain template placeholders with the following structure:
+The `--prompt` argument accepts either pre-defined prompt names or custom file paths:
+
+### Pre-defined Prompts
+To use pre-defined prompts, specify the prompt name (without extension). Pre-defined prompts are stored as markdown (.md) files in the `ai_feedback/data/prompts/user/` directory.
+
+### Custom Prompt Files
+To use custom prompt files, specify the file path to your custom prompt. The file should be a markdown (.md) file.
+
+Prompt files can contain template placeholders with the following structure:
 
 ```markdown
 Consider this question:
@@ -85,7 +91,7 @@ Prompt Naming Conventions:
 - Prompts to be used when --scope image is selected are prefixed with image_{}.md
 - Prompts to be used when --scope text is selected are prefixed with text_{}.md
 
-If the --scope argument is provided and its value does not match the prefix of the selected --prompt, an error message will be displayed.
+Scope validation (prefix matching) only applies to pre-defined prompts. Custom prompt files can be used with any scope.
 
 All prompts are treated as templates that can contain special placeholder blocks, the following template placeholders are automatically replaced:
 - `{context}` - Question context
@@ -122,8 +128,16 @@ All prompts are treated as templates that can contain special placeholder blocks
 ## Prompt_text
 Additonally, the user can pass in a string through the --prompt_text argument. This will either be concatenated to the prompt if --prompt is used or fed in as the only prompt if --prompt is not used.
 
-## Prompt_custom
-The user can pass in their own custom prompt file and use the --prompt_custom argument to flag that the model should use the custom prompt. This can be used instead of choosing one of the predefined prompts.
+## System Prompts
+The `--system_prompt` argument accepts either pre-defined system prompt names or custom file paths:
+
+### Pre-defined System Prompts
+To use pre-defined system prompts, specify the system prompt name (without extension). Pre-defined system prompts are stored as markdown (.md) files in the `ai_feedback/data/prompts/system/` directory.
+
+### Custom System Prompt Files
+To use custom system prompt files, specify the file path to your custom system prompt. The file should be a markdown (.md) file.
+
+System prompts define the AI model's behavior, tone, and approach to providing feedback. They are used to set the context and personality of the AI assistant.
 
 ## Models
 The models used can be seen under the ai_feedback/models folder.
@@ -303,6 +317,11 @@ python3 -m ai_feedback --prompt code_table --scope code \
         --model deepSeek-v3 --llama_mode cli
 ```
 
+#### Evaluate using custom prompt file path
+```bash
+python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --scope code --submission test_submissions/csc108/correct_submission/correct_submission.py --solution test_submissions/csc108/solution.py --model codellama:latest
+```
+
 #### Using Ollama
 In order to run this project on Bigmouth:
 1. SSH into teach.cs
@@ -339,8 +358,6 @@ Files:
 - llm_helpers.py: contains helper functions needed to run llm scripts.
 - python_tester_llm_pdf.py: Runs LLM on any pdf assignment (solution file and submission file) uploaded to the autotester. Creates general feedback about whether the student's written responses matches the instructors feedback. Dislayed in test outputs and overall comments.
 - custom_tester_llm_code.sh: Runs LLM on assignments (solution file, submission file, test output file) uploaded to the custom autotester. Currently, supports jupyter notebook files uploaded. Can specify prompt and model used in the script. Displays in overall comments and in test outputs. Can optionally uncomment the annotations section to display annotations, however the annotations will display on the .txt version of the file uploaded by the student, not the .ipynb file.
-
-<<<<<<< Updated upstream
 
 #### Python AutoTester Usage
 ##### Code Scope
@@ -406,7 +423,7 @@ Also pip install other packages that the submission or solution file uses.
 - Student uploads: test1_submission.ipynb,  test1_submission.txt
 
 NOTE: if the LLM Test Group appears to be blank/does not turn green, try increasing the timeout.
-=======
+
 #### Custom Tester
 - custom_tester_llm_code.sh: Runs LLM on any assignment (solution file, submission file, test output file) uploaded to the autotester. Can specify prompt and model used in the script. Displays in overall comments and in test outputs.
 
@@ -429,4 +446,3 @@ To run the test suite:
 ```console
 $ pytest
 ```
->>>>>>> Stashed changes

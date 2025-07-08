@@ -7,7 +7,7 @@ from pathlib import Path
 
 from . import code_processing, image_processing, text_processing
 from .helpers import arg_options
-from .helpers.constants import HELP_MESSAGES, TEST_OUTPUTS_DIRECTORY
+from .helpers.constants import HELP_MESSAGES
 
 
 def detect_submission_type(filename: str) -> str:
@@ -52,26 +52,77 @@ def load_markdown_template(template: str) -> str:
         sys.exit(1)
 
 
-def load_markdown_prompt(prompt_name: str) -> dict:
-    """Loads a markdown prompt file.
+def _load_content_with_fallback(
+    content_arg: str, predefined_values: list[str], predefined_subdir: str, content_type: str
+) -> str:
+    """Generic function to load content by trying pre-defined names first, then treating as file path.
 
     Args:
-        prompt_name (str): Name of the prompt file (without extension)
+        content_arg (str): Either a pre-defined name or a file path
+        predefined_values (list[str]): List of valid pre-defined names
+        predefined_subdir (str): Subdirectory for pre-defined files (e.g., "user", "system")
+        content_type (str): Type of content for error messages (e.g., "prompt", "system prompt")
 
     Returns:
-        dict: Dictionary containing prompt_content
+        str: The content
 
     Raises:
-        SystemExit: If the prompt file is not found
+        SystemExit: If the content cannot be loaded
     """
-    try:
-        prompt_file = os.path.join(os.path.dirname(__file__), f"data/prompts/user/{prompt_name}.md")
-        with open(prompt_file, "r") as file:
-            prompt_content = file.read()
-        return {"prompt_content": prompt_content}
-    except FileNotFoundError:
-        print(f"Error: Prompt file '{prompt_name}.md' not found in user subfolder.")
-        sys.exit(1)
+    # First, check if it's a pre-defined name
+    if content_arg in predefined_values:
+        try:
+            file_path = os.path.join(os.path.dirname(__file__), f"data/prompts/{predefined_subdir}/{content_arg}.md")
+            with open(file_path, "r", encoding='utf-8') as file:
+                return file.read()
+        except FileNotFoundError:
+            print(
+                f"Error: Pre-defined {content_type} file '{content_arg}.md' not found in {predefined_subdir} subfolder."
+            )
+            sys.exit(1)
+    else:
+        # Treat as a file path
+        try:
+            with open(content_arg, "r", encoding='utf-8') as file:
+                return file.read()
+        except FileNotFoundError:
+            print(f"Error: {content_type.title()} file '{content_arg}' not found.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error reading {content_type} file '{content_arg}': {e}")
+            sys.exit(1)
+
+
+def load_prompt_content(prompt_arg: str) -> str:
+    """Loads prompt content by trying pre-defined names first, then treating as file path.
+
+    Args:
+        prompt_arg (str): Either a pre-defined prompt name or a file path
+
+    Returns:
+        str: The prompt content
+
+    Raises:
+        SystemExit: If the prompt cannot be loaded
+    """
+    return _load_content_with_fallback(prompt_arg, arg_options.get_enum_values(arg_options.Prompt), "user", "prompt")
+
+
+def load_system_prompt_content(system_prompt_arg: str) -> str:
+    """Loads system prompt content by trying pre-defined names first, then treating as file path.
+
+    Args:
+        system_prompt_arg (str): Either a pre-defined system prompt name or a file path
+
+    Returns:
+        str: The system prompt content
+
+    Raises:
+        SystemExit: If the system prompt cannot be loaded
+    """
+    return _load_content_with_fallback(
+        system_prompt_arg, arg_options.get_enum_values(arg_options.SystemPrompt), "system", "system prompt"
+    )
 
 
 def main() -> int:
@@ -97,12 +148,10 @@ def main() -> int:
     parser.add_argument(
         "--prompt",
         type=str,
-        choices=arg_options.get_enum_values(arg_options.Prompt),
         required=False,
         help=HELP_MESSAGES["prompt"],
     )
     parser.add_argument("--prompt_text", type=str, required=False, help=HELP_MESSAGES["prompt_text"])
-    parser.add_argument("--prompt_custom", type=str, required=False, help=HELP_MESSAGES["prompt_custom"])
     parser.add_argument(
         "--scope",
         type=str,
@@ -147,7 +196,6 @@ def main() -> int:
         "--system_prompt",
         type=str,
         required=False,
-        choices=arg_options.get_enum_values(arg_options.SystemPrompt),
         help=HELP_MESSAGES["system_prompt"],
         default="student_test_feedback",
     )
@@ -168,18 +216,12 @@ def main() -> int:
 
     prompt_content = ""
 
-    system_prompt_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), f"data/prompts/system/{args.system_prompt}.md"
-    )
-    with open(system_prompt_path, encoding='utf-8') as file:
-        system_instructions = file.read()
+    system_instructions = load_system_prompt_content(args.system_prompt)
 
-    if args.prompt_custom:
-        prompt_filename = os.path.join("./", args.prompt_custom)
-        with open(prompt_filename, encoding='utf-8') as prompt_file:
-            prompt_content += prompt_file.read()
-    else:
-        if args.prompt:
+    if args.prompt:
+        # Only validate scope for pre-defined prompts (not for arbitrary file paths)
+        predefined_prompts = arg_options.get_enum_values(arg_options.Prompt)
+        if args.prompt in predefined_prompts:
             if not args.prompt.startswith("image") and args.scope == "image":
                 print("Error: The prompt must start with 'image'. Please re-run the command with a valid prompt.")
                 sys.exit(1)
@@ -190,14 +232,13 @@ def main() -> int:
                 print("Error: The prompt must start with 'text'. Please re-run the command with a valid prompt.")
                 sys.exit(1)
 
-            prompt = load_markdown_prompt(args.prompt)
-            prompt_content += prompt["prompt_content"]
+        prompt_content += load_prompt_content(args.prompt)
 
-        if args.prompt_text:
-            prompt_content += args.prompt_text
+    if args.prompt_text:
+        prompt_content += args.prompt_text
 
     if args.scope == "image":
-        prompt["prompt_content"] = prompt_content
+        prompt = {"prompt_content": prompt_content}
         request, response = image_processing.process_image(args, prompt, system_instructions)
     elif args.scope == "text":
         request, response = text_processing.process_text(args, prompt_content, system_instructions)
