@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -46,6 +47,11 @@ class CodeLlamaModel(Model):
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
                                        or None if no valid response is returned.
         """
+        if json_schema:
+            with open(json_schema, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+        else:
+            schema = None
 
         response = ollama.chat(
             model=self.model["model"],
@@ -53,6 +59,7 @@ class CodeLlamaModel(Model):
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
+            format=schema,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:

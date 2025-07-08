@@ -49,6 +49,7 @@ class DeepSeekModel(Model):
                 schema = json.load(f)
         else:
             schema = None
+
         response = ollama.chat(
             model=self.model["model"],
             messages=[
