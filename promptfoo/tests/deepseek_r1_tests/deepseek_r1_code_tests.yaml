@@ -7,17 +7,14 @@ defaultTest:
     scope: code
     submission_type: python
 
-scenarios:
-  - name: "Prompt: Code Feedback R1"
-    prompts:
-      - file: ../../../ai_feedback/data/prompts/user/code_feedback_r1.md
-    vars:
-      prompt_name: code_feedback_r1.md
+prompts:
+  - file://../../../ai_feedback/data/prompts/user/code_feedback_r1.md
 
 tests:
   - vars:
       submission_file: test_submissions/csc263_opt_connected/correct_submission/correct_submission.py
       solution_file: test_submissions/csc263_opt_connected/solution.py
+
 
 #  - vars:
 #      submission_file: test_submissions/csc263_opt_connected/fail_submission/fail_submission.py
