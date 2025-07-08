@@ -101,12 +101,7 @@ class DeepSeekV3Model(Model):
         """
         url = f"{LLAMA_SERVER_URL}/v1/completions"
 
-        payload = {
-            "messages": [
-                {"role": "user", "content": prompt},
-            ],
-            "temperature": 0.5,
-        }
+        payload = {"prompt": prompt, "temperature": 0.7, "max_tokens": 1000}
 
         if schema:
             payload["response_format"] = {"type": "json_schema", "schema": schema["schema"]}
