@@ -49,14 +49,13 @@ class DeepSeekModel(Model):
                 schema = json.load(f)
         else:
             schema = None
-        print(schema)
         response = ollama.chat(
             model=self.model["model"],
             messages=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            options={"schema": schema} if schema else None,
+            format=schema,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:
