@@ -76,7 +76,7 @@ class OpenAIModel(Model):
             function_name = re.sub(r"[^a-zA-Z0-9_-]", "_", schema.get("title", "structured_output")).lower()
 
             response = self.client.chat.completions.create(
-                model="gpt-4-turbo",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": system_instructions},
                     {"role": "user", "content": prompt},
