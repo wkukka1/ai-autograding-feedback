@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: codellama:latest
     scope: code
-    submission_type: python
 
 prompts:
   - file://../../../ai_feedback/data/prompts/user/code_overall.md

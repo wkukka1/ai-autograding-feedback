@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: deepSeek-v3
     scope: code
-    submission_type: python
     system_prompt: code_feedback_v3
 
 prompts:

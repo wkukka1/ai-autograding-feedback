@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: deepSeek-R1:70B
     scope: text
-    submission_type: pdf
 
 prompts:
   - file://../../../ai_feedback/data/prompts/user/text_analyze_r1.md

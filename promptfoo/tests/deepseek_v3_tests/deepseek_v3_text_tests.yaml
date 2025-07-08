@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: deepSeek-v3
     scope: text
-    submission_type: pdf
     system_prompt: text_feedback_v3
 
 prompts:
