@@ -70,6 +70,7 @@ class OpenAIModel(Model):
         Args:
             prompt (str): The fully constructed input prompt including file content.
             schema (Optional[dict]): Optional json schema to use.
+
         Returns:
             str: The model's response text.
         """
