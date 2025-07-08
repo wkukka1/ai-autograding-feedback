@@ -26,24 +26,24 @@ For the image scope, the program takes up to two files, depending on the prompt 
 - Saves response output in Markdown format with a predefined template or prints to stdout.
 
 ## Argument Details
-| Argument             | Description                                                       | Required |
-|----------------------|-------------------------------------------------------------------|----------|
-| `--submission_type`  | Type of submission (from `arg_options.FileType`)                  | ❌ |
-| `--prompt`           | The name of a preddefined prompt file (from `arg_options.Prompt`) | ❌ **|
-| `--prompt_text`      | Additional string text prompt that can be fed to model.           | ❌ ** |
-| `--prompt_custom`    | The name of prompt file uploaded to be used by model.             | ❌ ** |
-| `--scope`            | Processing scope (`image` or `code` or `text`)                    | ✅ |
-| `--submission`       | Submission file path                                              | ✅ |
-| `--question`         | Specific question to evaluate                                     | ❌ |
-| `--model`            | Model type (from `arg_options.Models`)                            | ✅ |
-| `--output`           | File path for where to record the output                          | ❌ |
-| `--solution`         | File path for the solution file                                   | ❌ |
-| `--test_output`      | File path for the file containing the results from tests          | ❌ |
-| `--submission_image` | File path for the submission image file                           | ❌ |
-| `--solution_image`   | File path for the solution image file                             | ❌ |
-| `--system_prompt`    | File path for the system instructions prompt                      | ❌ |
-| `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)    | ❌ |
-| `--output_template`  | Output template file (from `arg_options.OutputTemplate)           | ❌ |
+| Argument             | Description                                                                  | Required |
+|----------------------|------------------------------------------------------------------------------|----------|
+| `--submission_type`  | Type of submission (from `arg_options.FileType`)                             | ❌ |
+| `--prompt`           | The name of a preddefined prompt file (from `arg_options.Prompt`)            | ❌ **|
+| `--prompt_text`      | Additional string text prompt that can be fed to model or standalone prompt. | ❌ ** |
+| `--prompt_custom`    | The name of prompt file uploaded to be used by model.                        | ❌ ** |
+| `--scope`            | Processing scope (`image` or `code` or `text`)                               | ✅ |
+| `--submission`       | Submission file path                                                         | ✅ |
+| `--question`         | Specific question to evaluate                                                | ❌ |
+| `--model`            | Model type (from `arg_options.Models`)                                       | ✅ |
+| `--output`           | File path for where to record the output                                     | ❌ |
+| `--solution`         | File path for the solution file                                              | ❌ |
+| `--test_output`      | File path for the file containing the results from tests                     | ❌ |
+| `--submission_image` | File path for the submission image file                                      | ❌ |
+| `--solution_image`   | File path for the solution image file                                        | ❌ |
+| `--system_prompt`    | File path for the system instructions prompt                                 | ❌ |
+| `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)               | ❌ |
+| `--output_template`  | Output template file (from `arg_options.OutputTemplate)                      | ❌ |
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
