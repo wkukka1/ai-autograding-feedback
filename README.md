@@ -45,7 +45,6 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)    | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)           | ❌ |
 | `--json_schema`      | File path to json file for schema for structured output           | ❌ |
-
 ** One of either prompt, prompt_custom, or prompt_text must be selected.
 
 ## Scope
