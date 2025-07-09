@@ -52,10 +52,14 @@ class DeepSeekV3Model(Model):
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
-        schema = None
         if json_schema:
-            with open(json_schema) as f:
+            schema_path = Path(json_schema)
+            if not schema_path.exists():
+                raise FileNotFoundError(f"JSON schema file not found: {schema_path}")
+            with open(schema_path, "r", encoding="utf-8") as f:
                 schema = json.load(f)
+        else:
+            schema = None
 
         prompt = f"{system_instructions}\n{prompt}"
         if llama_mode == 'server':
