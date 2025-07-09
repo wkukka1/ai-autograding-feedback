@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: remote
     scope: code
-    submission_type: python
 
 prompts:
   - file://../../../ai_feedback/data/prompts/user/code_table.md
