@@ -2,7 +2,7 @@ TEST_OUTPUTS_DIRECTORY = "test_responses_md"
 HELP_MESSAGES = {
     "submission_type": "The format of the submission file (e.g., Jupyter notebook, Python script).",
     "prompt": "Pre-defined prompt name (from ai_feedback/data/prompts/user/) or file path to custom prompt file.",
-    "prompt_text": "Optional standalone prompt or additional text to append to the base prompt.",
+    "prompt_text": "The string prompt that is sent to the model",
     "scope": "The section of the assignment the model should analyze (e.g., code or image).",
     "submission": "The file path for the submission file.",
     "solution": "The file path for the solution file.",
