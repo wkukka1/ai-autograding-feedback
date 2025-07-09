@@ -57,7 +57,7 @@ class DeepSeekModel(Model):
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            format=schema['schema'],
+            format=schema['schema'] if schema else None,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:
