@@ -5,7 +5,6 @@ defaultTest:
   vars:
     model: llama3.2-vision:90b
     scope: image
-    submission_type: jupyter
 
 scenarios:
   - config:
