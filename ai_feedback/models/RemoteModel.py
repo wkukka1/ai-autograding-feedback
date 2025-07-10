@@ -64,6 +64,9 @@ class RemoteModel(Model):
 
         headers = {"X-API-KEY": os.getenv("REMOTE_API_KEY")}
         data = {"content": prompt, "model": self.model_name, "system_instructions": system_instructions}
+        if json_schema:
+            data["json_schema"] = json_schema
+
         if llama_mode:
             data["llama_mode"] = llama_mode
 
