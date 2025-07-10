@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -24,6 +25,7 @@ class DeepSeekModel(Model):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -37,11 +39,20 @@ class DeepSeekModel(Model):
             question_num (Optional[int]): An optional question number to target specific content.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
                                        or None if the response was invalid.
         """
+        if json_schema:
+            schema_path = Path(json_schema)
+            if not schema_path.exists():
+                raise FileNotFoundError(f"JSON schema file not found: {schema_path}")
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+        else:
+            schema = None
 
         response = ollama.chat(
             model=self.model["model"],
@@ -49,6 +60,7 @@ class DeepSeekModel(Model):
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
+            format=schema['schema'] if schema else None,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:

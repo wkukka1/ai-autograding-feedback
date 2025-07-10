@@ -43,6 +43,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--system_prompt`    | Pre-defined system prompt name or file path to custom system prompt | ❌ |
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)      | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)             | ❌ |
+| `--json_schema`      | File path to json file for schema for structured output             | ❌ |
 ** One of either `--prompt` or `--prompt_text` must be selected. If both are provided, `--prompt_text` will be appended to the contents of the file specified by `--prompt`.
 
 ## Scope
@@ -315,6 +316,12 @@ python3 -m ai_feedback --prompt code_table --scope code \
         --submission test_submissions/ggr274_homework5/test1/student_submission.ipynb \
         --solution test_submissions/ggr274_homework5/test1/Homework_5_solution.ipynb \
         --model deepSeek-v3 --llama_mode cli
+```
+
+
+#### Get annotations for cnn_example test using openAI model
+```bash
+python -m ai_feedback --prompt code_annotations --scope code --submission test_submissions/cnn_example/cnn_submission --solution test_submissions/cnn_example/cnn_solution.py --model openai --json_schema ai_feedback/data/schema/code_annotation_schema.json
 ```
 
 #### Evaluate using custom prompt file path

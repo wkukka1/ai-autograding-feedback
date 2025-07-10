@@ -73,6 +73,7 @@ def mock_and_capture(request):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ):
         all_prompts.append((test_name, "OpenAIModel.generate_response", prompt))
         return prompt, f"[MOCKED RESPONSE] \n {prompt}"

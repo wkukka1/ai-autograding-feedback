@@ -14,5 +14,6 @@ HELP_MESSAGES = {
     "test_output": "The output of tests from evaluating the assignment.",
     "submission_image": "The file path for the image file.",
     "solution_image": "The file path to the solution image.",
+    "json_schema": "file path to a json file that contains the schema for ai output",
     "system_prompt": "Pre-defined system prompt name (from ai_feedback/data/prompts/system/) or file path to custom system prompt file.",
 }
