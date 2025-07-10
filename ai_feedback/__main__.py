@@ -215,7 +215,6 @@ def main() -> int:
         args.submission_type = detect_submission_type(args.submission)
 
     prompt_content = ""
-
     system_instructions = load_system_prompt_content(args.system_prompt)
 
     if args.prompt:
