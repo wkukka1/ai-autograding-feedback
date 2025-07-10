@@ -60,6 +60,7 @@ def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]
             question_num=args.question,
             system_instructions=system_instructions,
             llama_mode=args.llama_mode,
+            json_schema=args.json_schema,
         )
     else:
         request, response = model.generate_response(
@@ -69,6 +70,7 @@ def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]
             scope=args.scope,
             system_instructions=system_instructions,
             llama_mode=args.llama_mode,
+            json_schema=args.json_schema,
         )
 
     return request, response

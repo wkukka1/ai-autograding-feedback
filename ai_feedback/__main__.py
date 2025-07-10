@@ -207,6 +207,13 @@ def main() -> int:
         default="cli",
         help=HELP_MESSAGES["llama_mode"],
     )
+    parser.add_argument(
+        "--json_schema",
+        type=str,
+        required=False,
+        default="",
+        help=HELP_MESSAGES["json_schema"],
+    )
 
     args = parser.parse_args()
 

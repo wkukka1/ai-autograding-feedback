@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import List, Optional
@@ -28,7 +29,7 @@ class OpenAIModelVector(Model):
         self.vector_store = self.client.vector_stores.create(name="Markus LLM Vector Store")
         self.model = self.client.beta.assistants.create(
             name="Markus LLM model",
-            model="gpt-4-turbo",
+            model="gpt-4o-mini",
             tools=[{"type": "file_search"}],
             tool_resources={"file_search": {"vector_store_ids": [self.vector_store.id]}},
         )
@@ -43,6 +44,7 @@ class OpenAIModelVector(Model):
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
+        json_schema: Optional[str] = None,
     ) -> tuple[str, str]:
         """
         Generate a response from the OpenAI model using the provided prompt and assignment files.
@@ -56,6 +58,7 @@ class OpenAIModelVector(Model):
             question_num (Optional[int]): An optional question number.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
+            json_schema (Optional[str]): Optional json schema to use.
 
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.
@@ -63,6 +66,15 @@ class OpenAIModelVector(Model):
         self.model = self.client.beta.assistants.update(assistant_id=self.model.id, instructions=system_instructions)
         if not self.model:
             raise RuntimeError("Model was not created successfully.")
+
+        if json_schema:
+            schema_path = Path(json_schema)
+            if not schema_path.exists():
+                raise FileNotFoundError(f"JSON schema file not found: {schema_path}")
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+        else:
+            schema = None
 
         request = "Uploaded Files: "
         file_ids: List[str] = []
@@ -77,7 +89,7 @@ class OpenAIModelVector(Model):
         if question_num:
             prompt += f" Identify and generate a response for the mistakes **only** in task ${question_num}. "
 
-        response = self._call_openai(prompt)
+        response = self._call_openai(prompt, schema)
         self._cleanup_resources(file_ids)
 
         request = f"\n{system_instructions}\n{prompt}"
@@ -98,12 +110,13 @@ class OpenAIModelVector(Model):
             self.client.vector_stores.files.create(vector_store_id=self.vector_store.id, file_id=response.id)
         return response.id
 
-    def _call_openai(self, prompt: str) -> str:
+    def _call_openai(self, prompt: str, schema: Optional[dict] = None) -> str:
         """
         Send the user prompt to OpenAI's assistant model and retrieve the generated response.
 
         Args:
             prompt (str): The input prompt for the assistant.
+            schema (Optional[dict]): Optional json schema to use.
 
         Returns:
             str: The assistant's generated response text.
@@ -112,7 +125,18 @@ class OpenAIModelVector(Model):
 
         self.client.beta.threads.messages.create(thread_id=thread.id, role="user", content=prompt)
 
-        run = self.client.beta.threads.runs.create(thread_id=thread.id, assistant_id=self.model.id)
+        response_format = None
+        if schema:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": schema,
+            }
+
+        run = self.client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=self.model.id,
+            **({"response_format": response_format} if response_format else {}),
+        )
 
         while run.status not in ["completed", "failed"]:
             run = self.client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
