@@ -39,4 +39,3 @@ def get_citizens_with_job(self, job: str) -> list[Citizen]:
   ```
 - Point out the misuse of `.append()` and suggest fixing it to avoid `NoneType` errors.
 - Confirm that these changes would allow the test case for an empty society to pass.
-
