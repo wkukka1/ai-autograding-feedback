@@ -4,7 +4,7 @@ providers:
 defaultTest:
   vars:
     scope: code
-    model: claude-3.7-sonnet
+    model: openai
     system_prompt: code_test_feedback
 
 prompts:
