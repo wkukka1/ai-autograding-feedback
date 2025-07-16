@@ -1,5 +1,5 @@
 """
-The Class for Citizen have been omitted assume there are no issues with their implementation
+The Class for Citizen has been omitted assume it is correctly implemented
 """
 
 from __future__ import annotations
