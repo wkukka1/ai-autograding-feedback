@@ -15,6 +15,7 @@ FIRST_LONGER = 'first'
 SECOND_LONGER = 'second'
 EQUAL = 'equal'
 
+
 def is_valid_message(text: str) -> bool:
     """Return True if and only if text contains between MIN_MESSAGE_LENGTH
     and MAX_MESSAGE_LENGTH characters (inclusive).

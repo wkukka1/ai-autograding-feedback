@@ -21,7 +21,7 @@ private void deleteRoot() {
 ### Issues Identified
 
 - **Syntax error**: `else (this.right.isEmpty())` is invalid Java. It should be `else if`.
-- **Incorrect reassignment logic**: 
+- **Incorrect reassignment logic**:
   - In `else if (this.left.isEmpty())`, the node’s root and structure are **not updated** properly. Only `this.right` is reassigned to `this.right.right`, which **loses the current root value** and breaks BST invariants.
   - In `else if (this.right.isEmpty())`, the same problem occurs with `this.right = this.left.right` — the root and left subtree are **ignored**.
 - No handling for the **two-child case**, which is essential in a correct `deleteRoot()` implementation.
