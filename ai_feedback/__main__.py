@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import os.path
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -8,6 +9,18 @@ from pathlib import Path
 from . import code_processing, image_processing, text_processing
 from .helpers import arg_options
 from .helpers.constants import HELP_MESSAGES
+
+_TYPE_BY_EXTENSION = {
+    '.c': 'C',
+    '.ipynb': 'Jupyter',
+    '.java': 'Java',
+    '.pdf': 'PDF',
+    '.py': 'Python',
+    '.r': 'R',
+    '.rmd': 'RMarkdown',
+    '.sql': 'SQL',
+    '.qmd': 'Quarto',
+}
 
 
 def detect_submission_type(filename: str) -> str:
@@ -17,17 +30,14 @@ def detect_submission_type(filename: str) -> str:
         filename (str): Path to the file.
 
     Returns:
-        str: The detected submission type ("jupyter", "python", or "pdf").
+        str: The detected submission type.
     """
-    if filename.endswith(".ipynb"):
-        return "jupyter"
-    elif filename.endswith(".py"):
-        return "python"
-    elif filename.endswith(".pdf"):
-        return "pdf"
-
-    print("Error: Could not auto-detect submission type.")
-    sys.exit(1)
+    ext = os.path.splitext(filename)[1].lower()
+    if ext in _TYPE_BY_EXTENSION:
+        return _TYPE_BY_EXTENSION[ext]
+    else:
+        print("Error: Could not auto-detect submission type.")
+        sys.exit(1)
 
 
 def load_markdown_template(template: str) -> str:

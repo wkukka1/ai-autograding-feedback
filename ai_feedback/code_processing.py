@@ -56,9 +56,6 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
             ensure_txt_file(args.solution, rename_files)
             solution_file = Path(args.solution.replace(".ipynb", ".txt"))
 
-    elif args.submission_type != "python":
-        raise SystemExit(f"Invalid submission type '{args.submission_type}'.")
-
     prompt = render_prompt_template(
         prompt,
         submission=submission_file,
