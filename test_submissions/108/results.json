@@ -1,7 +1,0 @@
-{
-    "name": "test11_constants.py::TestConstants::test_constants[add_new_mention - change MENTION_SYMBOL, input does not already contain tag but is longer than MAX_MESSAGE_LENGTH]",
-    "output": "test11_constants.py:244: in test_constants\n    assert status, msg\nE   AssertionError: \nE     This set of tests checks whether you used the constants provided\nE     and did not hard-code their values. We changed the values of your\nE     constants to these:\nE     MIN_MESSAGE_LENGTH = 1\nE     MAX_MESSAGE_LENGTH = 10\nE     MIN_USERNAME_LENGTH = 3\nE     MAX_USERNAME_LENGTH = 15\nE     HASHTAG_SYMBOL = #\nE     MENTION_SYMBOL = !\nE     UNDERSCORE = _\nE     SPACE =  \nE     FIRST_LONGER = first\nE     SECOND_LONGER = second\nE     EQUAL = equal\nE     Then, when we called add_new_mention('Looooong', 'Wow'), we expected this:\nE     Looooong\nE     but your code returned this:\nE     Looooong !Wow\nE   assert False",
-    "marks_earned": 0,
-    "marks_total": 1,
-    "status": "fail"
-}

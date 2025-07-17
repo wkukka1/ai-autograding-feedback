@@ -1,7 +1,0 @@
-{
-    "name": "test_society_get_citizens_with_job.py::test_specific[Empty society]",
-    "output": "test_society_get_citizens_with_job.py:104: in test_specific\n    simple_run_test(student_society, solution_society,\nutils_a2.py:217: in simple_run_test\n    assert match, error_msg\nE   AssertionError: When calling get_citizens_with_job('Cook'), expected:\nE   []\nE   But got:\nE   Traceback (most recent call last):\nE     File \"/data/markus/workspace/workers/autotst8/utils_a2.py\", line 135, in simple_run_test\nE       actual = getattr(student_obj, method_name)(*args)\nE                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE     File \"/data/markus/workspace/workers/autotst8/society_hierarchy.py\", line 635, in get_citizens_with_job\nE       everyone = self.get_all_citizens()\nE                  ^^^^^^^^^^^^^^^^^^^^^^^\nE     File \"/data/markus/workspace/workers/autotst8/society_hierarchy.py\", line 611, in get_all_citizens\nE       everyone = self._head.get_all_subordinates()\nE                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   AttributeError: 'NoneType' object has no attribute 'get_all_subordinates'\nE   \nE   When called on the initial Society:\nE   None",
-    "marks_earned": 0,
-    "marks_total": 1,
-    "status": "fail"
-}
