@@ -1,7 +1,0 @@
-{
-    "name": "BSTTest.testDeleteAll",
-    "output": "java.lang.NullPointerException: Cannot invoke \"BST.isEmpty()\" because \"this.right\" is null",
-    "marks_earned": 0,
-    "marks_total": 1,
-    "status": "error"
-}

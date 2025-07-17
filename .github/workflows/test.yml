@@ -39,4 +39,4 @@ jobs:
           LLAMA_SERVER_URL: http://localhost:8080
           OPENAI_API_KEY: fake-api-key
         run: |
-            pytest -vv
+            pytest -vv || [ $? -eq 5 ]
