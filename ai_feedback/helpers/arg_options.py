@@ -39,6 +39,7 @@ class Prompt(Enum):
     CODE_FEEDBACK_R1 = "code_feedback_r1"
     CODE_FUNCTIONALITY = "code_functionality"
     CODE_OVERALL = "code_overall"
+    CODE_TEST_FEEDBACK = "code_test_feedback"
     TEXT_PDF_ANALYZE = "text_pdf_analyze"
     TEXT_ANALYZE_V3 = "text_analyze_v3"
     TEXT_ANALYZE_R1 = "text_analyze_r1"
@@ -127,6 +128,7 @@ class SystemPrompt(Enum):
     TEST_FEEDBACK = "student_test_feedback"
     IMAGE_STYLE_GRADER = "image_style_grader"
     CODE_FEEDBACK_V3 = "code_feedback_v3"
+    CODE_TEST_FEEDBACK = "code_test_feedback"
     TEXT_FEEDBACK_V3 = "text_feedback_v3"
 
     def __str__(self):
