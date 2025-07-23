@@ -29,6 +29,7 @@ class Prompt(Enum):
     IMAGE_STYLE = "image_style"
     IMAGE_STYLE_ANNOTATIONS = "image_style_annotations"
     IMAGE_OVERALL = "image_overall"
+    IMAGE_COMPARE_OVERALL = "image_compare_overall"
     CODE_LINES = "code_lines"
     CODE_TEMPLATE = "code_template"
     CODE_TABLE = "code_table"
@@ -127,6 +128,7 @@ class SystemPrompt(Enum):
 
     TEST_FEEDBACK = "student_test_feedback"
     IMAGE_STYLE_GRADER = "image_style_grader"
+    IMAGE_COMPARISON_GRADER = "image_comparison_grader"
     CODE_FEEDBACK_V3 = "code_feedback_v3"
     CODE_TEST_FEEDBACK = "code_test_feedback"
     TEXT_FEEDBACK_V3 = "text_feedback_v3"
