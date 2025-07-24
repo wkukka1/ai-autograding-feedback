@@ -48,7 +48,7 @@ class DeepSeekV3Model(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (dict): Optional hyperparams to use.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -102,16 +102,14 @@ class DeepSeekV3Model(Model):
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
         """
         url = f"{LLAMA_SERVER_URL}/v1/completions"
 
-        payload = {"prompt": prompt}
-
-        for key, value in hyperparams.items():
-            payload[key] = value
+        payload = {"prompt": prompt, **hyperparams}
 
         if schema:
             raw_schema = schema.get("schema", schema)
@@ -140,6 +138,7 @@ class DeepSeekV3Model(Model):
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: The model response or None if the response was invalid.

@@ -34,7 +34,6 @@ class DeepSeekModel(Model):
 
         Args:
             prompt (str): The input prompt provided by the user.
-            hyperparams (dict): Optional hyperparams to use.
             submission_file (Optional[Path]): The path to the submission file.
             solution_file (Optional[Path]): The path to the solution file.
             test_output (Optional[Path]): The path to the test output file.
@@ -43,7 +42,7 @@ class DeepSeekModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (Optional[dict]): Optional hyperparams to use.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,

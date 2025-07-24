@@ -46,7 +46,7 @@ class ClaudeModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (dict): Optional hyperparams to use.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

@@ -49,7 +49,7 @@ class OpenAIModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (dict): Optional hyperparams to use.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
@@ -73,6 +73,7 @@ class OpenAIModel(Model):
         Args:
             prompt (str): The fully constructed input prompt including file content.
             schema (Optional[dict]): Optional json schema to use.
+            hyperparams (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: The model's response text.
