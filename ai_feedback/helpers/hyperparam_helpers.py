@@ -69,4 +69,5 @@ def cast_to_type(option_schema=dict, hyperparams=dict):
                 options[key] = value
         except Exception as e:
             print(f"Warning: Failed to cast hyperparameter '{key}' with value '{value}': {e}")
+            exit(1)
     return options
