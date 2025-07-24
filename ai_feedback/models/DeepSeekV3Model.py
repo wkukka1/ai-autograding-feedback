@@ -108,7 +108,7 @@ class DeepSeekV3Model(Model):
         """
         url = f"{LLAMA_SERVER_URL}/v1/completions"
 
-        payload = {"prompt": prompt, "temperature": 0.7, "max_tokens": 1000}
+        payload = {"prompt": prompt, "temperature": '0.7', "max_tokens": 1000}
 
         if schema:
             raw_schema = schema.get("schema", schema)
