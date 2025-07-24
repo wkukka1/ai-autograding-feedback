@@ -30,6 +30,7 @@ class ClaudeModel(Model):
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
+        hyperparams: Optional[dict] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from Claude using the provided prompt and assignment file context.
@@ -44,6 +45,7 @@ class ClaudeModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            hyperparams (Optional[dict]): Optional hyperparams to use.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
@@ -55,13 +57,45 @@ class ClaudeModel(Model):
 
         request += prompt
 
-        response = self.client.messages.create(
-            model="claude-3-7-sonnet-20250219",
-            max_tokens=1000,
-            temperature=0.5,
-            system=system_instructions,
-            messages=[{"role": "user", "content": request}],
-        )
+        # Set defaults and override with hyperparams if provided
+        hyperparams = hyperparams or {}
+        max_tokens = int(hyperparams.get("max_tokens", 1000))
+        temperature = float(hyperparams.get("temperature", 0.5))
+        top_p = hyperparams.get("top_p")
+        stop_sequences = hyperparams.get("stop_sequences")
+        metadata = hyperparams.get("metadata")
+        tools = hyperparams.get("tools")
+        tool_choice = hyperparams.get("tool_choice")
+        stream = hyperparams.get("stream", False)
+
+        # Normalize stop_sequences if it's a comma-separated string
+        if isinstance(stop_sequences, str):
+            stop_sequences = [s.strip() for s in stop_sequences.split(",") if s.strip()]
+
+        # Construct request parameters
+        request_kwargs = {
+            "model": "claude-3-7-sonnet-20250219",
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "system": system_instructions,
+            "messages": [{"role": "user", "content": request}],
+        }
+
+        # Optional params (only add if explicitly given)
+        if top_p is not None:
+            request_kwargs["top_p"] = float(top_p)
+        if stop_sequences:
+            request_kwargs["stop_sequences"] = stop_sequences
+        if metadata:
+            request_kwargs["metadata"] = metadata
+        if tools:
+            request_kwargs["tools"] = tools
+        if tool_choice:
+            request_kwargs["tool_choice"] = tool_choice
+        if stream:
+            request_kwargs["stream"] = True
+
+        response = self.client.messages.create(**request_kwargs)
 
         if not response or not response.content:
             print("Error: Invalid or empty response from Claude.")
