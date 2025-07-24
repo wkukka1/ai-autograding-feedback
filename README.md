@@ -330,7 +330,7 @@ python -m ai_feedback --prompt code_annotations --scope code --submission test_s
 python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --scope code --submission test_submissions/csc108/correct_submission/correct_submission.py --solution test_submissions/csc108/solution.py --model codellama:latest
 ```
 ### Evaluate using custom hyperparameters
-```bash 
+```bash
 python3 -m ai_feedback --prompt code_table --scope code --submission ../ai-autograding-feedback-eval/test_submissions/108/hard_coding_submission.py --model openai-vector --submission_type python --hyperparams "max_tokens=1200,temperature=0.4,top_p=0.92"
 ```
 

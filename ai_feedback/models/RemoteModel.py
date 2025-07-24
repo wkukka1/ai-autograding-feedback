@@ -66,7 +66,12 @@ class RemoteModel(Model):
         load_dotenv()
 
         headers = {"X-API-KEY": os.getenv("REMOTE_API_KEY")}
-        data = {"content": prompt, "model": self.model_name, "system_instructions": system_instructions, "hyperparams": hyperparams}
+        data = {
+            "content": prompt,
+            "model": self.model_name,
+            "system_instructions": system_instructions,
+            "hyperparams": hyperparams,
+        }
         if json_schema:
             schema_path = Path(json_schema)
             if not schema_path.exists():

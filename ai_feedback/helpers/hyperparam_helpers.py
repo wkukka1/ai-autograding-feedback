@@ -1,10 +1,13 @@
 # hyperparam_helpers.py
 
+
 def str_to_bool(s: str) -> bool:
     return s.lower() in {"1", "true", "yes", "on"}
 
+
 def parse_list(s: str) -> list:
     return [x.strip() for x in s.split(",") if x.strip()]
+
 
 ollama_option_schema = {
     "temperature": float,
@@ -57,6 +60,7 @@ claude_option_schema = {
     "tool_choice": str,
     "stream": str_to_bool,
 }
+
 
 def cast_to_type(option_schema=dict, hyperparams=dict):
     """given the option schema casts the values of hyperparams into their respective types"""

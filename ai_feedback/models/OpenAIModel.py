@@ -7,8 +7,12 @@ from typing import Optional, Tuple
 import openai
 from dotenv import load_dotenv
 
+from ai_feedback.helpers.hyperparam_helpers import (
+    cast_to_type,
+    openai_chat_option_schema,
+)
+
 from .Model import Model
-from ai_feedback.helpers.hyperparam_helpers import openai_chat_option_schema, cast_to_type
 
 load_dotenv()
 
@@ -66,7 +70,9 @@ class OpenAIModel(Model):
         response = self._call_openai(prompt, system_instructions, hyperparams, schema)
         return prompt, response
 
-    def _call_openai(self, prompt: str, system_instructions: str, hyperparams: dict, schema: Optional[dict] = None) -> str:
+    def _call_openai(
+        self, prompt: str, system_instructions: str, hyperparams: dict, schema: Optional[dict] = None
+    ) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.
 
@@ -91,7 +97,7 @@ class OpenAIModel(Model):
                 {"role": "user", "content": prompt},
             ],
             response_format=response_format,
-            **hyperparams
+            **hyperparams,
         )
 
         return response.choices[0].message.content
