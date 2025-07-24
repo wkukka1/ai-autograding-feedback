@@ -85,6 +85,7 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
                 system_instructions=system_instructions,
                 llama_mode=args.llama_mode,
                 json_schema=args.json_schema,
+                hyperparams=args.hyperparams,
             )
         else:
             request, response = model.generate_response(
@@ -95,6 +96,7 @@ def process_code(args, prompt: str, system_instructions: str) -> Tuple[str, str]
                 system_instructions=system_instructions,
                 llama_mode=args.llama_mode,
                 json_schema=args.json_schema,
+                hyperparams=args.hyperparams,
             )
 
     return request, response

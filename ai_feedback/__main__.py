@@ -224,8 +224,18 @@ def main() -> int:
         default="",
         help=HELP_MESSAGES["json_schema"],
     )
+    parser.add_argument(
+        "--hyperparams",
+        type=str,
+        required=False,
+        default={},
+        help=HELP_MESSAGES["hyperparams"],
+    )
 
     args = parser.parse_args()
+
+    if args.hyperparams:
+        args.hyperparams = dict(pair.split('=') for pair in args.hyperparams.split(','))
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
