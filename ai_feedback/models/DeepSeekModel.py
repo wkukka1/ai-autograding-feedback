@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 import ollama
 
 from .Model import Model
+from ..helpers.hyperparam_helpers import ollama_option_schema, cast_to_type
 
 
 class DeepSeekModel(Model):
@@ -26,6 +27,7 @@ class DeepSeekModel(Model):
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
+        hyperparams: Optional[dict] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -40,6 +42,7 @@ class DeepSeekModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            hyperparams (Optional[dict]): Optional hyperparams to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -54,6 +57,8 @@ class DeepSeekModel(Model):
         else:
             schema = None
 
+        hyperparams = cast_to_type(ollama_option_schema, hyperparams)
+
         response = ollama.chat(
             model=self.model["model"],
             messages=[
@@ -61,6 +66,7 @@ class DeepSeekModel(Model):
                 {"role": "user", "content": prompt},
             ],
             format=schema['schema'] if schema else None,
+            options=hyperparams if hyperparams else None,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:

@@ -33,6 +33,7 @@ class DeepSeekV3Model(Model):
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
+        hyperparams: Optional[dict] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
@@ -47,6 +48,7 @@ class DeepSeekV3Model(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
+            hyperparams (Optional[dict]): Optional hyperparams to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -67,7 +69,7 @@ class DeepSeekV3Model(Model):
             response = self._get_response_server(prompt, schema)
         else:
             self._ensure_env_vars('LLAMA_MODEL_PATH', 'LLAMA_CLI_PATH')
-            response = self._get_response_cli(prompt, schema)
+            response = self._get_response_cli(prompt, schema, hyperparams)
 
         response = response.strip()
 
@@ -128,7 +130,7 @@ class DeepSeekV3Model(Model):
 
         return model_output
 
-    def _get_response_cli(self, prompt: str, schema: Optional[dict] = None) -> str:
+    def _get_response_cli(self, prompt: str, schema: Optional[dict] = None, hyperparams: Optional[dict] = None) -> str:
         """
         Generate a model response using the prompt
 
@@ -154,6 +156,9 @@ class DeepSeekV3Model(Model):
         if schema:
             raw_schema = schema["schema"] if "schema" in schema else schema
             cmd += ["--json-schema", json.dumps(raw_schema)]
+
+        for key, value in hyperparams.items():
+            cmd += ["--" + key, value]
 
         try:
             completed = subprocess.run(
