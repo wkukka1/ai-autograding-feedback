@@ -1,8 +1,10 @@
 def str_to_bool(s: str) -> bool:
     return s.lower() in {"1", "true", "yes", "on"}
 
+
 def parse_list(s: str) -> list:
     return [x.strip() for x in s.split(",") if x.strip()]
+
 
 ollama_option_schema = {
     "temperature": float,

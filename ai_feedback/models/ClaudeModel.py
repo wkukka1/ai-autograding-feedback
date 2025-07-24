@@ -5,8 +5,8 @@ from typing import Optional, Tuple
 import anthropic
 from dotenv import load_dotenv
 
-from .Model import Model
 from ..helpers.hyperparam_helpers import cast_to_type, claude_option_schema
+from .Model import Model
 
 # Load environment variables from .env file
 load_dotenv()
@@ -65,7 +65,7 @@ class ClaudeModel(Model):
             "model": "claude-3-7-sonnet-20250219",
             "system": system_instructions,
             "messages": [{"role": "user", "content": request}],
-            **hyperparams
+            **hyperparams,
         }
 
         response = self.client.messages.create(**request_kwargs)

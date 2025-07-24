@@ -6,8 +6,8 @@ from typing import List, Optional
 import openai
 from dotenv import load_dotenv
 
-from .Model import Model
 from ..helpers.hyperparam_helpers import cast_to_type, openai_chat_option_schema
+from .Model import Model
 
 # Load environment variables from .env file
 load_dotenv()
@@ -142,7 +142,7 @@ class OpenAIModelVector(Model):
             thread_id=thread.id,
             assistant_id=self.model.id,
             **({"response_format": response_format} if response_format else {}),
-            **hyperparams
+            **hyperparams,
         )
 
         while run.status not in ["completed", "failed"]:

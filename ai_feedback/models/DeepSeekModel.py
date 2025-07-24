@@ -4,8 +4,8 @@ from typing import Optional, Tuple
 
 import ollama
 
+from ..helpers.hyperparam_helpers import cast_to_type, ollama_option_schema
 from .Model import Model
-from ..helpers.hyperparam_helpers import ollama_option_schema, cast_to_type
 
 
 class DeepSeekModel(Model):
