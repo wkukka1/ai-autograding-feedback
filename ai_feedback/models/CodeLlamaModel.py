@@ -28,6 +28,7 @@ class CodeLlamaModel(Model):
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
+        hyperparams: Optional[dict] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generates a response from the CodeLlama model using the provided prompt
@@ -43,6 +44,7 @@ class CodeLlamaModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            hyperparams (Optional[dict]): Optional hyperparams to use.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
@@ -57,14 +59,38 @@ class CodeLlamaModel(Model):
         else:
             schema = None
 
-        response = ollama.chat(
-            model=self.model["model"],
-            messages=[
+        hyperparams = hyperparams or {}
+        temperature = float(hyperparams.get("temperature", 0.5))
+        top_p = float(hyperparams.get("top_p", 1.0))
+        max_tokens = int(hyperparams.get("max_tokens", 1000))
+        stop = hyperparams.get("stop")  # can be string or list
+        stream = hyperparams.get("stream", False)
+
+        # Normalize stop to list if it's a comma-separated string
+        if isinstance(stop, str):
+            stop = [s.strip() for s in stop.split(",") if s.strip()]
+
+        # Prepare request parameters
+        request_kwargs = {
+            "model": self.model["model"],
+            "messages": [
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            format=schema['schema'] if schema else None,
-        )
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_tokens": max_tokens,
+            "format": schema["schema"] if schema else None,
+        }
+
+        if stop:
+            request_kwargs["stop"] = stop
+
+        # Optional: Log request
+        print(f"[CodeLlamaModel] Request config: {request_kwargs}")
+
+        # Call Ollama
+        response = ollama.chat(**request_kwargs)
 
         if not response or "message" not in response or "content" not in response["message"]:
             print("Error: Invalid or empty response from Ollama.")
