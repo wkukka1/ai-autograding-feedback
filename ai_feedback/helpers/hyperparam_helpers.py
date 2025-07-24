@@ -3,29 +3,32 @@
 def str_to_bool(s: str) -> bool:
     return s.lower() in {"1", "true", "yes", "on"}
 
+def parse_list(s: str) -> list:
+    return [x.strip() for x in s.split(",") if x.strip()]
+
 ollama_option_schema = {
-        "temperature": float,
-        "top_p": float,
-        "top_k": int,
-        "typical_p": float,
-        "repeat_penalty": float,
-        "presence_penalty": float,
-        "frequency_penalty": float,
-        "seed": int,
-        "stop": lambda x: [s.strip() for s in x.split(",")],
-        "num_predict": int,
-        "num_keep": int,
-        "num_ctx": int,
-        "num_batch": int,
-        "num_gpu": int,
-        "main_gpu": int,
-        "use_mmap": str_to_bool,
-        "num_thread": int,
-        "penalize_newline": str_to_bool,
-        "mirostat": int,
-        "mirostat_tau": float,
-        "mirostat_eta": float,
-    }
+    "temperature": float,
+    "top_p": float,
+    "top_k": int,
+    "typical_p": float,
+    "repeat_penalty": float,
+    "presence_penalty": float,
+    "frequency_penalty": float,
+    "seed": int,
+    "stop": lambda x: [s.strip() for s in x.split(",")],
+    "num_predict": int,
+    "num_keep": int,
+    "num_ctx": int,
+    "num_batch": int,
+    "num_gpu": int,
+    "main_gpu": int,
+    "use_mmap": str_to_bool,
+    "num_thread": int,
+    "penalize_newline": str_to_bool,
+    "mirostat": int,
+    "mirostat_tau": float,
+    "mirostat_eta": float,
+}
 
 def cast_to_type(option_schema=dict, hyperparams=dict):
     """given the option schema casts the values of hyperparams into their respective types"""

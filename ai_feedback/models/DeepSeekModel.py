@@ -21,19 +21,20 @@ class DeepSeekModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        hyperparams: dict,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
-        hyperparams: Optional[dict] = None,
     ) -> Optional[Tuple[str, str]]:
         """
         Generate a model response using the prompt and assignment files.
 
         Args:
             prompt (str): The input prompt provided by the user.
+            hyperparams (dict): Optional hyperparams to use.
             submission_file (Optional[Path]): The path to the submission file.
             solution_file (Optional[Path]): The path to the solution file.
             test_output (Optional[Path]): The path to the test output file.
