@@ -58,6 +58,7 @@ claude_option_schema = {
     "stream": str_to_bool,
 }
 
+
 def cast_to_type(option_schema=dict, hyperparams=dict):
     """given the option schema casts the values of hyperparams into their respective types"""
     options = {}
