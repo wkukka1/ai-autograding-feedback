@@ -47,6 +47,17 @@ openai_chat_option_schema = {
     "response_format": str,
 }
 
+claude_option_schema = {
+    "max_tokens": int,
+    "temperature": float,
+    "top_p": float,
+    "stop_sequences": parse_list,
+    "metadata": dict,
+    "tools": list,
+    "tool_choice": str,
+    "stream": str_to_bool,
+}
+
 def cast_to_type(option_schema=dict, hyperparams=dict):
     """given the option schema casts the values of hyperparams into their respective types"""
     options = {}
