@@ -30,6 +30,23 @@ ollama_option_schema = {
     "mirostat_eta": float,
 }
 
+openai_chat_option_schema = {
+    "temperature": float,
+    "top_p": float,
+    "n": int,
+    "stream": bool,
+    "stop": lambda s: s.split(",") if isinstance(s, str) else s,
+    "max_tokens": int,
+    "presence_penalty": float,
+    "frequency_penalty": float,
+    "logit_bias": dict,
+    "user": str,
+    "seed": int,
+    "tools": list,
+    "tool_choice": str,
+    "response_format": str,
+}
+
 def cast_to_type(option_schema=dict, hyperparams=dict):
     """given the option schema casts the values of hyperparams into their respective types"""
     options = {}

@@ -8,6 +8,7 @@ import openai
 from dotenv import load_dotenv
 
 from .Model import Model
+from ai_feedback.helpers.hyperparam_helpers import openai_chat_option_schema, cast_to_type
 
 load_dotenv()
 
@@ -27,6 +28,7 @@ class OpenAIModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        hyperparams: dict,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -47,6 +49,7 @@ class OpenAIModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            hyperparams (dict): Optional hyperparams to use.
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
@@ -60,10 +63,10 @@ class OpenAIModel(Model):
         else:
             schema = None
 
-        response = self._call_openai(prompt, system_instructions, schema)
+        response = self._call_openai(prompt, system_instructions, hyperparams, schema)
         return prompt, response
 
-    def _call_openai(self, prompt: str, system_instructions: str, schema: Optional[dict] = None) -> str:
+    def _call_openai(self, prompt: str, system_instructions: str, hyperparams: dict, schema: Optional[dict] = None) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.
 
@@ -78,6 +81,8 @@ class OpenAIModel(Model):
         if schema:
             response_format = {"type": "json_schema", "json_schema": schema}
 
+        hyperparams = cast_to_type(openai_chat_option_schema, hyperparams)
+
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -85,8 +90,7 @@ class OpenAIModel(Model):
                 {"role": "user", "content": prompt},
             ],
             response_format=response_format,
-            temperature=0.5,
-            max_tokens=1000,
+            **hyperparams
         )
 
         return response.choices[0].message.content
