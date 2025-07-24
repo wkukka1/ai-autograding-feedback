@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import ollama
 
 from .Model import Model
-
+from ai_feedback.helpers.hyperparam_helpers import ollama_option_schema, cast_to_type
 
 class CodeLlamaModel(Model):
 
@@ -57,6 +57,8 @@ class CodeLlamaModel(Model):
                 schema = json.load(f)
         else:
             schema = None
+
+        hyperparams = cast_to_type(ollama_option_schema, hyperparams)
 
         response = ollama.chat(
             model=self.model["model"],
