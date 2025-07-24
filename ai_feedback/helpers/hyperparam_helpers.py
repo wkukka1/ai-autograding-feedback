@@ -1,5 +1,3 @@
-# hyperparam_helpers.py
-
 def str_to_bool(s: str) -> bool:
     return s.lower() in {"1", "true", "yes", "on"}
 
