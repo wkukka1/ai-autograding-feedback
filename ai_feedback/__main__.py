@@ -228,7 +228,7 @@ def main() -> int:
         "--hyperparams",
         type=str,
         required=False,
-        default={},
+        default="",
         help=HELP_MESSAGES["hyperparams"],
     )
 
@@ -236,6 +236,8 @@ def main() -> int:
 
     if args.hyperparams:
         args.hyperparams = dict(pair.split('=') for pair in args.hyperparams.split(','))
+    else:
+        args.hyperparams = {}
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
