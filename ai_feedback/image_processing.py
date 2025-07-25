@@ -166,7 +166,7 @@ def process_image(args, prompt: dict, system_instructions: str) -> tuple[str, st
                 question_num=question,
                 submission_image=args.submission_image,
                 json_schema=args.json_schema,
-                hyperparams=args.model_options,
+                model_options=args.model_options,
             )
             responses.append(str(response))
         else:

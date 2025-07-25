@@ -229,7 +229,7 @@ def main() -> int:
         type=str,
         required=False,
         default="",
-        help=HELP_MESSAGES["hyperparams"],
+        help=HELP_MESSAGES["model_options"],
     )
 
     args = parser.parse_args()
