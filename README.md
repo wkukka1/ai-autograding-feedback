@@ -44,7 +44,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)      | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)             | ❌ |
 | `--json_schema`      | File path to json file for schema for structured output             | ❌ |
-| `--hyperparams`      | Comma-separated key-value pairs of hyperparameters                  | ❌ |
+| `--model_options`    | Comma-separated key-value pairs of hyperparameters and their values | ❌ |
 ** One of either `--prompt` or `--prompt_text` must be selected. If both are provided, `--prompt_text` will be appended to the contents of the file specified by `--prompt`.
 
 ## Scope
