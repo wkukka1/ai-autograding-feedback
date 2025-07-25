@@ -331,7 +331,7 @@ python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --s
 ```
 ### Evaluate using custom hyperparameters
 ```bash
-python3 -m ai_feedback --prompt code_table --scope code --submission ../ai-autograding-feedback-eval/test_submissions/108/hard_coding_submission.py --model openai-vector --submission_type python --hyperparams "max_tokens=1200,temperature=0.4,top_p=0.92"
+python3 -m ai_feedback --prompt code_table --scope code --submission ../ai-autograding-feedback-eval/test_submissions/108/hard_coding_submission.py --model openai-vector --submission_type python --model_options "max_tokens=1200,temperature=0.4,top_p=0.92"
 ```
 
 
