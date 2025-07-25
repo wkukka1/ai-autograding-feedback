@@ -59,10 +59,10 @@ claude_option_schema = {
 }
 
 
-def cast_to_type(option_schema=dict, hyperparams=dict):
+def cast_to_type(option_schema=dict, model_options=dict):
     """given the option schema casts the values of hyperparams into their respective types"""
     options = {}
-    for key, value in hyperparams.items():
+    for key, value in model_options.items():
         try:
             if key in option_schema:
                 options[key] = option_schema[key](value)
