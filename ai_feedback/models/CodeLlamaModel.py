@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 
 import ollama
 
-from ai_feedback.helpers.hyperparam_helpers import cast_to_type, ollama_option_schema
+from ai_feedback.helpers.model_options_helpers import cast_to_type, ollama_option_schema
 
 from .Model import Model
 
@@ -24,7 +24,7 @@ class CodeLlamaModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        hyperparams: dict,
+        model_options: dict,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -46,7 +46,7 @@ class CodeLlamaModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (dict): The hyperparameters to use for generating the response.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,
@@ -61,7 +61,7 @@ class CodeLlamaModel(Model):
         else:
             schema = None
 
-        hyperparams = cast_to_type(ollama_option_schema, hyperparams)
+        model_options = cast_to_type(ollama_option_schema, model_options)
 
         response = ollama.chat(
             model=self.model["model"],
@@ -70,7 +70,7 @@ class CodeLlamaModel(Model):
                 {"role": "user", "content": prompt},
             ],
             format=schema['schema'] if schema else None,
-            options=hyperparams if hyperparams else None,
+            options=model_options if model_options else None,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:

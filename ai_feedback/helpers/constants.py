@@ -16,5 +16,5 @@ HELP_MESSAGES = {
     "solution_image": "The file path to the solution image.",
     "json_schema": "file path to a json file that contains the schema for ai output",
     "system_prompt": "Pre-defined system prompt name (from ai_feedback/data/prompts/system/) or file path to custom system prompt file.",
-    "hyperparams": "Comma-separated key-value pairs of model hyperparameters",
+    "model_options": "Comma-separated key-value pairs of model hyperparameters",
 }

@@ -27,7 +27,7 @@ class DeepSeekV3Model(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        hyperparams: dict,
+        model_options: dict,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
@@ -48,7 +48,7 @@ class DeepSeekV3Model(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
-            hyperparams (dict): The hyperparameters to use for generating the response.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -66,10 +66,10 @@ class DeepSeekV3Model(Model):
         prompt = f"{system_instructions}\n{prompt}"
         if llama_mode == 'server':
             self._ensure_env_vars('LLAMA_SERVER_URL')
-            response = self._get_response_server(prompt, hyperparams, schema)
+            response = self._get_response_server(prompt, model_options, schema)
         else:
             self._ensure_env_vars('LLAMA_MODEL_PATH', 'LLAMA_CLI_PATH')
-            response = self._get_response_cli(prompt, hyperparams, schema)
+            response = self._get_response_cli(prompt, model_options, schema)
 
         response = response.strip()
 
@@ -95,21 +95,21 @@ class DeepSeekV3Model(Model):
         if missing:
             raise RuntimeError(f"Error: Environment variable(s) {', '.join(missing)} not set")
 
-    def _get_response_server(self, prompt: str, hyperparams: dict, schema: Optional[dict] = None) -> str:
+    def _get_response_server(self, prompt: str, model_options: dict, schema: Optional[dict] = None) -> str:
         """
         Generate a model response using the prompt
 
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
-            hyperparams (dict): The hyperparameters to use for generating the response.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
         """
         url = f"{LLAMA_SERVER_URL}/v1/completions"
 
-        payload = {"prompt": prompt, **hyperparams}
+        payload = {"prompt": prompt, **model_options}
 
         if schema:
             raw_schema = schema.get("schema", schema)
@@ -131,14 +131,14 @@ class DeepSeekV3Model(Model):
 
         return model_output
 
-    def _get_response_cli(self, prompt: str, hyperparams: dict, schema: Optional[dict] = None) -> str:
+    def _get_response_cli(self, prompt: str, model_options: dict, schema: Optional[dict] = None) -> str:
         """
         Generate a model response using the prompt
 
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
-            hyperparams (dict): The hyperparameters to use for generating the response.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: The model response or None if the response was invalid.
@@ -159,7 +159,7 @@ class DeepSeekV3Model(Model):
             raw_schema = schema["schema"] if "schema" in schema else schema
             cmd += ["--json-schema", json.dumps(raw_schema)]
 
-        for key, value in hyperparams.items():
+        for key, value in model_options.items():
             cmd += ["--" + key, value]
 
         try:

@@ -34,7 +34,7 @@ class RemoteModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        hyperparams: dict,
+        model_options: dict,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
@@ -57,7 +57,7 @@ class RemoteModel(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             submission_image (Optional[str]): An optional path to a submission image file.
             json_schema (Optional[str]): An optional json schema to use.
-            hyperparams (dict): The hyperparameters to use for generating the response.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -70,7 +70,7 @@ class RemoteModel(Model):
             "content": prompt,
             "model": self.model_name,
             "system_instructions": system_instructions,
-            "hyperparams": hyperparams,
+            "model_options": model_options,
         }
         if json_schema:
             schema_path = Path(json_schema)

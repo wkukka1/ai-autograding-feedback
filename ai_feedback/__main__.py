@@ -225,7 +225,7 @@ def main() -> int:
         help=HELP_MESSAGES["json_schema"],
     )
     parser.add_argument(
-        "--hyperparams",
+        "--model_options",
         type=str,
         required=False,
         default="",
@@ -234,10 +234,10 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    if args.hyperparams:
-        args.hyperparams = dict(pair.split('=') for pair in args.hyperparams.split(','))
+    if args.model_options:
+        args.model_options = dict(pair.split('=') for pair in args.model_options.split(','))
     else:
-        args.hyperparams = {}
+        args.model_options = {}
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
