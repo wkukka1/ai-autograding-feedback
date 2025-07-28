@@ -120,7 +120,7 @@ class OpenAIModelVector(Model):
         Args:
             prompt (str): The input prompt for the assistant.
             schema (Optional[dict]): Optional json schema to use.
-            model_options Optional(dict): The optional model options to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             str: The assistant's generated response text.
