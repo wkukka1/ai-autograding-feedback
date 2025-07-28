@@ -15,7 +15,7 @@ ollama_option_schema = {
     "presence_penalty": float,
     "frequency_penalty": float,
     "seed": int,
-    "stop": lambda x: [s.strip() for s in x.split(",")],
+    "stop": parse_list,
     "num_predict": int,
     "num_keep": int,
     "num_ctx": int,
@@ -69,6 +69,6 @@ def cast_to_type(option_schema=dict, model_options=dict):
             else:
                 options[key] = value
         except Exception as e:
-            print(f"Warning: Failed to cast hyperparameter '{key}' with value '{value}': {e}")
+            print(f"Warning: Failed to process model option '{key}' with value '{value}': {e}")
             exit(1)
     return options
