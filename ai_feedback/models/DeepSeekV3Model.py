@@ -95,14 +95,14 @@ class DeepSeekV3Model(Model):
         if missing:
             raise RuntimeError(f"Error: Environment variable(s) {', '.join(missing)} not set")
 
-    def _get_response_server(self, prompt: str, model_options: dict, schema: Optional[dict] = None) -> str:
+    def _get_response_server(self, prompt: str, model_options: Optional[dict] = None, schema: Optional[dict] = None) -> str:
         """
         Generate a model response using the prompt
 
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             str: A tuple containing the model response or None if the response was invalid.
@@ -131,14 +131,14 @@ class DeepSeekV3Model(Model):
 
         return model_output
 
-    def _get_response_cli(self, prompt: str, model_options: dict, schema: Optional[dict] = None) -> str:
+    def _get_response_cli(self, prompt: str, model_options: Optional[dict] = None, schema: Optional[dict] = None) -> str:
         """
         Generate a model response using the prompt
 
         Args:
             prompt (str): The input prompt provided by the user.
             schema (Optional[dict]): Optional schema provided by the user.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             str: The model response or None if the response was invalid.

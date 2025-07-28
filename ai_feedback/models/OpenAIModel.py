@@ -71,7 +71,7 @@ class OpenAIModel(Model):
         return prompt, response
 
     def _call_openai(
-        self, prompt: str, system_instructions: str, model_options: dict, schema: Optional[dict] = None
+        self, prompt: str, system_instructions: str, model_options: Optional[dict] = None, schema: Optional[dict] = None
     ) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.

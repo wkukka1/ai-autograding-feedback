@@ -113,14 +113,14 @@ class OpenAIModelVector(Model):
             self.client.vector_stores.files.create(vector_store_id=self.vector_store.id, file_id=response.id)
         return response.id
 
-    def _call_openai(self, prompt: str, model_options, schema: Optional[dict] = None) -> str:
+    def _call_openai(self, prompt: str, model_options: Optional[dict] = None, schema: Optional[dict] = None) -> str:
         """
         Send the user prompt to OpenAI's assistant model and retrieve the generated response.
 
         Args:
             prompt (str): The input prompt for the assistant.
             schema (Optional[dict]): Optional json schema to use.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options Optional(dict): The optional model options to use for generating the response.
 
         Returns:
             str: The assistant's generated response text.
