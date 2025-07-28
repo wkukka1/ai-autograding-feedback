@@ -25,7 +25,7 @@ class ClaudeModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        model_options: dict,
+        model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
@@ -46,7 +46,7 @@ class ClaudeModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.

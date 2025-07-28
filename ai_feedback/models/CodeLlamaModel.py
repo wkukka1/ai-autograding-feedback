@@ -24,7 +24,7 @@ class CodeLlamaModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        model_options: dict,
+        model_options: Optional[dict] = None,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -46,7 +46,7 @@ class CodeLlamaModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple of the request and the model's response,

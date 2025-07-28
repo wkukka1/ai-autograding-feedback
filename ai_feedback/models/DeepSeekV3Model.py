@@ -27,7 +27,7 @@ class DeepSeekV3Model(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
-        model_options: dict,
+        model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
@@ -48,7 +48,7 @@ class DeepSeekV3Model(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             question_num (Optional[int]): An optional question number to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
-            model_options (dict): The hyperparameters to use for generating the response.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
