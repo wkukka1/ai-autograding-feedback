@@ -1,3 +1,4 @@
+import pytest
 import os.path
 
 # Modify depending on name of student's submission file

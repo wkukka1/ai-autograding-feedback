@@ -1,6 +1,3 @@
-import os
-import os.path
-
 import pytest
 from llm_helpers import *
 
