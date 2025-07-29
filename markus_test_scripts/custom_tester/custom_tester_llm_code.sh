@@ -40,7 +40,7 @@ echo "{\"overall_comment\": $OVERALL_COMMENT}"
 #       --prompt_text "Previous message: $OVERALL_COMMENT. $ANNOTATION_PROMPT" \
 #       --scope code \
 #       --model openai \
-#       --assignment ./ \
-#       --output direct 2>&1)
+#       --submission ./student_submission.ipynb \
+#       --submission ./student_submission.png 2>&1)
 # ANNOTATIONS_OUTPUT_STR=$(echo "$ANNOTATIONS_OUTPUT" | jq -R -s .)
 # echo "$ANNOTATIONS_OUTPUT"
