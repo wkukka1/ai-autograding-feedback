@@ -1,5 +1,6 @@
-import pytest
 import os.path
+
+import pytest
 
 # Modify depending on name of student's submission file
 import student_submission as submission
