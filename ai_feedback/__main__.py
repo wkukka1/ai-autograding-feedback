@@ -224,8 +224,20 @@ def main() -> int:
         default="",
         help=HELP_MESSAGES["json_schema"],
     )
+    parser.add_argument(
+        "--model_options",
+        type=str,
+        required=False,
+        default="",
+        help=HELP_MESSAGES["model_options"],
+    )
 
     args = parser.parse_args()
+
+    if args.model_options:
+        args.model_options = dict(pair.split('=') for pair in args.model_options.split(','))
+    else:
+        args.model_options = {}
 
     # Auto-detect submission type if not provided
     if args.submission_type is None:
