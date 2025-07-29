@@ -1,12 +1,14 @@
 import sys
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 from .helpers.arg_options import model_mapping
 from .helpers.template_utils import render_prompt_template
 
 
-def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]:
+def process_text(
+    args, prompt: str, system_instructions: str, marking_instructions: Optional[str] = None
+) -> Tuple[str, str]:
     """
     Processes text-based assignment files and generates a response using the selected model.
 
@@ -18,6 +20,7 @@ def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]
         args: Command-line argument namespace containing assignment, model, scope, and question attributes.
         prompt (str): The initial user prompt.
         system_instructions (str): instructions for the model
+        marking_instructions (str, optional): Marking instructions to replace {marking_instructions} placeholder
 
     Returns:
         Tuple[str, str]: A tuple containing the request and the model's generated response.
@@ -38,7 +41,12 @@ def process_text(args, prompt: str, system_instructions: str) -> Tuple[str, str]
     test_output = Path(args.test_output) if args.test_output else None
 
     rendered_prompt = render_prompt_template(
-        prompt, solution=solution_file, submission=submission_file, test_output=test_output, question_num=args.question
+        prompt,
+        solution=solution_file,
+        submission=submission_file,
+        test_output=test_output,
+        question_num=args.question,
+        marking_instructions=marking_instructions,
     )
 
     if args.model in model_mapping:
