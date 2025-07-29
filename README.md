@@ -44,6 +44,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)      | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)             | ❌ |
 | `--json_schema`      | File path to json file for schema for structured output             | ❌ |
+| `--marking_instructions` | File path to marking instructions/rubric                        | ❌ |
 | `--model_options`    | Comma-separated key-value pairs of model options and their values   | ❌ |
 ** One of either `--prompt` or `--prompt_text` must be selected. If both are provided, `--prompt_text` will be appended to the contents of the file specified by `--prompt`.
 
@@ -140,6 +141,9 @@ To use pre-defined system prompts, specify the system prompt name (without exten
 To use custom system prompt files, specify the file path to your custom system prompt. The file should be a markdown (.md) file.
 
 System prompts define the AI model's behavior, tone, and approach to providing feedback. They are used to set the context and personality of the AI assistant.
+
+## Marking Instructions
+The `--marking_instructions` argument accepts a file path to a text file containing rubric or marking instructions. If the prompt template contains a `{marking_instructions}` placeholder, the contents of the file will be inserted at that location in the prompt.
 
 ## Models
 The models used can be seen under the ai_feedback/models folder.
