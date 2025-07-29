@@ -10,6 +10,7 @@ from llm_helpers import *
 
 llm_feedback = ""
 
+
 def test_with_feedback(request):
     """Generates LLM Feedback for code scope of assignments"""
     global llm_feedback
@@ -38,7 +39,7 @@ def test_with_annotations(request):
         submission_path='student_submission.py',
         scope="code",
         model="claude-3.7-sonnet",
-        json_schema="code_annotation_schema"
+        json_schema="code_annotation_schema",
     )  # generate annotations
 
     annotations_json_list = extract_json(raw_annotation)

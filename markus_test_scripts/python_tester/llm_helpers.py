@@ -130,7 +130,7 @@ def run_llm(
         "--scope",
         scope,
         "--model",
-        model
+        model,
     ]
     if question is not None:
         llm_command += ["--question", question]

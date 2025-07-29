@@ -20,4 +20,4 @@ def test_with_markers(request):
     # Display LLM output in the overall comment
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
     # Add annotations
-    add_image_annotations(request, llm_feedback,"student_submission.png")
+    add_image_annotations(request, llm_feedback, "student_submission.png")
