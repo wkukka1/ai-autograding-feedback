@@ -18,6 +18,7 @@ def render_prompt_template(
     solution: Optional[Path] = None,
     test_output: Optional[Path] = None,
     question_num: Optional[int] = None,
+    marking_instructions: Optional[str] = None,
     **kwargs,
 ) -> str:
     """Render a prompt template by replacing placeholders with actual values.
@@ -31,6 +32,7 @@ def render_prompt_template(
         prompt_content (str): The prompt template with placeholders like {file_contents}
         has_submission_image (bool): Whether a submission image is present
         has_solution_image (bool): Whether a solution image is present
+        marking_instructions (str, optional): Marking instructions to replace {marking_instructions} placeholder
         **kwargs: Additional key-value pairs for placeholder replacement
 
     Returns:
@@ -43,6 +45,12 @@ def render_prompt_template(
         template_data['file_contents'] = _get_question_contents([submission, solution], question_num)
     else:
         template_data['file_contents'] = gather_xml_file_contents(submission, solution, test_output)
+
+    # Handle marking instructions placeholder
+    if marking_instructions is not None:
+        template_data['marking_instructions'] = marking_instructions
+    elif '{marking_instructions}' in prompt_content:
+        template_data['marking_instructions'] = ''
 
     # Handle image placeholders with context-aware replacement
     if '{submission_image}' in prompt_content and 'submission_image' not in template_data:

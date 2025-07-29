@@ -135,6 +135,25 @@ def load_system_prompt_content(system_prompt_arg: str) -> str:
     )
 
 
+def load_marking_instructions_content(marking_instructions_path: str) -> str:
+    """Loads marking instructions content from a file path.
+
+    Args:
+        marking_instructions_path (str): Path to the marking instructions file
+
+    Returns:
+        str: The marking instructions content
+
+    Raises:
+        SystemExit: If the file cannot be loaded
+    """
+    try:
+        with open(marking_instructions_path, "r", encoding='utf-8') as file:
+            return file.read()
+    except Exception:
+        sys.exit(1)
+
+
 def main() -> int:
     """
     Parses command-line arguments to determine the type of submission, scope,
@@ -225,6 +244,12 @@ def main() -> int:
         help=HELP_MESSAGES["json_schema"],
     )
     parser.add_argument(
+        "--marking_instructions",
+        type=str,
+        required=False,
+        help=HELP_MESSAGES["marking_instructions"],
+    )
+    parser.add_argument(
         "--model_options",
         type=str,
         required=False,
@@ -245,6 +270,10 @@ def main() -> int:
 
     prompt_content = ""
     system_instructions = load_system_prompt_content(args.system_prompt)
+
+    marking_instructions = None
+    if args.marking_instructions:
+        marking_instructions = load_marking_instructions_content(args.marking_instructions)
 
     if args.prompt:
         # Only validate scope for pre-defined prompts (not for arbitrary file paths)
@@ -267,11 +296,15 @@ def main() -> int:
 
     if args.scope == "image":
         prompt = {"prompt_content": prompt_content}
-        request, response = image_processing.process_image(args, prompt, system_instructions)
+        request, response = image_processing.process_image(args, prompt, system_instructions, marking_instructions)
     elif args.scope == "text":
-        request, response = text_processing.process_text(args, prompt_content, system_instructions)
+        request, response = text_processing.process_text(
+            args, prompt_content, system_instructions, marking_instructions
+        )
     else:
-        request, response = code_processing.process_code(args, prompt_content, system_instructions)
+        request, response = code_processing.process_code(
+            args, prompt_content, system_instructions, marking_instructions
+        )
 
     markdown_template = load_markdown_template(args.output_template)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
