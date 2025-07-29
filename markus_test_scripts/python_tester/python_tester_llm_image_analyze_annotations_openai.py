@@ -6,10 +6,11 @@ def test_image_analyze(request):
     """Test whether the submission graph matches the problem requirements"""
     # Run LLM feedback
     llm_feedback = run_llm(
-        submission="jupyter",
+        submission_type="jupyter",
+        submission_path="student_submission.ipynb",
+        submission_image="student_submission.png",
         question="4",
         scope="image",
-        output="direct",
         model="openai",
         prompt="image_analyze_annotations",
     )

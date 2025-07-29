@@ -6,10 +6,11 @@ def test_with_markers(request):
     """Generates LLM response"""
     # Run LLM feedback
     llm_feedback = run_llm(
-        submission="jupyter",
+        submission_type="jupyter",
+        submission_path="student_submission.ipynb",
+        submission_image="student_submission.png",
         question="4",
         scope="image",
-        output="direct",
         model="openai",
         prompt="image_style_annotations",
     )
@@ -19,4 +20,5 @@ def test_with_markers(request):
     # Display LLM output in the overall comment
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
     # Add annotations
-    add_image_annotations(request, llm_feedback, "student_submission.png")
+    add_image_annotations(request, llm_feedback,
+                          "../../presentation_materials/iris_image_examples/image_test_incorrect/student_submission.png")

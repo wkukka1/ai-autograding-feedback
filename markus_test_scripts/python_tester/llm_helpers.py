@@ -14,8 +14,8 @@ an array of annotations, referencing the student's submission file for line and 
 Each annotation should include: filename: The name of the student's file. content:
 A short description of the mistake. line_start and line_end: The line number(s) where the
 mistake occurs. Ensure the JSON is valid and properly formatted. Here is a sample format
-of the json array to return: { \"annotations\": [{\"filename\": \"student_code.py\",
-\"content\": \"Variable 'x' is unused.\", \"line_start\": 5, \"line_end\": 5,]}.
+of the json array to return: {{ "annotations": [{{"filename": "student_code.py",
+"content": "Variable 'x' is unused.", "line_start": 5, "line_end": 5}}] }}.
 ONLY return the json object and nothing else. Make sure the line #s don't exceed
 the number of lines in the file. You can use markdown syntax in the annotation's content,
 especially when denoting code."""
@@ -89,14 +89,16 @@ def add_annotation_columns(annotations: List[Dict[str, Any]], submission: Any) -
 
 
 def run_llm(
-    submission: str,
+    submission_type: str,
+    submission_path: str,
     model: str,
     scope: str,
-    output: str,
-    prompt_custom: Optional[bool] = None,
+    submission_image: Optional[str] = None,
     question: Optional[str] = None,
     prompt_text: Optional[str] = None,
     prompt: Optional[str] = None,
+    json_schema: Optional[str] = None,
+    output: Optional[str] = None,
 ) -> str:
     """
     Executes the LLM feedback generator script and captures its output.
@@ -105,11 +107,10 @@ def run_llm(
         submission: The submission type.
         model: The LLM model to use.
         scope: The feedback generation scope ('code', 'image', or 'text').
-        output: The output format type.
-        prompt_custom: Whether to use a instructor's custom prompt file.
         question: Optional assignment question text.
         prompt_text: Custom string input prompt for the LLM.
         prompt: Name of predefined prompt file to use.
+        output: filepath of output file.
 
     Returns:
         The output from the LLM feedback generator as a string, or an error message.
@@ -120,24 +121,26 @@ def run_llm(
         "-m",
         "ai_feedback",
         "--submission_type",
-        submission,
+        submission_type,
+        "--submission",
+        submission_path,
         "--scope",
         scope,
-        "--assignment",
-        "./",
         "--model",
-        model,
-        "--output",
-        output,
+        model
     ]
     if question is not None:
         llm_command += ["--question", question]
-    if prompt_custom is not None:
-        llm_command.append("--prompt_custom")
     if prompt is not None:
         llm_command += ["--prompt", prompt]
     if prompt_text is not None:
         llm_command += ["--prompt_text", prompt_text]
+    if json_schema is not None:
+        llm_command += ["--json_schema", json_schema]
+    if output:
+        llm_command += ["--output", output]
+    if submission_image:
+        llm_command += ["--submission_image", submission_image]
 
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
     try:
