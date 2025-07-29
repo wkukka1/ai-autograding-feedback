@@ -44,6 +44,7 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)      | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)             | ❌ |
 | `--json_schema`      | File path to json file for schema for structured output             | ❌ |
+| `--model_options`    | Comma-separated key-value pairs of model options and their values   | ❌ |
 ** One of either `--prompt` or `--prompt_text` must be selected. If both are provided, `--prompt_text` will be appended to the contents of the file specified by `--prompt`.
 
 ## Scope
@@ -328,6 +329,11 @@ python -m ai_feedback --prompt code_annotations --scope code --submission test_s
 ```bash
 python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --scope code --submission test_submissions/csc108/correct_submission/correct_submission.py --solution test_submissions/csc108/solution.py --model codellama:latest
 ```
+### Evaluate using custom model_options
+```bash
+python3 -m ai_feedback --prompt code_table --scope code --submission ../ai-autograding-feedback-eval/test_submissions/108/hard_coding_submission.py --model openai-vector --submission_type python --model_options "max_tokens=1200,temperature=0.4,top_p=0.92"
+```
+
 
 #### Using Ollama
 In order to run this project on Bigmouth:

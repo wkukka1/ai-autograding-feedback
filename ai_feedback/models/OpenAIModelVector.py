@@ -6,6 +6,7 @@ from typing import List, Optional
 import openai
 from dotenv import load_dotenv
 
+from ..helpers.model_options_helpers import cast_to_type, openai_chat_option_schema
 from .Model import Model
 
 # Load environment variables from .env file
@@ -39,6 +40,7 @@ class OpenAIModelVector(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        model_options: Optional[dict] = None,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -59,6 +61,7 @@ class OpenAIModelVector(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             tuple[str, str]: A tuple containing the full system request and the model's text response.
@@ -89,7 +92,7 @@ class OpenAIModelVector(Model):
         if question_num:
             prompt += f" Identify and generate a response for the mistakes **only** in task ${question_num}. "
 
-        response = self._call_openai(prompt, schema)
+        response = self._call_openai(prompt, model_options, schema)
         self._cleanup_resources(file_ids)
 
         request = f"\n{system_instructions}\n{prompt}"
@@ -110,13 +113,14 @@ class OpenAIModelVector(Model):
             self.client.vector_stores.files.create(vector_store_id=self.vector_store.id, file_id=response.id)
         return response.id
 
-    def _call_openai(self, prompt: str, schema: Optional[dict] = None) -> str:
+    def _call_openai(self, prompt: str, model_options: Optional[dict] = None, schema: Optional[dict] = None) -> str:
         """
         Send the user prompt to OpenAI's assistant model and retrieve the generated response.
 
         Args:
             prompt (str): The input prompt for the assistant.
             schema (Optional[dict]): Optional json schema to use.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             str: The assistant's generated response text.
@@ -132,10 +136,13 @@ class OpenAIModelVector(Model):
                 "json_schema": schema,
             }
 
+        model_options = cast_to_type(openai_chat_option_schema, model_options)
+
         run = self.client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=self.model.id,
             **({"response_format": response_format} if response_format else {}),
+            **model_options,
         )
 
         while run.status not in ["completed", "failed"]:

@@ -34,6 +34,7 @@ class RemoteModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         question_num: Optional[int] = None,
         test_output: Optional[Path] = None,
@@ -56,6 +57,7 @@ class RemoteModel(Model):
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             submission_image (Optional[str]): An optional path to a submission image file.
             json_schema (Optional[str]): An optional json schema to use.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -64,7 +66,12 @@ class RemoteModel(Model):
         load_dotenv()
 
         headers = {"X-API-KEY": os.getenv("REMOTE_API_KEY")}
-        data = {"content": prompt, "model": self.model_name, "system_instructions": system_instructions}
+        data = {
+            "content": prompt,
+            "model": self.model_name,
+            "system_instructions": system_instructions,
+            "model_options": model_options,
+        }
         if json_schema:
             schema_path = Path(json_schema)
             if not schema_path.exists():

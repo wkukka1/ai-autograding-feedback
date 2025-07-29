@@ -7,6 +7,11 @@ from typing import Optional, Tuple
 import openai
 from dotenv import load_dotenv
 
+from ai_feedback.helpers.model_options_helpers import (
+    cast_to_type,
+    openai_chat_option_schema,
+)
+
 from .Model import Model
 
 load_dotenv()
@@ -27,6 +32,7 @@ class OpenAIModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        model_options: Optional[dict] = None,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -47,6 +53,7 @@ class OpenAIModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            model_options (Optional[dict]): The optional model_options to use for generating the response.
 
         Returns:
             Tuple[str, str]: The full prompt and the generated response from OpenAI.
@@ -60,16 +67,19 @@ class OpenAIModel(Model):
         else:
             schema = None
 
-        response = self._call_openai(prompt, system_instructions, schema)
+        response = self._call_openai(prompt, system_instructions, model_options, schema)
         return prompt, response
 
-    def _call_openai(self, prompt: str, system_instructions: str, schema: Optional[dict] = None) -> str:
+    def _call_openai(
+        self, prompt: str, system_instructions: str, model_options: Optional[dict] = None, schema: Optional[dict] = None
+    ) -> str:
         """
         Send a prompt to OpenAI's chat completion API and retrieve the generated response.
 
         Args:
             prompt (str): The fully constructed input prompt including file content.
             schema (Optional[dict]): Optional json schema to use.
+            model_options (dict): The hyperparameters to use for generating the response.
 
         Returns:
             str: The model's response text.
@@ -78,6 +88,8 @@ class OpenAIModel(Model):
         if schema:
             response_format = {"type": "json_schema", "json_schema": schema}
 
+        model_options = cast_to_type(openai_chat_option_schema, model_options)
+
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -85,8 +97,7 @@ class OpenAIModel(Model):
                 {"role": "user", "content": prompt},
             ],
             response_format=response_format,
-            temperature=0.5,
-            max_tokens=1000,
+            **model_options,
         )
 
         return response.choices[0].message.content
