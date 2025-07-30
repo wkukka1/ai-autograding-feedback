@@ -89,10 +89,10 @@ def add_annotation_columns(annotations: List[Dict[str, Any]], submission: Any) -
 
 
 def run_llm(
-    submission_type: str,
     submission_path: str,
     model: str,
     scope: str,
+    submission_type: Optional[str],
     submission_image: Optional[str] = None,
     question: Optional[str] = None,
     prompt_text: Optional[str] = None,
@@ -104,7 +104,7 @@ def run_llm(
     Executes the LLM feedback generator script and captures its output.
 
     Args:
-        submission_type: The submission type.
+        submission_type: Optional type of submission.
         submission_path: The file path for the submission file.
         model: The LLM model to use.
         scope: The feedback generation scope ('code', 'image', or 'text').
@@ -123,8 +123,6 @@ def run_llm(
         sys.executable,
         "-m",
         "ai_feedback",
-        "--submission_type",
-        submission_type,
         "--submission",
         submission_path,
         "--scope",
@@ -144,6 +142,8 @@ def run_llm(
         llm_command += ["--output", output]
     if submission_image:
         llm_command += ["--submission_image", submission_image]
+    if submission_type:
+        llm_command += ["--submission_type", submission_type]
 
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
     try:
