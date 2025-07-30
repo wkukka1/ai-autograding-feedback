@@ -6,7 +6,6 @@ def test_with_markers(request):
     """Generates LLM response"""
     # Run LLM feedback
     llm_feedback = run_llm(
-        submission_type="jupyter",
         submission_path="student_submission.ipynb",
         submission_image="student_submission.png",
         question="4",

@@ -16,7 +16,6 @@ def test_with_feedback(request):
     global llm_feedback
     # change prompt and model here
     llm_feedback = run_llm(
-        submission_type="python",
         prompt="code_table",
         submission_path='student_submission.py',
         scope="code",
@@ -34,7 +33,6 @@ def test_with_annotations(request):
 
     # Run LLM feedback
     raw_annotation = run_llm(
-        submission_type="python",
         prompt_text=prompt,
         submission_path='student_submission.py',
         scope="code",

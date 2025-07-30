@@ -6,7 +6,6 @@ def test_with_markers(request):
     """Generates LLM response for PDF submission"""
     # Run LLM feedback
     llm_feedback = run_llm(
-        submission_type="pdf",
         submission_path="student_submission.pdf",
         scope="text",
         model="openai",

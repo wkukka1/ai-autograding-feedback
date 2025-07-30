@@ -11,7 +11,6 @@ def test_with_feedback(request):
     # change prompt and model here
     # instructor uploaded custom_prompt.txt file
     llm_feedback = run_llm(
-        submission_type='python',
         prompt_text="custom_prompt",
         submission_path='student_submission.py',
         scope="code",
