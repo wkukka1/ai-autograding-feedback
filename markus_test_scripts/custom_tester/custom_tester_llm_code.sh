@@ -20,12 +20,10 @@ PYTHON_BIN="/home/docker/.autotesting/scripts/defaultvenv/bin/python"
 
 # Change prompt type and model type here
 MAIN_OUTPUT=$($PYTHON_BIN -m ai_feedback \
-      --submission_type jupyter \
       --prompt code_template \
       --scope code \
       --model openai \
-      --assignment ./ \
-      --output stdout 2>&1)
+      --submission ./student_submission.ipynb 2>&1)
 
 OVERALL_COMMENT=$(echo "$MAIN_OUTPUT" | jq -R -s .)
 
@@ -37,11 +35,9 @@ echo "{\"overall_comment\": $OVERALL_COMMENT}"
 # UNCOMMENT TO CREATE ANNOTATIONS ON THE test1_output.txt file
 
 # ANNOTATIONS_OUTPUT=$($PYTHON_BIN -m ai_feedback \
-#       --submission_type jupyter \
 #       --prompt_text "Previous message: $OVERALL_COMMENT. $ANNOTATION_PROMPT" \
 #       --scope code \
 #       --model openai \
-#       --assignment ./ \
-#       --output direct 2>&1)
+#       --submission ./student_submission.ipynb 2>&1)
 # ANNOTATIONS_OUTPUT_STR=$(echo "$ANNOTATIONS_OUTPUT" | jq -R -s .)
 # echo "$ANNOTATIONS_OUTPUT"
