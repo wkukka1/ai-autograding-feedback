@@ -26,8 +26,16 @@ def test_with_feedback(request):
 def test_with_annotations(request):
     """Generates LLM Annotations"""
     # feed in previous LLM message to create annotations
-    prompt = f"Previous message: {llm_feedback}."
-    prompt += ANNOTATION_PROMPT
+    feedback = run_llm(
+        submission_type="python",
+        prompt="code_table",
+        submission_path='submission.py',
+        scope="code",
+        model="openai",
+    )
+
+    prompt = f"<previous_message> {feedback} </previous_message>"
+    prompt = prompt.replace("{", "{{").replace("}", "}}")
 
     # Run LLM feedback
     raw_annotation = run_llm(
