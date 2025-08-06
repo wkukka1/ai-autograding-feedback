@@ -124,7 +124,6 @@ def run_llm(
     submission_path: str,
     model: str,
     scope: str,
-    system_prompt: Optional[str] = None,
     submission_image: Optional[str] = None,
     question: Optional[str] = None,
     prompt_text: Optional[str] = None,
@@ -137,7 +136,8 @@ def run_llm(
     Executes the LLM feedback generator script and captures its output.
 
     Args:
-        submission: The submission type.
+        submission_type: The type of the submission
+        submission_path: the file path to the submission
         model: The LLM model to use.
         scope: The feedback generation scope ('code', 'image', or 'text').
         question: Optional assignment question text.
@@ -177,8 +177,6 @@ def run_llm(
         llm_command += ["--submission_image", submission_image]
     if model_options:
         llm_command += ["--model_options", model_options]
-    if system_prompt:
-        llm_command += ["--system_prompt", system_prompt]
 
     llm_result = subprocess.run(llm_command, capture_output=True, text=True)
     try:
@@ -200,6 +198,7 @@ def safe_eval_dict(match: str):
             print(f"[SKIPPED] Malformed match: {match[:80]}... Reason: {e}")
             return None
 
+
 def extract_json(response: str) -> List[Dict[str, Any]]:
     """
     Extracts JSON objects embedded in a string.
@@ -211,7 +210,7 @@ def extract_json(response: str) -> List[Dict[str, Any]]:
         A list of parsed JSON dictionaries extracted from the input string.
     """
     matches = re.findall(r"(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})", response)
-    return [json.loads(match) for match in matches]
+    return [parsed for match in matches if (parsed := safe_eval_dict(match))]
 
 
 MINIMUM_ANNOTATION_WIDTH = 8
