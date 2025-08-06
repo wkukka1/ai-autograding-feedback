@@ -136,7 +136,7 @@ def run_llm(
     Executes the LLM feedback generator script and captures its output.
 
     Args:
-        submission_type: Optional type of submission
+        submission_type: Optional type of submission.
         submission_path: The file path for the submission file.
         model: The LLM model to use.
         scope: The feedback generation scope ('code', 'image', or 'text').
