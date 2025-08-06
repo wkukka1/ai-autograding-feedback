@@ -12,7 +12,7 @@ def test_image_analyze(request):
         scope="image",
         model="claude-3.7-sonnet",
         prompt="image_analyze_annotations",
-        model_options='max_tokens=1000'
+        model_options='max_tokens=1000',
     )
 
     # Display LLM output in the test output
