@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 
 import ollama
 
+from ..helpers.model_options_helpers import cast_to_type, ollama_option_schema
 from .Model import Model
 
 
@@ -20,6 +21,7 @@ class DeepSeekModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        model_options: Optional[dict] = None,
         question_num: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
@@ -40,6 +42,7 @@ class DeepSeekModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: A tuple containing the prompt and the model's response,
@@ -54,6 +57,8 @@ class DeepSeekModel(Model):
         else:
             schema = None
 
+        model_options = cast_to_type(ollama_option_schema, model_options)
+
         response = ollama.chat(
             model=self.model["model"],
             messages=[
@@ -61,6 +66,7 @@ class DeepSeekModel(Model):
                 {"role": "user", "content": prompt},
             ],
             format=schema['schema'] if schema else None,
+            options=model_options if model_options else None,
         )
 
         if not response or "message" not in response or "content" not in response["message"]:

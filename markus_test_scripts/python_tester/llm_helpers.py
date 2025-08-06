@@ -43,7 +43,7 @@ of the json array to return:  {{
     }}
   ]
 }}
- .
+
 ONLY return the json object and nothing else. Make sure the line #s don't exceed
 the number of lines in the file. You can use markdown syntax in the annotation's content,
 especially when denoting code.
@@ -145,6 +145,8 @@ def run_llm(
         prompt: Name of predefined prompt file to use.
         output: filepath of output file.
         model_options: model options to pass to the llm
+        submission_image: An optional file path to the image to give feedback to.
+        json_schema: Optional JSON schema to format the response.
 
     Returns:
         The output from the LLM feedback generator as a string, or an error message.
