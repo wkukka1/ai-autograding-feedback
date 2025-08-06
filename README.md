@@ -44,6 +44,8 @@ For the image scope, the program takes up to two files, depending on the prompt 
 | `--llama_mode`       | How to invoke deepSeek-v3 (choices in `arg_options.LlamaMode`)      | ❌ |
 | `--output_template`  | Output template file (from `arg_options.OutputTemplate)             | ❌ |
 | `--json_schema`      | File path to json file for schema for structured output             | ❌ |
+| `--marking_instructions` | File path to marking instructions/rubric                        | ❌ |
+| `--model_options`    | Comma-separated key-value pairs of model options and their values   | ❌ |
 ** One of either `--prompt` or `--prompt_text` must be selected. If both are provided, `--prompt_text` will be appended to the contents of the file specified by `--prompt`.
 
 ## Scope
@@ -139,6 +141,9 @@ To use pre-defined system prompts, specify the system prompt name (without exten
 To use custom system prompt files, specify the file path to your custom system prompt. The file should be a markdown (.md) file.
 
 System prompts define the AI model's behavior, tone, and approach to providing feedback. They are used to set the context and personality of the AI assistant.
+
+## Marking Instructions
+The `--marking_instructions` argument accepts a file path to a text file containing rubric or marking instructions. If the prompt template contains a `{marking_instructions}` placeholder, the contents of the file will be inserted at that location in the prompt.
 
 ## Models
 The models used can be seen under the ai_feedback/models folder.
@@ -328,6 +333,11 @@ python -m ai_feedback --prompt code_annotations --scope code --submission test_s
 ```bash
 python -m ai_feedback --prompt ai_feedback/data/prompts/user/code_overall.md --scope code --submission test_submissions/csc108/correct_submission/correct_submission.py --solution test_submissions/csc108/solution.py --model codellama:latest
 ```
+### Evaluate using custom model_options
+```bash
+python3 -m ai_feedback --prompt code_table --scope code --submission ../ai-autograding-feedback-eval/test_submissions/108/hard_coding_submission.py --model openai-vector --submission_type python --model_options "max_tokens=1200,temperature=0.4,top_p=0.92"
+```
+
 
 #### Using Ollama
 In order to run this project on Bigmouth:
