@@ -23,6 +23,7 @@ def test_with_feedback(request):
         scope="code",
         model="claude-3.7-sonnet",
         output="stdout",
+        model_options='max_tokens=1000'
     )
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
