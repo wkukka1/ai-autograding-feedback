@@ -18,34 +18,14 @@ TEST_NAME="LLM Feedback Test"
 
 PYTHON_BIN="/home/docker/.autotesting/scripts/defaultvenv/bin/python"
 
-submission=""
-solution=""
-
-while IFS= read -r -d '' file; do
-  filename=$(basename "$file")
-  lowercase_name=$(echo "$filename" | tr '[:upper:]' '[:lower:]')
-  if [[ -z "$submission" && "$lowercase_name" == *student_submission* && "$lowercase_name" != *.png ]]; then
-    submission="$file"
-  elif [[ -z "$solution" && "$lowercase_name" == *instructor_solution* ]]; then
-    solution="$file"
-  fi
-done < <(find ./ -type f -print0)
-
-CMD=("$PYTHON_BIN" -m ai_feedback \
-  --submission_type jupyter \
-  --prompt code_template \
-  --scope code \
-  --model openai)
-
-if [[ -n "$submission" ]]; then
-  CMD+=(--submission "$submission")
-fi
-
-if [[ -n "$solution" ]]; then
-  CMD+=(--solution "$solution")
-fi
-
-MAIN_OUTPUT=$("${CMD[@]}" 2>&1)
+# Change prompt type and model type here
+MAIN_OUTPUT=$($PYTHON_BIN -m ai_feedback \
+      --submission_type jupyter \
+      --prompt code_template \
+      --scope code \
+      --model openai \
+      --assignment ./ \
+      --output stdout 2>&1)
 
 OVERALL_COMMENT=$(echo "$MAIN_OUTPUT" | jq -R -s .)
 

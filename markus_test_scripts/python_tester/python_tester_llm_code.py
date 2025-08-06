@@ -1,4 +1,7 @@
+import os
 import os.path
+
+import pytest
 
 # Modify depending on name of student's submission file
 import student_submission as submission
@@ -8,16 +11,17 @@ from llm_helpers import *
 
 llm_feedback = ""
 
+
 def test_with_feedback(request):
     """Generates LLM Feedback for code scope of assignments"""
     global llm_feedback
     # change prompt and model here
     llm_feedback = run_llm(
-        submission_type="python",
+        submission="python",
         prompt="code_table",
-        submission_path='student_submission.py',
         scope="code",
         model="claude-3.7-sonnet",
+        output="stdout",
     )
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
@@ -39,12 +43,11 @@ def test_with_annotations(request):
 
     # Run LLM feedback
     raw_annotation = run_llm(
-        submission_type="python",
+        submission="python",
         prompt_text=prompt,
-        submission_path='student_submission.py',
         scope="code",
         model="claude-3.7-sonnet",
-        json_schema="code_annotation_schema"
+        output="direct",
     )  # generate annotations
 
     annotations_json_list = extract_json(raw_annotation)
