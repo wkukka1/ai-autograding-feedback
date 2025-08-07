@@ -15,7 +15,6 @@ def test_with_feedback(request):
         submission_path='student_submission.py',
         scope="code",
         model="claude-3.7-sonnet",
-        output="stdout",
         model_options='max_tokens=1000',
     )
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))

@@ -18,6 +18,7 @@ def test_with_feedback(request):
         submission_path='student_submission.py',
         scope="code",
         model="claude-3.7-sonnet",
+        model_options='max_tokens=1000'
     )
     request.node.add_marker(pytest.mark.markus_message(llm_feedback))
     request.node.add_marker(pytest.mark.markus_overall_comments(llm_feedback))
@@ -26,17 +27,9 @@ def test_with_feedback(request):
 def test_with_annotations(request):
     """Generates LLM Annotations"""
     # feed in previous LLM message to create annotations
-    feedback = run_llm(
-        submission_type="python",
-        prompt="code_table",
-        submission_path='submission.py',
-        scope="code",
-        model="openai",
-    )
-
-    prompt = f"<previous_message> {feedback} </previous_message>"
+    prompt = f"<previous_message> {llm_feedback} </previous_message>"
     prompt = prompt.replace("{", "{{").replace("}", "}}")
-
+    prompt += ANNOTATION_PROMPT
     # Run LLM feedback
     raw_annotation = run_llm(
         prompt_text=prompt,
@@ -44,6 +37,7 @@ def test_with_annotations(request):
         scope="code",
         model="claude-3.7-sonnet",
         json_schema="code_annotation_schema",
+        model_options='max_tokens=1000'
     )  # generate annotations
 
     annotations_json_list = extract_json(raw_annotation)
