@@ -12,6 +12,7 @@ def test_with_markers(request):
         scope="image",
         model="claude-3.7-sonnet",
         prompt="image_style_annotations",
+        model_options='max_tokens=1000',
     )
 
     # Display LLM output in the test output
