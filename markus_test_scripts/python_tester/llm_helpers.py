@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 import re
@@ -14,11 +15,41 @@ an array of annotations, referencing the student's submission file for line and 
 Each annotation should include: filename: The name of the student's file. content:
 A short description of the mistake. line_start and line_end: The line number(s) where the
 mistake occurs. Ensure the JSON is valid and properly formatted. Here is a sample format
-of the json array to return: {{ "annotations": [{{"filename": "student_code.py",
-"content": "Variable 'x' is unused.", "line_start": 5, "line_end": 5}}] }}.
+of the json array to return:  {{
+  "annotations": [
+    {{
+      "filename": "submission.py",
+      "content": "The variable 'result' is assigned but never used.",
+      "line_start": 3,
+      "line_end": 3,
+      "column_start": 4,
+      "column_end": 16
+    }},
+    {{
+      "filename": "submission.py",
+      "content": "Missing parentheses in the print statement. Use print('Hello') instead.",
+      "line_start": 5,
+      "line_end": 5,
+      "column_start": 0,
+      "column_end": 20
+    }},
+    {{
+      "filename": "submission.py",
+      "content": "The function 'calculate_sum' is called but not defined.",
+      "line_start": 10,
+      "line_end": 10,
+      "column_start": 0,
+      "column_end": 15
+    }}
+  ]
+}}
+
 ONLY return the json object and nothing else. Make sure the line #s don't exceed
 the number of lines in the file. You can use markdown syntax in the annotation's content,
-especially when denoting code."""
+especially when denoting code.
+
+Use only double quotes in your response
+"""
 
 
 def add_annotation_columns(annotations: List[Dict[str, Any]], submission: Any) -> List[Dict[str, Any]]:
@@ -92,13 +123,14 @@ def run_llm(
     submission_path: str,
     model: str,
     scope: str,
-    submission_type: Optional[str],
+    submission_type: Optional[str] = None,
     submission_image: Optional[str] = None,
     question: Optional[str] = None,
     prompt_text: Optional[str] = None,
     prompt: Optional[str] = None,
     json_schema: Optional[str] = None,
     output: Optional[str] = None,
+    model_options: Optional[str] = None,
 ) -> str:
     """
     Executes the LLM feedback generator script and captures its output.
@@ -114,6 +146,9 @@ def run_llm(
         prompt: Name of predefined prompt file to use.
         json_schema: Optional JSON schema to format the response.
         output: filepath of output file.
+        model_options: model options to pass to the llm
+        submission_image: An optional file path to the image to give feedback to.
+        json_schema: Optional JSON schema to format the response.
 
     Returns:
         The output from the LLM feedback generator as a string, or an error message.
@@ -142,6 +177,8 @@ def run_llm(
         llm_command += ["--output", output]
     if submission_image:
         llm_command += ["--submission_image", submission_image]
+    if model_options:
+        llm_command += ["--model_options", model_options]
     if submission_type:
         llm_command += ["--submission_type", submission_type]
 
@@ -155,6 +192,17 @@ def run_llm(
     return llm_result.stdout.strip()
 
 
+def safe_eval_dict(match: str):
+    try:
+        return json.loads(match)  # Try strict JSON first
+    except json.JSONDecodeError:
+        try:
+            return ast.literal_eval(match)  # Fall back to Python-style dict
+        except (SyntaxError, ValueError) as e:
+            print(f"[SKIPPED] Malformed match: {match[:80]}... Reason: {e}")
+            return None
+
+
 def extract_json(response: str) -> List[Dict[str, Any]]:
     """
     Extracts JSON objects embedded in a string.
@@ -166,7 +214,7 @@ def extract_json(response: str) -> List[Dict[str, Any]]:
         A list of parsed JSON dictionaries extracted from the input string.
     """
     matches = re.findall(r"(\{(?:[^{}]|(?:\{(?:[^{}]|(?:\{[^{}]*\}))*\}))*\})", response)
-    return [json.loads(match) for match in matches]
+    return [parsed for match in matches if (parsed := safe_eval_dict(match))]
 
 
 MINIMUM_ANNOTATION_WIDTH = 8
