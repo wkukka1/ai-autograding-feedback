@@ -30,6 +30,7 @@ def test_with_annotations(request):
     prompt = f"<previous_message> {llm_feedback} </previous_message>"
     prompt = prompt.replace("{", "{{").replace("}", "}}")
     prompt += ANNOTATION_PROMPT
+
     # Run LLM feedback
     raw_annotation = run_llm(
         prompt_text=prompt,
