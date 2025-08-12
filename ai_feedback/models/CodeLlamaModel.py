@@ -14,7 +14,7 @@ class CodeLlamaModel(Model):
         Initializes the CodeLlamaModel with configuration for the model and system instructions.
         """
         self.model = {
-            "model": "codellama:latest",
+            "model": "gpt-oss:120b",
         }
 
     def generate_response(
