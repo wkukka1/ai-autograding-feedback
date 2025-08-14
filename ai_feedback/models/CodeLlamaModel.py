@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import ollama
 
 from .Model import Model
-
+import time, pprint
 
 class CodeLlamaModel(Model):
 
@@ -56,7 +56,7 @@ class CodeLlamaModel(Model):
                 schema = json.load(f)
         else:
             schema = None
-
+        t0 = time.perf_counter()
         response = ollama.chat(
             model=self.model["model"],
             messages=[
@@ -65,7 +65,15 @@ class CodeLlamaModel(Model):
             ],
             format=schema['schema'] if schema else None,
         )
-
+        t1 = time.perf_counter()
+        pprint.pp({
+            "wall_ms": round((t1 - t0) * 1000, 1),
+            "prompt_eval_count": response.get("prompt_eval_count"),
+            "eval_count": response.get("eval_count"),
+            "prompt_eval_duration_ms": (response.get("prompt_eval_duration", 0) / 1e6),
+            "eval_duration_ms": (response.get("eval_duration", 0) / 1e6),
+            "output_len_chars": len(response["message"]["content"] or "")
+        })
         if not response or "message" not in response or "content" not in response["message"]:
             print("Error: Invalid or empty response from Ollama.")
             return None
