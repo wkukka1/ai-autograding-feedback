@@ -74,19 +74,52 @@ class OpenAIModel(Model):
         Returns:
             str: The model's response text.
         """
-        response_format = None
-        if schema:
-            response_format = {"type": "json_schema", "json_schema": schema}
-
-        response = self.client.chat.completions.create(
-            model="gpt-5",
-            messages=[
+        req = {
+            "model": "gpt-5",  # hard-coded
+            "input": [
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            response_format=response_format,
-            temperature=0.5,
-            max_tokens=1000,
-        )
+            "temperature": 0.5,
+            "max_output_tokens": 1000,  # correct param for GPT-5
+        }
 
-        return response.choices[0].message.content
+        if schema:
+            req["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "structured_output",
+                    "schema": schema,
+                    "strict": True,
+                },
+            }
+
+        resp = self.client.responses.create(**req)
+
+        # Best-case: SDK provides `output_text`
+        if hasattr(resp, "output_text") and resp.output_text is not None:
+            return resp.output_text
+
+        # Fallback: assemble from blocks
+        text_chunks = []
+        for item in getattr(resp, "output", []) or []:
+            for block in getattr(item, "content", []) or []:
+                if getattr(block, "type", "") == "output_text":
+                    text_chunks.append(getattr(block, "text", ""))
+        return "".join(text_chunks) if text_chunks else str(resp)
+        # response_format = None
+        # if schema:
+        #     response_format = {"type": "json_schema", "json_schema": schema}
+        #
+        # response = self.client.chat.completions.create(
+        #     model="gpt-5",
+        #     messages=[
+        #         {"role": "system", "content": system_instructions},
+        #         {"role": "user", "content": prompt},
+        #     ],
+        #     response_format=response_format,
+        #     temperature=0.5,
+        #     max_tokens=1000,
+        # )
+        #
+        # return response.choices[0].message.content
