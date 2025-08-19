@@ -74,39 +74,21 @@ class OpenAIModel(Model):
         Returns:
             str: The model's response text.
         """
-        req = {
-            "model": "gpt-5",  # hard-coded
-            "input": [
+        resp = self.client.responses.create(
+            model="gpt-5",
+            input=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
             ],
-            "temperature": 0.5,
-            "max_output_tokens": 1000,  # correct param for GPT-5
-        }
-
-        if schema:
-            req["response_format"] = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "structured_output",
-                    "schema": schema,
-                    "strict": True,
-                },
-            }
-
-        resp = self.client.responses.create(**req)
-
-        # Best-case: SDK provides `output_text`
-        if hasattr(resp, "output_text") and resp.output_text is not None:
-            return resp.output_text
-
-        # Fallback: assemble from blocks
-        text_chunks = []
-        for item in getattr(resp, "output", []) or []:
-            for block in getattr(item, "content", []) or []:
-                if getattr(block, "type", "") == "output_text":
-                    text_chunks.append(getattr(block, "text", ""))
-        return "".join(text_chunks) if text_chunks else str(resp)
+            max_output_tokens=1000,
+            reasoning={"effort": "low"},
+            text={"verbosity": "medium"},
+        )
+        # for key, value in resp.items():
+        #     print(f"{key}: {value}")
+        print(resp)
+        print(resp.output_text)
+        return resp.output_text
         # response_format = None
         # if schema:
         #     response_format = {"type": "json_schema", "json_schema": schema}
