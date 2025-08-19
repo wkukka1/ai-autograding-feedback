@@ -79,7 +79,7 @@ class OpenAIModel(Model):
             response_format = {"type": "json_schema", "json_schema": schema}
 
         response = self.client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-5",
             messages=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": prompt},
