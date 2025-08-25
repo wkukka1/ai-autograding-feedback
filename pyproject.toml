@@ -27,6 +27,7 @@ dependencies = [
     "pillow",
     "PyPDF2",
     "requests",
+    "matplotlib"
 ]
 
 [project.optional-dependencies]

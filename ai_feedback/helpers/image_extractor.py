@@ -210,10 +210,8 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
         current_context = ch["context"].replace(os.sep, "_")
         per_context_counter.setdefault(current_context, 0)
 
-        # before/after fignums (fallback)
         fignums_before = set(plt.get_fignums())
 
-        # track created figures (store REAL objects + numbers)
         created_figs: list[tuple[int, object]] = []
         saved_fignums_this_chunk: set[int] = set()
 
@@ -242,11 +240,9 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
             plt.figure = _orig_figure
             plt.subplots = _orig_subplots
 
-        # fallback new fig numbers
         fignums_after = set(plt.get_fignums())
         new_fignums = sorted(fignums_after - fignums_before)
 
-        # save created (by object) first
         for fnum, fig in created_figs:
             if fnum in saved_fignums_this_chunk:
                 continue
@@ -271,7 +267,6 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
 
     plt.savefig = _orig_savefig
 
-    # unique paths
     seen, uniq = set(), []
     for p in saved_files:
         if p not in seen:
