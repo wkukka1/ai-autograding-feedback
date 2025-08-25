@@ -36,7 +36,7 @@ class RemoteModel(Model):
         system_instructions: str,
         model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
-        question_num: Optional[int] = None,
+        question: Optional[str] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
         llama_mode: Optional[str] = None,
@@ -50,7 +50,7 @@ class RemoteModel(Model):
             prompt (str): The input prompt provided by the user.
             submission_file (Optional[Path]): The path to the submission file.
             solution_file (Optional[Path]): The path to the solution file.
-            question_num (Optional[int]): An optional question number to target specific content.
+            question (Optional[str]): An optional question number to target specific content.
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
             system_instructions (str): instructions for the model

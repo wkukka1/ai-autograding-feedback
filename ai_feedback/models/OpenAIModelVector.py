@@ -41,7 +41,7 @@ class OpenAIModelVector(Model):
         submission_file: Path,
         system_instructions: str,
         model_options: Optional[dict] = None,
-        question_num: Optional[int] = None,
+        question: Optional[str] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
@@ -57,7 +57,7 @@ class OpenAIModelVector(Model):
             solution_file (Optional[Path]): The path to a file to store the response to.
             test_output (Optional[Path]): The path to a file to store the response to.
             scope (Optional[str]): The path to a file to store the response to.
-            question_num (Optional[int]): An optional question number.
+            question (Optional[str]): An optional question to extract text from.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
@@ -89,8 +89,8 @@ class OpenAIModelVector(Model):
             file_ids.append(file_id)
             request += base
 
-        if question_num:
-            prompt += f" Identify and generate a response for the mistakes **only** in task ${question_num}. "
+        if question:
+            prompt += f" Identify and generate a response for the mistakes **only** in task ${question}. "
 
         response = self._call_openai(prompt, model_options, schema)
         self._cleanup_resources(file_ids)

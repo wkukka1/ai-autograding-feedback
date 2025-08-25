@@ -325,20 +325,20 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
     return file_contents.strip()
 
 
-def extract_question_from_txt(file_path: Path, question: str) -> tuple[str, bool, str]:
-    content = file_path.read_text()
-
-    intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
-    intro_content = intro_match.group(1).strip() if intro_match else ""
-
-    task_pattern = rf"(## {question}\b.*?)(?=\n##|\Z)"
-    task_match = re.search(task_pattern, content, re.DOTALL)
-
-    if task_match:
-        task_content = task_match.group(1).strip()
-        task_found = True
-
-    return intro_content, task_found, task_content
+# def extract_question_from_txt(file_path: Path, question: str) -> tuple[str, bool, str]:
+#     content = file_path.read_text()
+#
+#     intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
+#     intro_content = intro_match.group(1).strip() if intro_match else ""
+#
+#     task_pattern = rf"(## {question}\b.*?)(?=\n##|\Z)"
+#     task_match = re.search(task_pattern, content, re.DOTALL)
+#
+#     if task_match:
+#         task_content = task_match.group(1).strip()
+#         task_found = True
+#
+#     return intro_content, task_found, task_content
 
 
 def normalize_text(x: str) -> str:
