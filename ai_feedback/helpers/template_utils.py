@@ -18,7 +18,6 @@ def render_prompt_template(
     solution: Optional[Path] = None,
     test_output: Optional[Path] = None,
     question: Optional[str] = None,
-    question_num: Optional[int] = None,
     marking_instructions: Optional[str] = None,
     **kwargs,
 ) -> str:
@@ -277,15 +276,12 @@ def gather_images(output_directory: str, question: str, include_images: list[str
 
 def _get_question_contents(assignment_files: List[Optional[Path]], question: str) -> str:
     """
-    Retrieve contents of files specifically for a targeted question number.
-
-    Assumes files follow a specific markdown-like structure with sections titled
-    '## Introduction' and '## Task {question_num}'.
+    Retrieve contents of files specifically for a targeted question heading.
 
     Args:
         assignment_files (List[Optional[Path]]): List of Path or None objects to parse.
             Expected order: [submission, solution]
-        question_num (int): The target task number to extract.
+        question (str): Question identifier
 
     Returns:
         str: Combined content of the introduction and the specified task from matching files.
