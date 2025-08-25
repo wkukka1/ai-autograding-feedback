@@ -50,7 +50,7 @@ class RemoteModel(Model):
             prompt (str): The input prompt provided by the user.
             submission_file (Optional[Path]): The path to the submission file.
             solution_file (Optional[Path]): The path to the solution file.
-            question (Optional[str]): An optional question number to target specific content.
+            question (Optional[str]): An optional question to target specific content.
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
             system_instructions (str): instructions for the model
