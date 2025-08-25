@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 import anthropic
 from dotenv import load_dotenv
 
+from ..helpers.model_options_helpers import cast_to_type, claude_option_schema
 from .Model import Model
 
 # Load environment variables from .env file
@@ -24,6 +25,7 @@ class ClaudeModel(Model):
         prompt: str,
         submission_file: Path,
         system_instructions: str,
+        model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
         question_num: Optional[int] = None,
@@ -44,6 +46,7 @@ class ClaudeModel(Model):
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
+            model_options (Optional[dict]): The optional model options to use for generating the response.
 
         Returns:
             Optional[Tuple[str, str]]: The original prompt and the model's response, or None if the response is invalid.
@@ -55,13 +58,17 @@ class ClaudeModel(Model):
 
         request += prompt
 
-        response = self.client.messages.create(
-            model="claude-3-7-sonnet-20250219",
-            max_tokens=1000,
-            temperature=0.5,
-            system=system_instructions,
-            messages=[{"role": "user", "content": request}],
-        )
+        model_options = cast_to_type(claude_option_schema, model_options)
+
+        # Construct request parameters
+        request_kwargs = {
+            "model": "claude-3-7-sonnet-20250219",
+            "system": system_instructions,
+            "messages": [{"role": "user", "content": request}],
+            **model_options,
+        }
+
+        response = self.client.messages.create(**request_kwargs)
 
         if not response or not response.content:
             print("Error: Invalid or empty response from Claude.")
