@@ -2,8 +2,8 @@ import base64
 import json
 import os
 import re
-from typing import Dict, Any, List, Optional
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str):
@@ -119,20 +119,22 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
             continue
 
         if in_py:
-            if (fence_kind == "```" and _FENCE_END_TICKS.match(line)) or \
-                    (fence_kind == "~~~" and _FENCE_END_TILDES.match(line)):
+            if (fence_kind == "```" and _FENCE_END_TICKS.match(line)) or (
+                fence_kind == "~~~" and _FENCE_END_TILDES.match(line)
+            ):
                 in_py = False
                 fence_kind = None
                 context = (
-                    f"{current_main}__{current_sub}" if current_main and current_sub
-                    else (current_main or "unknown")
+                    f"{current_main}__{current_sub}" if current_main and current_sub else (current_main or "unknown")
                 )
                 if cur:
-                    chunks.append({
-                        "context": context,
-                        "code": cur[:],
-                        "start_line": start_line + 1,  # 1-based
-                    })
+                    chunks.append(
+                        {
+                            "context": context,
+                            "code": cur[:],
+                            "start_line": start_line + 1,  # 1-based
+                        }
+                    )
                 i += 1
                 continue
             else:
@@ -158,8 +160,10 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
 
 
 def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, dpi: int = 120) -> list[str]:
+    import importlib
+    import os
+    import tempfile
     from pathlib import Path
-    import os, tempfile, importlib
 
     chunks = extract_qmd_python_chunks_with_context(qmd_path)
     if not chunks:
@@ -193,6 +197,7 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
 
     # mirror user savefig
     _orig_savefig = plt.savefig
+
     def _mirror_savefig(*args, **kwargs):
         nonlocal current_context, saved_fignums_this_chunk
         ctx = current_context
@@ -202,6 +207,7 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
         if fnum not in saved_fignums_this_chunk:
             _save_fig_with_context(fig, ctx)
             saved_fignums_this_chunk.add(fnum)
+
     plt.savefig = _mirror_savefig
 
     exec_env: dict[str, object] = {"__name__": "__qmd_exec__", "plt": plt}
@@ -259,11 +265,15 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
 
         # close figs we touched
         for _, fig in created_figs:
-            try: plt.close(fig)
-            except Exception: pass
+            try:
+                plt.close(fig)
+            except Exception:
+                pass
         for fnum in new_fignums:
-            try: plt.close(plt.figure(fnum))
-            except Exception: pass
+            try:
+                plt.close(plt.figure(fnum))
+            except Exception:
+                pass
 
     plt.savefig = _orig_savefig
 

@@ -2,10 +2,10 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import List, Optional, Dict, Any, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-import PyPDF2
 import fitz
+import PyPDF2
 from ollama import Image
 from PIL import Image as PILImage
 
@@ -300,11 +300,7 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
     print(f"Attempting to extract question contents for question number {question}")
     for index, file_path in enumerate(assignment_files):
         print(f"Assignment file {index + 1}/{len(assignment_files)}: {file_path}")
-        if (
-            not file_path
-            or "error_output" in file_path.name
-            or file_path.name == ".DS_Store"
-        ):
+        if not file_path or "error_output" in file_path.name or file_path.name == ".DS_Store":
             continue
 
         task_content = ""
@@ -332,6 +328,7 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
 
     return file_contents.strip()
 
+
 def extract_question_from_txt(file_path: Path, question: str) -> tuple[str, bool, str]:
     content = file_path.read_text()
 
@@ -346,6 +343,7 @@ def extract_question_from_txt(file_path: Path, question: str) -> tuple[str, bool
         task_found = True
 
     return intro_content, task_found, task_content
+
 
 def normalize_text(x: str) -> str:
     """Normalize text for consistent matching (rough R parity)."""
@@ -369,11 +367,7 @@ def flatten_toc(pdf_path: Path) -> List[Dict[str, Any]]:
     flat = []
     for row in toc_rows:
         level, title, page = row[0], row[1], row[2]
-        flat.append({
-            "title": title,
-            "page": page if page is not None else None,
-            "level": level
-        })
+        flat.append({"title": title, "page": page if page is not None else None, "level": level})
     return flat
 
 
@@ -445,15 +439,12 @@ def extract_question_from_pdf(pdf_path: Path, heading: str) -> tuple[str, bool]:
         if next_idx:
             end_line = next_idx[0] - 1
 
-
     if start_line > end_line or start_line < 0:
         raise ValueError(f"Invalid line bounds: start={start_line}, end={end_line}")
 
-    extracted = lines[start_line:end_line + 1]
+    extracted = lines[start_line : end_line + 1]
 
     return "\n".join([l.strip() for l in extracted]), True
-
-
 
 
 def extract_question_from_txt(submission_path: Path, question: str) -> tuple[str, bool]:
@@ -491,5 +482,5 @@ def extract_question_from_txt(submission_path: Path, question: str) -> tuple[str
     next_candidates = [ln for ln, lvl, _ in header_lines if ln > start_line and lvl <= cur_level]
     end_line = next_candidates[0] - 1 if next_candidates else len(lines) - 1
 
-    block = "".join(lines[start_line:end_line + 1])
+    block = "".join(lines[start_line : end_line + 1])
     return block, True
