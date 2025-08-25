@@ -293,9 +293,8 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
     task_found = False
 
     semantic_tags = ["submission", "solution"]
-    print(f"Attempting to extract question contents for question number {question}")
+
     for index, file_path in enumerate(assignment_files):
-        print(f"Assignment file {index + 1}/{len(assignment_files)}: {file_path}")
         if not file_path or "error_output" in file_path.name or file_path.name == ".DS_Store":
             continue
 
@@ -316,7 +315,6 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
         file_contents += task_content + "\n\n"
         file_contents += f"</{tag_name}>\n\n"
 
-        print(f"DEBUG: FILE CONTENTS = {file_contents}")
 
     if not task_found:
         print(f"Task {question} not found in any assignment file.")
