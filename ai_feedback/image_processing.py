@@ -8,7 +8,7 @@ from openai import OpenAI
 from PIL import Image as PILImage
 
 from .helpers.arg_options import Models
-from .helpers.image_extractor import extract_images
+from .helpers.image_extractor import extract_images, extract_qmd_python_images
 from .helpers.image_reader import *
 from .helpers.template_utils import render_prompt_template
 from .models.RemoteModel import RemoteModel
@@ -96,7 +96,10 @@ def process_image(args, prompt: dict, system_instructions: str) -> tuple[str, st
     if args.solution:
         solution_notebook = Path(args.solution)
     # Extract submission images
-    extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
+    if submission_notebook.suffix == ".qmd":
+        images = extract_qmd_python_images(submission_notebook, OUTPUT_DIRECTORY)
+    else:
+        images = extract_images(submission_notebook, OUTPUT_DIRECTORY, "submission")
     # Optionally extract solution images
     if args.solution and solution_notebook.is_file():
         extract_images(solution_notebook, OUTPUT_DIRECTORY, "solution")
@@ -147,6 +150,9 @@ def process_image(args, prompt: dict, system_instructions: str) -> tuple[str, st
             solution_image_path = args.solution_image
             message.images.append(Image(value=solution_image_path))
 
+        for image in images:
+            message.images.append(Image(value=image))
+
         # Prompt the LLM
         requests.append(f"{message.content}\n\n{[str(image.value) for image in message.images]}")
         if args.model == Models.OPENAI.value:
@@ -163,7 +169,7 @@ def process_image(args, prompt: dict, system_instructions: str) -> tuple[str, st
                 rendered_prompt,
                 args.submission,
                 system_instructions=system_instructions,
-                question_num=question,
+                question=question,
                 submission_image=args.submission_image,
                 json_schema=args.json_schema,
             )
