@@ -39,7 +39,6 @@ def process_text(
             raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
 
     test_output = Path(args.test_output) if args.test_output else None
-    print(args.question if args.question else "NO QUESTION")
     rendered_prompt = render_prompt_template(
         prompt,
         solution=solution_file,
