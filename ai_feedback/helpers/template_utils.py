@@ -315,7 +315,6 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
         file_contents += task_content + "\n\n"
         file_contents += f"</{tag_name}>\n\n"
 
-
     if not task_found:
         print(f"Task {question} not found in any assignment file.")
         sys.exit(1)
