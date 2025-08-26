@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-import fitz
+import pymupdf
 import PyPDF2
 from ollama import Image
 from PIL import Image as PILImage
@@ -316,7 +316,7 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question: str
         file_contents += f"</{tag_name}>\n\n"
 
     if not task_found:
-        print(f"Task {question} not found in any assignment file.")
+        print(f"Task '{question}' not found in any assignment file.")
         sys.exit(1)
 
     return file_contents.strip()
@@ -337,7 +337,7 @@ def flatten_toc(pdf_path: Path) -> List[Dict[str, Any]]:
     Convert PyMuPDF TOC (outline) to a flat list of dicts:
     {title, page, level}
     """
-    doc = fitz.open(pdf_path)
+    doc = pymupdf.open(pdf_path)
     toc_rows = doc.get_toc(simple=False)
     doc.close()
 

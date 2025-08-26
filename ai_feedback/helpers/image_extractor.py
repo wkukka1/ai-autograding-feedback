@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 import importlib
 import tempfile
 
-def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str):
+def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str) -> List[Path]:
     image_paths = []
     with open(input_notebook_path, "r") as file:
         notebook = json.load(file)
@@ -62,7 +62,7 @@ def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLi
 
 def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]]:
     """
-    Extract ONLY Python code chunks from a QMD/RMD and annotate each with context from # / ## headings.
+    Extract ONLY Python code chunks from a QMD and annotate each with context from # / ## headings.
     Supports ```{python ...}, ```python, and ~~~ variants. Skips YAML front matter.
     """
     _PY_CHUNK_START = re.compile(
@@ -101,8 +101,7 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
     start_line = 0
     fence_kind = None  # "```" or "~~~"
 
-    while i < len(lines):
-        raw = lines[i]
+    for i, raw in enumerate(lines):
         line = raw.rstrip("\n")
 
         if not in_py and _PY_CHUNK_START.match(line):

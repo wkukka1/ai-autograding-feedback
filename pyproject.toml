@@ -21,13 +21,14 @@ license-files = ["LICEN[CS]E*"]
 dependencies = [
     "anthropic",
     "dotenv",
+    "matplotlib",
     "openai",
     "nbformat",
     "ollama",
     "pillow",
+    "PyMuPDF",
     "PyPDF2",
     "requests",
-    "matplotlib"
 ]
 
 [project.optional-dependencies]
