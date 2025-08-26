@@ -1,11 +1,12 @@
 import base64
+import importlib
 import json
 import os
 import re
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import importlib
-import tempfile
+
 
 def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str):
     image_paths = []
