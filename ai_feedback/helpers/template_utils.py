@@ -382,8 +382,6 @@ def extract_question_from_pdf(pdf_path: Path, heading: str) -> tuple[str, bool]:
 
     # Load and flatten TOC
     toc = flatten_toc(pdf_path)
-    for i, d in enumerate(toc[:10]):  # only show first 10 to avoid overload
-        print(f"    TOC[{i}] = {d}")
 
     titles_norm = [normalize_text(d["title"]) for d in toc]
     norm_heading = normalize_text(heading)
@@ -402,7 +400,6 @@ def extract_question_from_pdf(pdf_path: Path, heading: str) -> tuple[str, bool]:
 
     # Locate start of heading within text
     start_indices = [i for i, t in enumerate(norm_lines) if t == norm_heading]
-    print(norm_lines)
 
     if not start_indices:
         raise ValueError(f"[ERROR] Start indices for heading '{heading}' not found.")

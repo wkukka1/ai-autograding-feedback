@@ -4,7 +4,8 @@ import os
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
+import importlib
+import tempfile
 
 def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLike, output_name: str):
     image_paths = []
@@ -59,12 +60,6 @@ def extract_images(input_notebook_path: os.PathLike, output_directory: os.PathLi
     return image_paths
 
 
-def _clean_heading_text(s: str) -> str:
-    s = s.strip()
-    s = re.sub(r"\s+", " ", s)
-    return s
-
-
 def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]]:
     """
     Extract ONLY Python code chunks from a QMD/RMD and annotate each with context from # / ## headings.
@@ -98,13 +93,13 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
             i += 1
         i = min(i + 1, len(lines))
 
-    current_main: Optional[str] = None
-    current_sub: Optional[str] = None
-    chunks: List[Dict[str, Any]] = []
+    current_main = None
+    current_sub = None
+    chunks = []
     in_py = False
-    cur: List[str] = []
+    cur = []
     start_line = 0
-    fence_kind: Optional[str] = None  # "```" or "~~~"
+    fence_kind = None  # "```" or "~~~"
 
     while i < len(lines):
         raw = lines[i]
@@ -159,12 +154,18 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
     return chunks
 
 
-def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, dpi: int = 120) -> list[str]:
-    import importlib
-    import os
-    import tempfile
-    from pathlib import Path
+def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, dpi: int = 120) -> List[str]:
+    """
+    Runs the python blocks of code and saves images using matplotlib.
+    Args:
+        qmd_path: path to qmd file to extract images from
+        output_dir(Optional): directory to save images to
+        dpi: The resolution of the output image
 
+    Returns:
+        List[str]: Returns a list of image paths
+
+    """
     chunks = extract_qmd_python_chunks_with_context(qmd_path)
     if not chunks:
         return []
@@ -176,8 +177,8 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
     mpl.use("Agg", force=True)
     plt = importlib.import_module("matplotlib.pyplot")
 
-    saved_files: list[str] = []
-    per_context_counter: dict[str, int] = {}
+    saved_files = []
+    per_context_counter = {}
     current_context = "unknown"
 
     def _save_fig_with_context(fig, ctx: str):
@@ -192,7 +193,6 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
         path = outdir / fname
 
         fig.savefig(path.as_posix(), dpi=dpi, bbox_inches="tight")
-        size = path.stat().st_size
         saved_files.append(path.as_posix())
 
     # mirror user savefig
@@ -210,7 +210,7 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
 
     plt.savefig = _mirror_savefig
 
-    exec_env: dict[str, object] = {"__name__": "__qmd_exec__", "plt": plt}
+    exec_env = {"__name__": "__qmd_exec__", "plt": plt}
 
     for ch in chunks:
         current_context = ch["context"].replace(os.sep, "_")
@@ -218,8 +218,8 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
 
         fignums_before = set(plt.get_fignums())
 
-        created_figs: list[tuple[int, object]] = []
-        saved_fignums_this_chunk: set[int] = set()
+        created_figs = []
+        saved_fignums_this_chunk = set()
 
         _orig_figure = plt.figure
         _orig_subplots = plt.subplots
@@ -283,3 +283,9 @@ def extract_qmd_python_images(qmd_path: str, output_dir: Optional[str] = None, d
             seen.add(p)
             uniq.append(p)
     return uniq
+
+
+def _clean_heading_text(s: str) -> str:
+    s = s.strip()
+    s = re.sub(r"\s+", " ", s)
+    return s
