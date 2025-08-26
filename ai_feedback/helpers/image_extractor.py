@@ -82,7 +82,7 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
 
     qp = Path(qmd_path)
     if not qp.exists():
-        raise FileNotFoundError(f"QMD/RMD file not found: {qmd_path}")
+        raise FileNotFoundError(f"QMD file not found: {qmd_path}")
 
     lines = qp.read_text(encoding="utf-8", errors="ignore").splitlines()
 
