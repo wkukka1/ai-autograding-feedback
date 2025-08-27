@@ -367,7 +367,6 @@ This python package can be used as a dependency in the Markus Autotester, in ord
 ### Markus Test Scripts
 - /markus_test_scripts contains scripts which can be uploaded to the autotester in order to generate LLM Feedback
 - Currently, only openAI and Claude models are supported.
-- The /test_submissions directory has mock assignment submissions, solutions, and test files, used for testing the markus integration. These files can be submitted on the markus autotester along with the llm script files.
 - Within these llm script files, the models and prompts used can be changed by editing the command line arguments, through the run_llm() function.
 
 Files:
@@ -378,8 +377,8 @@ Files:
 
 #### Python AutoTester Usage
 ##### Code Scope
-1. Ensure the student has submitted a submission file (_submission suffixed).
-2. Ensure the instructor has submitted a solution file (_solution suffixed), llm_helpers.py (located in /markus_test_scripts), and python_tester_llm_code.py (located in /markus_test_scripts). Instructor can also upload another pytest file which can be run as its own test group.
+1. Ensure the student has submitted a submission file.
+2. Ensure the instructor has submitted a solution file, llm_helpers.py (located in /markus_test_scripts), and python_tester_llm_code.py (located in /markus_test_scripts). Instructor can also upload another pytest file which can be run as its own test group.
 3. Ensure the submission import statement in python_tester_llm_code.py matches the name of the student's submission file name.
 4. Create a Python Autotester Test Group to run the LLM File.
 5. In the Package Requirements section of the Test Group Settings for the LLM file, put:
@@ -393,6 +392,13 @@ Along with any other packages that the submission or solution file uses.
 
 ##### Text Scope
 - Do the same as the code scope, but ensure that the student submission and instructor solution are .pdf files with the same naming assumption. Also, ensure that python_tester_llm_pdf.py is uploaded as the test script.
+
+##### AI Tester Usage
+1. In the Autotest settings of the assignment, click Add Tester and select the `ai` option.
+2. Fill in all required arguments for the AI tester.
+3. Upload any related files (e.g., JSON schema files, custom prompts, or configuration files).
+4. Ensure the MarkUs Autotester Docker container has the API keys defined in an .env file and that these variables are specified in the docker-compose.yml file.
+5. Ensure the Timeout is set to 120 seconds or longer.
 
 #### Running Python Autotester Examples
 ##### CNN Example
@@ -417,8 +423,8 @@ Along with any other packages that the submission or solution file uses.
 - Student uploads: student_pdf_submission.pdf
 
 #### Custom Tester Usage
-1. Ensure the student has submitted a submission file (_submission suffixed).
-2. Ensure the instructor has submitted a solution file (_solution suffixed) and custom_tester_llm_code.sh (located in /markus_test_scripts). Instructor can also upload another script used to run its own test group. (See below for GGR274 Example.)
+1. Ensure the student has submitted a submission file.
+2. Ensure the instructor has submitted a solution file and custom_tester_llm_code.sh (located in /markus_test_scripts). Instructor can also upload another script used to run its own test group. (See below for GGR274 Example.)
 3. In the Markus Autotesting terminal:
 ``` bash
  docker exec -it -u 0 markus-autotesting-server-1 /bin/bash
