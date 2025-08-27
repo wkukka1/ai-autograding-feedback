@@ -110,7 +110,6 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
             cur = []
             start_line = i
             fence_kind = "~~~" if line.strip().startswith("~~~") else "```"
-            i += 1
             continue
 
         if in_py:
@@ -130,26 +129,20 @@ def extract_qmd_python_chunks_with_context(qmd_path: str) -> List[Dict[str, Any]
                             "start_line": start_line + 1,  # 1-based
                         }
                     )
-                i += 1
                 continue
             else:
                 cur.append(raw)
-                i += 1
                 continue
 
         m1 = _H1.match(line)
         if m1:
             current_main = _clean_heading_text(m1.group(1))
             current_sub = None
-            i += 1
             continue
         m2 = _H2.match(line)
         if m2:
             current_sub = _clean_heading_text(m2.group(1))
-            i += 1
             continue
-
-        i += 1
 
     return chunks
 
