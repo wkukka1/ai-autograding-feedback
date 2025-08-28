@@ -86,8 +86,7 @@ class OpenAIModel(Model):
         )
         # for key, value in resp.items():
         #     print(f"{key}: {value}")
-        print(resp)
-        print(resp.output_text)
+
         return resp.output_text
         # response_format = None
         # if schema:
