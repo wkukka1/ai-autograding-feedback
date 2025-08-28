@@ -28,7 +28,7 @@ class ClaudeModel(Model):
         model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
-        question_num: Optional[int] = None,
+        question: Optional[str] = None,
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
@@ -42,7 +42,7 @@ class ClaudeModel(Model):
             submission_file: path to the submission file.
             test_output: path to the file containing the results of tests run on user submission
             scope (Optional[str]): The content scope.
-            question_num (Optional[int]): Specific task number to extract from text files.
+            question (Optional[str]): Specific task to extract from text files.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
@@ -53,8 +53,8 @@ class ClaudeModel(Model):
         """
         request = ""
 
-        if question_num:
-            request += f" Identify and generate a response for the mistakes **only** in question/task ${question_num}. "
+        if question:
+            request += f" Identify and generate a response for the mistakes **only** in question/task ${question}. "
 
         request += prompt
 

@@ -39,13 +39,12 @@ def process_text(
             raise FileNotFoundError(f"Solution file '{solution_file}' not found.")
 
     test_output = Path(args.test_output) if args.test_output else None
-
     rendered_prompt = render_prompt_template(
         prompt,
         solution=solution_file,
         submission=submission_file,
         test_output=test_output,
-        question_num=args.question,
+        question=args.question,
         marking_instructions=marking_instructions,
     )
 
@@ -65,7 +64,7 @@ def process_text(
             solution_file=solution_file,
             submission_file=submission_file,
             scope=args.scope,
-            question_num=args.question,
+            question=args.question,
             system_instructions=system_instructions,
             llama_mode=args.llama_mode,
             json_schema=args.json_schema,

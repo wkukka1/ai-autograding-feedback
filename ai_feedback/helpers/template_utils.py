@@ -2,9 +2,9 @@ import os
 import re
 import sys
 from pathlib import Path
-from string import Template
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
+import pymupdf
 import PyPDF2
 from ollama import Image
 from PIL import Image as PILImage
@@ -17,7 +17,7 @@ def render_prompt_template(
     has_solution_image: bool = False,
     solution: Optional[Path] = None,
     test_output: Optional[Path] = None,
-    question_num: Optional[int] = None,
+    question: Optional[str] = None,
     marking_instructions: Optional[str] = None,
     **kwargs,
 ) -> str:
@@ -28,7 +28,7 @@ def render_prompt_template(
         submission (Path): Path to the student's submission file
         solution (Path, optional): Path to the instructor's solution file
         test_output (Path, optional): Path to the student's test output or error trace file
-        question_num (int, optional): The question number to use
+        question (str, optional): The question string to use
         prompt_content (str): The prompt template with placeholders like {file_contents}
         has_submission_image (bool): Whether a submission image is present
         has_solution_image (bool): Whether a solution image is present
@@ -41,8 +41,8 @@ def render_prompt_template(
     template_data = kwargs.copy()
 
     template_data['file_references'] = gather_file_references(submission, solution, test_output)
-    if question_num is not None:
-        template_data['file_contents'] = _get_question_contents([submission, solution], question_num)
+    if question is not None:
+        template_data['file_contents'] = _get_question_contents([submission, solution], question)
     else:
         template_data['file_contents'] = gather_xml_file_contents(submission, solution, test_output)
 
@@ -177,7 +177,7 @@ def _wrap_lines_with_xml(lines: List[str], tag_name: str, filename: str) -> str:
     return content
 
 
-def extract_pdf_text(pdf_path: str) -> str:
+def extract_pdf_text(pdf_path: Path | str) -> str:
     """Extract text content from a PDF file.
 
     Args:
@@ -274,17 +274,14 @@ def gather_images(output_directory: str, question: str, include_images: list[str
     return images
 
 
-def _get_question_contents(assignment_files: List[Optional[Path]], question_num: int) -> str:
+def _get_question_contents(assignment_files: List[Optional[Path]], question: str) -> str:
     """
-    Retrieve contents of files specifically for a targeted question number.
-
-    Assumes files follow a specific markdown-like structure with sections titled
-    '## Introduction' and '## Task {question_num}'.
+    Retrieve contents of files specifically for a targeted question heading.
 
     Args:
         assignment_files (List[Optional[Path]]): List of Path or None objects to parse.
             Expected order: [submission, solution]
-        question_num (int): The target task number to extract.
+        question (str): Question identifier
 
     Returns:
         str: Combined content of the introduction and the specified task from matching files.
@@ -298,25 +295,18 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question_num:
     semantic_tags = ["submission", "solution"]
 
     for index, file_path in enumerate(assignment_files):
-        if (
-            not file_path
-            or file_path.suffix != '.txt'
-            or "error_output" in file_path.name
-            or file_path.name == ".DS_Store"
-        ):
+        if not file_path or "error_output" in file_path.name or file_path.name == ".DS_Store":
             continue
 
-        content = file_path.read_text()
-
-        intro_match = re.search(r"(## Introduction\b.*?)(?=\n##|\Z)", content, re.DOTALL)
-        intro_content = intro_match.group(1).strip() if intro_match else ""
-
-        task_pattern = rf"(## Task {question_num}\b.*?)(?=\n##|\Z)"
-        task_match = re.search(task_pattern, content, re.DOTALL)
-
         task_content = ""
-        if task_match:
-            task_content = task_match.group(1).strip()
+        if file_path.suffix == '.txt':
+            intro_content, found = extract_question_from_txt(file_path, question)
+        elif file_path.suffix == ".pdf":
+            intro_content, found = extract_question_from_pdf(file_path, question)
+        else:
+            continue
+
+        if found:
             task_found = True
 
         tag_name = semantic_tags[index] if index < len(semantic_tags) else "file"
@@ -326,7 +316,145 @@ def _get_question_contents(assignment_files: List[Optional[Path]], question_num:
         file_contents += f"</{tag_name}>\n\n"
 
     if not task_found:
-        print(f"Task {question_num} not found in any assignment file.")
+        print(f"Task '{question}' not found in any assignment file.")
         sys.exit(1)
 
     return file_contents.strip()
+
+
+def normalize_text(x: str) -> str:
+    """Normalize text for consistent matching (rough R parity)."""
+    x = re.sub(r"[\r\n\t]", " ", x)
+    x = re.sub(r"[‘’´`]", "'", x)
+    x = re.sub(r"[“”]", '"', x)
+    x = re.sub(r"[–—]", "-", x)
+    x = re.sub(r"\s+", " ", x)
+    return x.strip().lower()
+
+
+def flatten_toc(pdf_path: Path) -> List[Dict[str, Any]]:
+    """
+    Convert PyMuPDF TOC (outline) to a flat list of dicts:
+    {title, page, level}
+    """
+    doc = pymupdf.open(pdf_path)
+    toc_rows = doc.get_toc(simple=False)
+    doc.close()
+
+    flat = []
+    for row in toc_rows:
+        level, title, page = row[0], row[1], row[2]
+        flat.append({"title": title, "page": page if page is not None else None, "level": level})
+    return flat
+
+
+def get_next_heading_title(flat_toc: List[Dict[str, Any]], heading: str) -> Optional[str]:
+    """
+    Given a flattened TOC and a heading title, return the title of the next
+    heading that is at the same or higher level (not a subheading).
+    """
+    norm_heading = normalize_text(heading)
+    titles_norm = [normalize_text(d["title"]) for d in flat_toc]
+    matches = [i for i, t in enumerate(titles_norm) if t == norm_heading]
+    if not matches:
+        return None
+
+    match_idx = matches[-1]
+    start_level = flat_toc[match_idx]["level"]
+
+    if match_idx >= len(flat_toc) - 1:
+        return None
+
+    for i in range(match_idx + 1, len(flat_toc)):
+        if flat_toc[i]["level"] <= start_level:
+            return flat_toc[i]["title"]
+    return None
+
+
+def extract_question_from_pdf(pdf_path: Path, heading: str) -> tuple[str, bool]:
+    """
+    Extract the text block under a given heading (matched by exact normalized title)
+    up to the next heading at the same or higher level.
+    """
+    if not os.path.exists(pdf_path):
+        raise FileNotFoundError(f"[Error: Submission file {os.path.basename(pdf_path)} not found]")
+
+    # Load and flatten TOC
+    toc = flatten_toc(pdf_path)
+
+    titles_norm = [normalize_text(d["title"]) for d in toc]
+    norm_heading = normalize_text(heading)
+
+    if norm_heading not in titles_norm:
+        print(f"[ERROR] Heading '{norm_heading}' not found in TOC")
+        return "", False
+
+    next_heading_title = get_next_heading_title(toc, heading)
+
+    # Read full text (as continuous lines)
+    full_text = extract_pdf_text(pdf_path)
+    lines = full_text.split("\n")
+
+    norm_lines = [normalize_text(l.strip()) for l in lines]
+
+    # Locate start of heading within text
+    start_indices = [i for i, t in enumerate(norm_lines) if t == norm_heading]
+
+    if not start_indices:
+        raise ValueError(f"[ERROR] Start indices for heading '{heading}' not found.")
+
+    start_line = start_indices[0]
+    end_line = len(lines) - 1
+
+    # If we know the next heading, find its first occurrence after start_line
+    if next_heading_title:
+        nh = normalize_text(next_heading_title)
+        next_idx = [i for i, t in enumerate(norm_lines) if t == nh and i > start_line]
+        if next_idx:
+            end_line = next_idx[0] - 1
+
+    if start_line > end_line or start_line < 0:
+        raise ValueError(f"Invalid line bounds: start={start_line}, end={end_line}")
+
+    extracted = lines[start_line : end_line + 1]
+
+    return "\n".join([l.strip() for l in extracted]), True
+
+
+def extract_question_from_txt(submission_path: Path, question: str) -> tuple[str, bool]:
+    """
+    Given a Markdown file, return the block from the heading 'question'
+    up to (but not including) the next heading of the same or higher level.
+    """
+    _MD_HEADER_RE = re.compile(r"^(#{1,6})\s+(.*)$")
+    if not os.path.exists(submission_path):
+        raise FileNotFoundError(f"[Error: Submission file {submission_path} not found]")
+
+    with open(submission_path, "r", encoding="utf-8", errors="ignore") as f:
+        lines = f.readlines()
+
+    def norm(x: str) -> str:
+        return normalize_text(re.sub(r"\s+", " ", x.strip()))
+
+    header_lines = []
+    for idx, line in enumerate(lines):
+        m = _MD_HEADER_RE.match(line)
+        if m:
+            level = len(m.group(1))
+            text = norm(m.group(2))
+            header_lines.append((idx, level, text))
+
+    norm_question = norm(question)
+    matches = [i for i, (_, _, txt) in enumerate(header_lines) if txt == norm_question]
+    if not matches:
+        return "", False
+
+    start_tuple = header_lines[matches[0]]
+    start_line, cur_level, _ = start_tuple
+
+    # find next heading of same or higher level
+    next_candidates = [ln for ln, lvl, _ in header_lines if ln > start_line and lvl <= cur_level]
+    end_line = next_candidates[0] - 1 if next_candidates else len(lines) - 1
+
+    block = "".join(lines[start_line : end_line + 1])
+    return block, True

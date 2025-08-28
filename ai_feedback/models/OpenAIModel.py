@@ -33,7 +33,7 @@ class OpenAIModel(Model):
         submission_file: Path,
         system_instructions: str,
         model_options: Optional[dict] = None,
-        question_num: Optional[int] = None,
+        question: Optional[int] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
@@ -49,7 +49,7 @@ class OpenAIModel(Model):
             solution_file (Path): Path to the solution file.
             test_output (Path): Path to the test output file.
             scope (Optional[str]): The content scope.
-            question_num (Optional[int]): Specific question number to focus on.
+            question (Optional[str]): Specific question number to focus on.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.

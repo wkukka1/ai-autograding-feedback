@@ -85,7 +85,7 @@ def process_code(
                 submission_file=submission_file,
                 solution_file=solution_file,
                 test_output=test_output_file,
-                question_num=args.question,
+                question=args.question,
                 system_instructions=system_instructions,
                 llama_mode=args.llama_mode,
                 json_schema=args.json_schema,

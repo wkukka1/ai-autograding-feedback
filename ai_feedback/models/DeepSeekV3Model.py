@@ -30,7 +30,7 @@ class DeepSeekV3Model(Model):
         model_options: Optional[dict] = None,
         solution_file: Optional[Path] = None,
         scope: Optional[str] = None,
-        question_num: Optional[int] = None,
+        question: Optional[str] = None,
         test_output: Optional[Path] = None,
         llama_mode: Optional[str] = None,
         json_schema: Optional[str] = None,
@@ -46,7 +46,7 @@ class DeepSeekV3Model(Model):
             scope (Optional[str]): Optional scope to use for this model.
             test_output (Optional[Path]): Path Object pointing to the test output file.
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
-            question_num (Optional[int]): An optional question number to target specific content.
+            question (Optional[str]): An optional question to target specific content.
             json_schema (Optional[str]): Optional json schema to use.
             model_options (Optional[dict]): The optional model options to use for generating the response.
 

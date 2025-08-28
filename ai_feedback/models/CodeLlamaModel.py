@@ -25,7 +25,7 @@ class CodeLlamaModel(Model):
         submission_file: Path,
         system_instructions: str,
         model_options: Optional[dict] = None,
-        question_num: Optional[int] = None,
+        question: Optional[str] = None,
         solution_file: Optional[Path] = None,
         test_output: Optional[Path] = None,
         scope: Optional[str] = None,
@@ -42,7 +42,7 @@ class CodeLlamaModel(Model):
             solution_file (Optional[Path]): The path to the solution file.
             test_output (Optional[Path]): The path to the test output file.
             scope (Optional[str]): The scope to use for generating the response.
-            question_num (Optional[int]): An optional specific question number to extract content for.
+            question (Optional[str]): An optional specific question to extract content for.
             system_instructions (str): instructions for the model
             llama_mode (Optional[str]): Optional mode to invoke llama.cpp in.
             json_schema (Optional[str]): Optional json schema to use.
